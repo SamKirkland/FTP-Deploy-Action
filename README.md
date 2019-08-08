@@ -36,7 +36,7 @@ action "FTP-Deploy-Action" {
   - ![Action](images/env.png)
 
 
-### Explination of steps
+### Explanation of steps
 - This action is triggered by a `event` on your repo
 - A docker image based on `mwienk/docker-lftp` is spun up on github servers
 - The docker container compresses your code into a tar.gz file
