@@ -50,7 +50,8 @@ I recommend you use a secrets to store your FTP_USERNAME and FTP_PASSWORD.
 #### Commonly used ARGS
 Custom lftp arguments, this field is passed through directly into the lftp script. See [lftp's website](https://lftp.yar.ru/lftp-man.html) for all options.
 You can use as many arguments as you want, seperate them with a space
-| ARG                 | Description                                                      |
+
+| Argument            | Description                                                      |
 |---------------------|------------------------------------------------------------------|
 | `--delete`          | Delete files not present at the source                           |
 | `--transfer-all`    | Transfer  all  files, even seemingly the same at the target site |
