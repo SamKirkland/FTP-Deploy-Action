@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.10
 
 LABEL version="1.0.0"
 LABEL repository="https://github.com/SamKirkland/FTP-Deploy-Action"
