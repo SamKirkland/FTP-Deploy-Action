@@ -54,7 +54,7 @@ You can use as many arguments as you want, seperate them with a space
 | Argument            | Description                                                          |
 |---------------------|----------------------------------------------------------------------|
 | `--delete`          | Delete files not present at the source                               |
-| `--transfer-all`    | Transfer  all  files, even seemingly the same at the target site     |
+| `--transfer-all`    | Transfer  all  files, even seemingly the same as the target site     |
 | `--dry-run`         | Ouputs files that will be modified without making any actual changes |
 | `--include=`        | Include matching files                                               |
 | `--exclude=`        | Exclude matching files                                               |
