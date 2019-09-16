@@ -51,16 +51,16 @@ I recommend you use a secrets to store your FTP_USERNAME and FTP_PASSWORD.
 Custom lftp arguments, this field is passed through directly into the lftp script. See [lftp's website](https://lftp.yar.ru/lftp-man.html) for all options.
 You can use as many arguments as you want, seperate them with a space
 
-| Argument            | Description                                                          |
-|---------------------|----------------------------------------------------------------------|
-| `--delete`          | Delete files not present at the source                               |
-| `--transfer-all`    | Transfer  all  files, even seemingly the same as the target site     |
-| `--dry-run`         | Ouputs files that will be modified without making any actual changes |
-| `--include=`        | Include matching files                                               |
-| `--exclude=`        | Exclude matching files                                               |
-| `--include-glob=GP` | Include matching files (GP is a glob pattern, e.g. `*.zip`)          |
-| `--exclude-glob=GP` | Exclude matching files (GP is a glob pattern, e.g. `*.zip`)          |
-| `--no-empty-dirs`   | Don't create empty directories                                       |
+| Argument               | Description                                                                                          |
+|------------------------|------------------------------------------------------------------------------------------------------|
+| `--delete`             | Delete files not present at the source                                                               |
+| `--transfer-all`       | Transfer  all  files, even seemingly the same as the target site                                     |
+| `--dry-run`            | Ouputs files that will be modified without making any actual changes                                 |
+| `--include=File.txt`   | Include matching files, you can add multiple `--include`                                             |
+| `--exclude=File.txt`   | Exclude matching files, you can add multiple `--exclude`                                             |
+| `--include-glob=*.zip` | Include matching files, you can add multiple `--include-glob`                                        |
+| `--exclude-glob=*.zip` | Exclude matching files, you can add multiple `--exclude-glob`                                        |
+| `--no-empty-dirs`      | Don't create empty directories                                                                       |
 
 
 ## Common Examples
@@ -126,6 +126,8 @@ jobs:
 1. `rm: Access failed: 553 Prohibited file name: ./.ftpquota`
    * The `.ftpquota` file is created by some FTP Servers and cannot be modified by the user
    * **Fix:** Add `--exclude=.ftpquota` to your ARGS
+2. How do I exclude .git files from the publish
+   * **Fix:** Add `--exclude-glob=**/.git*/** --exclude-glob=**/.git**` to your ARGS
 
 #### Deprecated main.workflow config (used for beta/legacy apps that haven't been migrated to .yaml workflows yet)
 ```json
