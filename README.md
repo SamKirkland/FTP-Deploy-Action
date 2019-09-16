@@ -9,7 +9,7 @@ Automate deploying websites and more with this GitHub action.
 on: push
 name: Publish Website
 jobs:
-  fTP-Deploy-Action:
+  FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
@@ -70,7 +70,7 @@ Make sure you have an npm script named 'build'. This config should work for most
 on: push
 name: Build and Publish Front End Framework Website
 jobs:
-  fTP-Deploy-Action:
+  FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
@@ -105,7 +105,7 @@ Ouputs a list of files that will be created/modified to sync your source without
 on: push
 name: Publish Website Dry Run
 jobs:
-  fTP-Deploy-Action:
+  FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
