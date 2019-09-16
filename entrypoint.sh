@@ -8,8 +8,9 @@ echo "Uploading files..."
 
 WDEFAULT_LOCAL_DIR=${LOCAL_DIR:-"."}
 WDEFAULT_REMOTE_DIR=${REMOTE_DIR:-"."}
+WDEFAULT_ARGS=${REMOTE_DIR:-""}
 
-lftp $FTP_SERVER -u $FTP_USERNAME,$FTP_PASSWORD -e "set ftp:ssl-allow no; mirror $ARGS -R $WDEFAULT_LOCAL_DIR $WDEFAULT_REMOTE_DIR; quit"
+lftp $FTP_SERVER -u $FTP_USERNAME,$FTP_PASSWORD -e "set ftp:ssl-allow no; mirror $WDEFAULT_ARGS -R $WDEFAULT_LOCAL_DIR $WDEFAULT_REMOTE_DIR; quit"
 
 echo "FTP Deploy Complete"
 exit 0
