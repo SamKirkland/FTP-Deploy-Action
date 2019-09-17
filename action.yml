@@ -32,5 +32,5 @@ runs:
     - ${{ inputs.local_dir }}
     - ${{ inputs.remote_dir }}
 branding:
-  icon: 'pload-cloud'  
+  icon: 'upload-cloud'  
   color: 'orange'
