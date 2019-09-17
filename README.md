@@ -53,6 +53,7 @@ You can use as many arguments as you want, seperate them with a space
 
 | Argument               | Description                                                                                          |
 |------------------------|------------------------------------------------------------------------------------------------------|
+| `--verbose`            | Outputs which files are being modified, useful for debugging                                         |
 | `--delete`             | Delete files not present at the source                                                               |
 | `--transfer-all`       | Transfer  all  files, even seemingly the same as the target site                                     |
 | `--dry-run`            | Ouputs files that will be modified without making any actual changes                                 |
@@ -60,7 +61,10 @@ You can use as many arguments as you want, seperate them with a space
 | `--exclude=File.txt`   | Exclude matching files, you can add multiple `--exclude`                                             |
 | `--include-glob=*.zip` | Include matching files, you can add multiple `--include-glob`                                        |
 | `--exclude-glob=*.zip` | Exclude matching files, you can add multiple `--exclude-glob`                                        |
+| `--delete-excluded`    | Deletes any items you've marked as excluded if they exist on the server                              |
 | `--no-empty-dirs`      | Don't create empty directories                                                                       |
+| `--parallel=X`         | Uploads X files at a time in parallel                                                                |
+| `-L`                   | Upload symbolic links as files (FTP doesn't have a way of creating actual symbolic links)            |
 
 
 ## Common Examples
@@ -126,8 +130,10 @@ jobs:
 1. `rm: Access failed: 553 Prohibited file name: ./.ftpquota`
    * The `.ftpquota` file is created by some FTP Servers and cannot be modified by the user
    * **Fix:** Add `--exclude=.ftpquota` to your ARGS
-2. How do I exclude .git files from the publish
-   * **Fix:** Add `--exclude-glob=**/.git*/** --exclude-glob=**/.git**` to your ARGS
+2. How to exclude .git files from the publish
+   * **Fix:** Add `--exclude-glob=.git*/** --exclude-glob=.git**` to your ARGS
+   * Note: If you've already published these files you will need to manually delete them on the server or add the `--delete-excluded` option to ARGS
+   * Note: This will exclude all folders and files that start with `.git` no matter the folder they're in
 
 #### Deprecated main.workflow config (used for beta/legacy apps that haven't been migrated to .yaml workflows yet)
 ```json
