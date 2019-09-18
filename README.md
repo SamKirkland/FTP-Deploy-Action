@@ -5,7 +5,7 @@ Automate deploying websites and more with this GitHub action.
 ![Action](images/action-preview.gif)
 
 ### Usage Example (Your_Project/.github/workflows/main.yml)
-```shell
+```yml
 on: push
 name: Publish Website
 jobs:
@@ -70,7 +70,7 @@ You can use as many arguments as you want, seperate them with a space
 ## Common Examples
 ### Build and Publish React/Angular/Vue/Node Website
 Make sure you have an npm script named 'build'. This config should work for most node built websites
-```shell
+```yml
 on: push
 name: Build and Publish Front End Framework Website
 jobs:
@@ -105,7 +105,7 @@ jobs:
 
 ### Log only dry run: Use this mode for testing
 Ouputs a list of files that will be created/modified to sync your source without making any actual changes
-```shell
+```yml
 on: push
 name: Publish Website Dry Run
 jobs:
@@ -136,7 +136,7 @@ jobs:
    * Note: This will exclude all folders and files that start with `.git` no matter the folder they're in
 
 #### Deprecated main.workflow config (used for beta/legacy apps that haven't been migrated to .yaml workflows yet)
-```json
+```workflow
 action "FTP-Deploy-Action" {
    uses = "SamKirkland/FTP-Deploy-Action@master"
    secrets = ["FTP_USERNAME", "FTP_PASSWORD", "FTP_SERVER"]
