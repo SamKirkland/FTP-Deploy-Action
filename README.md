@@ -15,10 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@master
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
       env:
         FTP_SERVER: ftp.samkirkland.com
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_USERNAME: myFtpUserName
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         ARGS: --delete
         # --delete arg will delete files on the server if you've deleted them in git
@@ -28,28 +28,30 @@ jobs:
 2. Select the actions tab `(currently only for beta testers)`
 3. Select `Blank workflow file` or `Set up a workflow yourself`, if you don't see these options manually create a yaml file `Your_Project/.github/workflows/main.yml`
 4. Paste the above code into your file and save
-7. Now you need to add a few keys to the `secrets` section in your project, the following are required at a minimum. To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for each of the following
-   * FTP_SERVER
-   * FTP_USERNAME
-   * FTP_PASSWORD
-   * (see optional settings below)
+7. Now you need to add a key to the `secrets` section in your project. To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for `FTP_PASSWORD`
 
 ### Settings
-To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for each of the following.
-I recommend you use a secrets to store your FTP_USERNAME and FTP_PASSWORD.
+Keys can be added directly to your .yml config file or referenced from your project `Secrets` storage.
 
-| Key Name       | Required? | Example                     | Default | Description |
-|----------------|-----------|-----------------------------|---------|-------------|
-| `FTP_SERVER`   | Yes       | ftp.samkirkland.com         | N/A     | FTP server name (you may need to specify a port) |
-| `FTP_USERNAME` | Yes       | git-action@samkirkland.com  | N/A     | FTP account username |
-| `FTP_PASSWORD` | Yes       | CrazyUniquePassword&%123    | N/A     | FTP account password |
-| `LOCAL_DIR`    | No        | build                       | . (root project folder) | The local folder to copy, defaults to root project folder. Do NOT include slashes for folders. |
-| `REMOTE_DIR`   | No        | serverFolder                | . (root FTP folder) | The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here). Do NOT include slashes for folders.  |
-| `ARGS`         | No        | See `Commonly used ARGS` section below  | N/A     | Custom lftp arguments, this field is passed through directly into the lftp script. |
+To add a `secret` go to the `Settings` tab in your project then select `Secrets`.
+I recommend you store your FTP_PASSWORD as a secret.
 
-#### Commonly used ARGS
+| Key Name       | Required? | Example                    | Default         | Description                                              |
+|----------------|-----------|----------------------------|-----------------|----------------------------------------------------------|
+| `FTP_SERVER`   | Yes       | ftp.samkirkland.com        | N/A             | FTP server name (you may need to specify a port)         |
+| `FTP_USERNAME` | Yes       | git-action@samkirkland.com | N/A             | FTP account username                                     |
+| `FTP_PASSWORD` | Yes       | CrazyUniquePassword&%123   | N/A             | FTP account password                                     |
+| `METHOD`       | No        | ftp                        | ftp             | Protocol used to deploy (ftp or sftp)                    |
+| `PORT`         | No        | 21                         | ftp=21, sftp=22 | The port used to connect to server                       |
+| `LOCAL_DIR`    | No        | build                      | . (root project folder) | The local folder to copy, defaults to root project folder. Do NOT include slashes for folders. |
+| `REMOTE_DIR`   | No        | serverFolder               | . (root FTP folder) | The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here). Do NOT include slashes for folders.  |
+| `ARGS`         | No        | See `ARGS` section below   | N/A | Custom lftp arguments, this field is passed through directly into the lftp script. |
+
+#### ARGS
 Custom lftp arguments, this field is passed through directly into the lftp script. See [lftp's website](https://lftp.yar.ru/lftp-man.html) for all options.
 You can use as many arguments as you want, seperate them with a space
+
+Below is an incomplete list of commonly used ARGS:
 
 | Argument               | Description                                                                                          |
 |------------------------|------------------------------------------------------------------------------------------------------|
@@ -94,12 +96,35 @@ jobs:
       run: ls
       
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@master
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
       env:
         FTP_SERVER: ftp.samkirkland.com
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_USERNAME: myFTPUsername
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         LOCAL_DIR: build
+        ARGS: --delete
+```
+
+
+## SFTP Example
+```yml
+on: push
+name: Publish Website over SFTP
+jobs:
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: FTP-Deploy-Action
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
+      env:
+        FTP_SERVER: ftp.samkirkland.com
+        FTP_USERNAME: mySFTPUsername
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        METHOD: sftp
+        PORT: 7280
         ARGS: --delete
 ```
 
@@ -115,10 +140,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@master
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
       env:
         FTP_SERVER: ftp.samkirkland.com
-        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_USERNAME: myFTPUsername
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         ARGS: --delete --dry-run
 ```
@@ -138,7 +163,7 @@ jobs:
 #### Deprecated main.workflow config (used for beta/legacy apps that haven't been migrated to .yaml workflows yet)
 ```workflow
 action "FTP-Deploy-Action" {
-   uses = "SamKirkland/FTP-Deploy-Action@master"
+   uses = "SamKirkland/FTP-Deploy-Action@1.0.0"
    secrets = ["FTP_USERNAME", "FTP_PASSWORD", "FTP_SERVER"]
 }
 ```
@@ -160,7 +185,6 @@ action "FTP-Deploy-Action" {
 
 
 #### ToDo
-- SFTP example
 - More examples
 
 #### Pull Requests Welcome!

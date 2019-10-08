@@ -1,5 +1,5 @@
 name: 'FTP Deploy'
-description: 'Syncs files via FTP to a remote server'
+description: 'Syncs files via FTP/SFTP to a remote server'
 inputs:
   ftp_server:
     description: 'FTP server name (you may need to specify a port)'
@@ -10,14 +10,22 @@ inputs:
   ftp_password:
     description: 'FTP account password'
     required: true
+  method:
+    description: 'Protocol used to deploy (ftp or sftp)'
+    required: false
+    default: "ftp"
+  port:
+    description: 'The port used to connect to server'
+    required: false
+    default: "21"
   local_dir:
     description: 'The local folder to copy, defaults to root project folder'
     required: false
-    default: ''
+    default: ""
   remote_dir:
     description: 'The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here)'
     required: false
-    default: ''
+    default: ""
   ARGS:
     description: 'Passes through options into lftp'
     required: false
@@ -29,6 +37,8 @@ runs:
     - ${{ inputs.ftp_server }}
     - ${{ inputs.ftp_username }}
     - ${{ inputs.ftp_password }}
+    - ${{ inputs.method }}
+    - ${{ inputs.port }}
     - ${{ inputs.local_dir }}
     - ${{ inputs.remote_dir }}
 branding:
