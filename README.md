@@ -67,6 +67,7 @@ Below is an incomplete list of commonly used ARGS:
 | `--no-empty-dirs`      | Don't create empty directories                                                                       |
 | `--parallel=X`         | Uploads X files at a time in parallel                                                                |
 | `-L`                   | Upload symbolic links as files (FTP doesn't have a way of creating actual symbolic links)            |
+| `--ignore-time`        | ⚠ Temporary workaround to prevent all files being uploaded. See [this issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/16).            |
 
 
 ## Common Examples
