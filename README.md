@@ -25,7 +25,7 @@ jobs:
 ```
 
 1. Select the repository you want to add the action to
-2. Select the actions tab `(currently only for beta testers)`
+2. Select the actions tab
 3. Select `Blank workflow file` or `Set up a workflow yourself`, if you don't see these options manually create a yaml file `Your_Project/.github/workflows/main.yml`
 4. Paste the above code into your file and save
 7. Now you need to add a key to the `secrets` section in your project. To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for `FTP_PASSWORD`
