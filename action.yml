@@ -1,46 +1,27 @@
 name: 'FTP Deploy'
 description: 'Syncs files via FTP/SFTP to a remote server'
+author: 'Sam Kirkland'
 inputs:
-  ftp_server:
-    description: 'FTP server name (you may need to specify a port)'
+  ftp-server:
+    description: 'Deployment destination server & path. Formatted as protocol://domain.com:port/full/destination/path/'
     required: true
-  ftp_username:
+  ftp-username:
     description: 'FTP account username'
     required: true
-  ftp_password:
+  ftp-password:
     description: 'FTP account password'
     required: true
-  method:
-    description: 'Protocol used to deploy (ftp or sftp)'
-    required: false
-    default: "ftp"
-  port:
-    description: 'The port used to connect to server'
-    required: false
-    default: "21"
-  local_dir:
+  local-dir:
     description: 'The local folder to copy, defaults to root project folder'
+    defaults: ./
     required: false
-    default: ""
-  remote_dir:
-    description: 'The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here)'
+  git-ftp-args:
+    description: 'Passes through options into git-ftp'
+    defaults: 
     required: false
-    default: ""
-  ARGS:
-    description: 'Passes through options into lftp'
-    required: false
-    default: ""
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.ftp_server }}
-    - ${{ inputs.ftp_username }}
-    - ${{ inputs.ftp_password }}
-    - ${{ inputs.method }}
-    - ${{ inputs.port }}
-    - ${{ inputs.local_dir }}
-    - ${{ inputs.remote_dir }}
 branding:
-  icon: 'upload-cloud'  
+  icon: 'upload-cloud'
   color: 'orange'

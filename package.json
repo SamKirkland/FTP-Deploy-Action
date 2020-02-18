@@ -1,0 +1,40 @@
+{
+  "name": "typescript-action",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TypeScript template action",
+  "main": "dist/main.js",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "scripts": {
+    "build:dev": "tsc",
+    "build:production": "ncc build src/main.ts -o dist",
+    "build:docker": "docker build --tag action .",
+    "run:docker": "docker run action --build-arg FTP_SERVER=example.com FTP_USERNAME=test@example.com FTP_PASSWORD=passwordExample"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/actions/typescript-action.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup"
+  ],
+  "author": "SamKirkland",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "1.2.0",
+    "@actions/exec": "1.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.8",
+    "@zeit/ncc": "0.20.5",
+    "jest": "24.9.0",
+    "jest-circus": "24.9.0",
+    "ts-jest": "24.1.0",
+    "typescript": "3.7.2"
+  }
+}

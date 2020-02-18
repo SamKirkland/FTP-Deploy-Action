@@ -1,8 +1,12 @@
-# FTP Deploy GitHub Action
+<p align="center">
+  <img alt="FTP Deploy - Continuous integration for everyone" src="images/ftp-upload-logo-small.png">
+</p>
 
-Automate deploying websites and more with this GitHub action.
+Automate deploying websites and more with this GitHub action
 
 ![Action](images/action-preview.gif)
+
+![Test FTP Deploy](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/Test%20FTP%20Deploy/badge.svg) ![Test SFTP Deploy](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/Test%20SFTP%20Deploy/badge.svg)
 
 ### Usage Example (Your_Project/.github/workflows/main.yml)
 ```yml
@@ -14,65 +18,230 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+      with:
+        fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      env:
-        FTP_SERVER: ftp.samkirkland.com
-        FTP_USERNAME: myFtpUserName
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        ARGS: --delete
-        # --delete arg will delete files on the server if you've deleted them in git
+      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      with:
+        ftp-server: ftp://ftp.samkirkland.com/
+        ftp-username: myFtpUserName
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
 ```
 
+#### Setup Steps
 1. Select the repository you want to add the action to
-2. Select the actions tab
+2. Select the `Actions` tab
 3. Select `Blank workflow file` or `Set up a workflow yourself`, if you don't see these options manually create a yaml file `Your_Project/.github/workflows/main.yml`
-4. Paste the above code into your file and save
-7. Now you need to add a key to the `secrets` section in your project. To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for `FTP_PASSWORD`
+4. Paste the example above into your yaml file and save
+5. Now you need to add a key to the `secrets` section in your project. To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for `ftp-password`
+6. Update your yaml file settings
 
 ### Settings
+**Migrating from v2? See the [migration guide](v2-v3-migration.md)**
+
 Keys can be added directly to your .yml config file or referenced from your project `Secrets` storage.
 
 To add a `secret` go to the `Settings` tab in your project then select `Secrets`.
-I recommend you store your FTP_PASSWORD as a secret.
+I recommend you store your `ftp-password` as a secret.
 
-| Key Name       | Required? | Example                    | Default         | Description                                              |
-|----------------|-----------|----------------------------|-----------------|----------------------------------------------------------|
-| `FTP_SERVER`   | Yes       | ftp.samkirkland.com        | N/A             | FTP server name (you may need to specify a port)         |
-| `FTP_USERNAME` | Yes       | git-action@samkirkland.com | N/A             | FTP account username                                     |
-| `FTP_PASSWORD` | Yes       | CrazyUniquePassword&%123   | N/A             | FTP account password                                     |
-| `METHOD`       | No        | ftp                        | ftp             | Protocol used to deploy (ftp or sftp)                    |
-| `PORT`         | No        | 21                         | ftp=21, sftp=22 | The port used to connect to server                       |
-| `LOCAL_DIR`    | No        | build                      | . (root project folder) | The local folder to copy, defaults to root project folder. Do NOT include slashes for folders. |
-| `REMOTE_DIR`   | No        | serverFolder               | . (root FTP folder) | The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here). Do NOT include slashes for folders.  |
-| `ARGS`         | No        | See `ARGS` section below   | N/A | Custom lftp arguments, this field is passed through directly into the lftp script. |
+| Key Name       | Required? | Example                                       | Default | Description                                              |
+|----------------|-----------|-----------------------------------------------|---------|----------------------------------------------------------|
+| `ftp-server`   | Yes       | ftp://ftp.samkirkland.com/destinationPath/    |         | Deployment destination server & path. Formatted as `protocol://domain.com:port/destinationPath/` protocol can be `ftp`, `ftps`, or `sftp`. Port is optional, when not specified it will default to 21 when using ftp, 22 when using sftp, and 990 when using ftps         |
+| `ftp-username` | Yes       | username@samkirkland.com                      |         | FTP account username                                     |
+| `ftp-password` | Yes       | CrazyUniquePassword&%123                      |         | FTP account password                                     |
+| `local-dir`    | No        | deploy/                                       | ./      | Which local folder to deploy, path should be relative to the root and should include trailing slash. `./` is the root of the project  |
+| `git-ftp-args` | No        | See `git-ftp-args` section below              |         | Custom git-ftp arguments, this field is passed through directly into the git-ftp script |
 
-#### ARGS
-Custom lftp arguments, this field is passed through directly into the lftp script. See [lftp's website](https://lftp.yar.ru/lftp-man.html) for all options.
+#### Advanced options using `git-ftp-args`
+Custom arguments, this field is passed through directly into the git-ftp script. See [git-ftp's manual](https://github.com/git-ftp/git-ftp/blob/master/man/git-ftp.1.md) for all options.
 You can use as many arguments as you want, seperate them with a space
 
-Below is an incomplete list of commonly used ARGS:
+Below is an incomplete list of commonly used args:
 
 | Argument               | Description                                                                                          |
 |------------------------|------------------------------------------------------------------------------------------------------|
-| `--verbose`            | Outputs which files are being modified, useful for debugging                                         |
-| `--delete`             | Delete files not present at the source                                                               |
-| `--transfer-all`       | Transfer  all  files, even seemingly the same as the target site                                     |
-| `--dry-run`            | Ouputs files that will be modified without making any actual changes                                 |
-| `--include=File.txt`   | Include matching files, you can add multiple `--include`                                             |
-| `--exclude=File.txt`   | Exclude matching files, you can add multiple `--exclude`                                             |
-| `--include-glob=*.zip` | Include matching files, you can add multiple `--include-glob`                                        |
-| `--exclude-glob=*.zip` | Exclude matching files, you can add multiple `--exclude-glob`                                        |
-| `--delete-excluded`    | Deletes any items you've marked as excluded if they exist on the server                              |
-| `--no-empty-dirs`      | Don't create empty directories                                                                       |
-| `--parallel=X`         | Uploads X files at a time in parallel                                                                |
-| `-L`                   | Upload symbolic links as files (FTP doesn't have a way of creating actual symbolic links)            |
-| `--ignore-time`        | ⚠ Temporary workaround to prevent all files being uploaded. See [this issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/16).            |
+| `--dry-run`            | Does not upload or delete anything, but tries to get the .git-ftp.log file from remote host          |
+| `--silent`             | Be silent                                                                                            |
+| `--all`                | Transfer all files, even seemingly the same as the target site (default is differences only)         |
+| `--lock`               | Locks remote files from being modified while a deployment is running                                 |
+| `--remote-root`        | Specifies the remote root directory to deploy to. The remote path in the URL is ignored              |
+| `--key`                | SSH private key file name for SFTP                                                                   |
+| `--branch`             | Push a specific branch. I recommend [creating a yaml action for each branch instead](https://github.com/SamKirkland/FTP-Deploy-Action/issues/37#issuecomment-579819486) |
+| `--pubkey`             | SSH public key file name. Used with `--key` option                                                   |
+| `--insecure`           | Don't verify server's certificate                                                                    |
+| `--cacert <file>`      | Use as CA certificate store. Useful when a server has a self-signed certificate                      |
 
 
-## Common Examples
-### Build and Publish React/Angular/Vue/Node Website
-Make sure you have an npm script named 'build'. This config should work for most node built websites
+### Ignore specific files when deploying
+Add patterns to `.git-ftp-ignore` and all matching file names will be ignored. The patterns are interpreted as shell glob patterns.
+Here are some glob pattern examples:
+
+#### Ignore git related files:
+```gitattributes
+.gitignore
+*/.gitignore      # ignore files in sub directories
+*/.gitkeep
+.git-ftp-ignore
+.git-ftp-include
+.gitlab-ci.yml
+```
+
+#### Ignore a single file called `foobar.txt`
+```gitattributes
+foobar.txt
+```
+
+#### Ignore all files having extension .txt
+```gitattributes
+*.txt
+```
+
+#### Ignore everything in a directory named `config`
+```gitattributes
+config/*
+```
+
+### Force upload specific files
+The `.git-ftp-include` file specifies intentionally untracked files to should upload. If you have a file that should always be uploaded, add a line beginning with `!` followed by the file's name.
+
+#### Always upload the file `VERSION.txt`
+```gitattributes
+!VERSION.txt
+```
+
+#### Always upload the folder `build`
+```gitattributes
+!build/
+```
+
+If you have a file that should be uploaded whenever a tracked file changes, add a line beginning with the untracked file's name followed by a colon and the tracked file's name.
+#### Upload CSS file compiled from an SCSS file
+```gitattributes
+css/style.css:scss/style.scss
+```
+
+If you have multiple source files, you can add multiple lines for each of them. Whenever one of the tracked files changes, the upload of the paired untracked file will be triggered.
+
+```gitattributes
+css/style.css:scss/style.scss
+css/style.css:scss/mixins.scss
+```
+
+If a local untracked file is deleted, any change of a paired tracked file will trigger the deletion of the remote file on the server.
+
+All paths are usually relative to the Git working directory. When using the `local-dir` option, paths of tracked files (right side of the colon) are relative to the set `local-dir`.
+```gitattributes
+# upload "html/style.css" triggered by html/style.scss
+# with local-dir "html"
+html/style.css:style.scss
+```
+
+If your source file is outside the `local-dir`, prefix it with a / and define a path relative to the Git working directory.
+#### Uploading a file outside of `local-dir`
+```gitattributes
+# upload "dist/style.css" with local-dir "dist"
+dist/style.css:/src/style.scss
+```
+
+It is also possible to upload whole directories. For example, if you use a package manager like composer, you can upload all vendor packages when the file composer.lock changes:
+```gitattributes
+vendor/:composer.lock
+```
+But keep in mind that this will upload all files in the vendor folder, even those that are on the server already. And it will not delete files from that directory if local files are deleted.
+
+### Common Examples
+Read more about the differences between these protocols [https://www.sftp.net/sftp-vs-ftps](https://www.sftp.net/sftp-vs-ftps)
+
+### FTP (File Transfer Protocol)
+`ftp://ftp.samkirkland.com:21/mypath`
+
+FTP has existed since 1971, it's an ancient protocol with near universal support.
+
+```yml
+on: push
+name: Publish Website
+jobs:
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 2
+    - name: FTP-Deploy-Action
+      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      with:
+        ftp-server: ftp://ftp.samkirkland.com/
+        ftp-username: myFtpUserName
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
+```
+
+### FTPS (File Transfer Protocol over SSL)
+`ftps://ftp.samkirkland.com:21/mypath`
+
+Use the legacy FTP over a secure encrypted connection.
+
+Notes about sftp:
+- Most hosts don't offer FTPS, it's more common on windows/.net hosts and less common on linux hosting
+- Most hosts don't have a correct certificate setup for ftp domains, [even my host doesn't do it right](https://ftp.samkirkland.com/). This means you'll likely have to add `--insecure` to `git-ftp-args`
+
+```yml
+on: push
+name: Publish Website over FTPS
+jobs:
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 2
+
+    - name: FTP-Deploy-Action
+      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      with:
+        ftp-server: ftps://ftp.samkirkland.com:21/
+        ftp-username: myFTPSUsername
+        ftp-password: ${{ secrets.FTPS_PASSWORD }}
+        git-ftp-args: --insecure # if your certificate is setup correctly this can be removed
+```
+
+### SFTP (SSH File Transfer Protocol)
+`sftp://ftp.samkirkland.com:22/mypath`
+
+Similar in name to FTP but this protocol is entirely new and requires SSH access to the server.
+
+##### Notes about SFTP:
+- **You CANNOT use a FTP account - they are not the same!**
+- You must have shell access to your server, please read you webhosts documentation
+- You will need to create a **SSH** user to deploy over SFTP. Normally this is your cpanel or hosting providers username and password
+- Most web hosts change the default port (21), check with your host for your port number
+
+```yml
+on: push
+name: Publish Website over SFTP
+jobs:
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 2
+
+    - name: FTP-Deploy-Action
+      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      with:
+        ftp-server: sftp://ftp.samkirkland.com:7280/
+        ftp-username: mySFTPUsername
+        ftp-password: ${{ secrets.SFTP_PASSWORD }}
+        git-ftp-args: --insecure # if your certificate is setup correctly this can be removed
+```
+
+
+### Build and Publish React/Angular/Vue Website
+Make sure you have an npm script named 'build'. This config should work for most node built websites.
+If you don't commit your `build` folder to github you MUST create a `.git-ftp-include` file with the content `!build/` so the folder is always uploaded
 ```yml
 on: push
 name: Build and Publish Front End Framework Website
@@ -82,7 +251,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    
+      with:
+        fetch-depth: 2
+
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
@@ -97,36 +268,12 @@ jobs:
       run: ls
       
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      env:
-        FTP_SERVER: ftp.samkirkland.com
-        FTP_USERNAME: myFTPUsername
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        LOCAL_DIR: build
-        ARGS: --delete
-```
-
-
-## SFTP Example
-```yml
-on: push
-name: Publish Website over SFTP
-jobs:
-  FTP-Deploy-Action:
-    name: FTP-Deploy-Action
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    
-    - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      env:
-        FTP_SERVER: ftp.samkirkland.com
-        FTP_USERNAME: mySFTPUsername
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        METHOD: sftp
-        PORT: 7280
-        ARGS: --delete
+      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      with:
+        ftp-server: ftp://ftp.samkirkland.com/
+        ftp-username: myFTPUsername
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: build
 ```
 
 ### Log only dry run: Use this mode for testing
@@ -140,34 +287,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+      with:
+        fetch-depth: 2
+
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      env:
-        FTP_SERVER: ftp.samkirkland.com
-        FTP_USERNAME: myFTPUsername
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        ARGS: --delete --dry-run
+      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      with:
+        ftp-server: ftp://ftp.samkirkland.com/
+        ftp-username: myFTPUsername
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        git-ftp-args: --dry-run
 ```
 
 ##### Want another example? Let me know by creating a github issue
 
-
 ## FAQ
-1. `rm: Access failed: 553 Prohibited file name: ./.ftpquota`
-   * The `.ftpquota` file is created by some FTP Servers and cannot be modified by the user
-   * **Fix:** Add `--exclude=.ftpquota` to your ARGS
-2. How to exclude .git files from the publish
-   * **Fix:** Add `--exclude-glob=.git*/** --exclude-glob=.git**` to your ARGS
-   * Note: If you've already published these files you will need to manually delete them on the server or add the `--delete-excluded` option to ARGS
-   * Note: This will exclude all folders and files that start with `.git` no matter the folder they're in
+1. `Can't access remote 'sftp://', exiting...` or `Can't access remote 'ftps://', exiting...`
+  * **Fix 1:** Verify your login credentials are correct, download a ftp client and test with the exact same host/username/password
+  * **Fix 2:** Remember if you are using SFTP or FTPS you cannot use a normal FTP account username/password. You must use a elevated account. Each host has a different process to setup a FTPS or SFTP account. Please contact your host for help.
+  * **Fix 3:** If you are using sftp or ftps you should add `git-ftp-args: --insecure`, most hosts setup certificates incorrectly :(
+2. `rm: Access failed: 553 Prohibited file name: ./.ftpquota`
+  * **What is happening?** The `.ftpquota` file is created by some FTP Servers and cannot be modified by the user
+  * **Fix:** Add `.ftpquota` to your `.git-ftp-ignore` file
+3. How to exclude .git files from the publish
+  * **Fix:** See the `.git-ftp-ignore` example above
+4. All files are being uploaded instead of just different files
+  * By default only different files are uploaded.
+  * Verify you have `with: fetch-depth: 2` in your `actions/checkout@master` step. The last 2 checkins are required in order to determine differences
+  * If you've had multiple git commits without deploying, all files will be uploaded to get back in sync
+  * Verify you **don't** have the `--all` git-ftp-args flag set
+5. How do I set a upload timeout?
+  * github has a built-in `timeout-minutes` option. Place `timeout-minutes: X` before the `steps:` line. Timeout defaults to 360 minutes.
 
-#### Deprecated main.workflow config (used for beta/legacy apps that haven't been migrated to .yaml workflows yet)
-```workflow
-action "FTP-Deploy-Action" {
-   uses = "SamKirkland/FTP-Deploy-Action@1.0.0"
-   secrets = ["FTP_USERNAME", "FTP_PASSWORD", "FTP_SERVER"]
-}
-```
 
 ### Debugging locally
 ##### Instructions for debugging on windows
@@ -175,17 +326,9 @@ action "FTP-Deploy-Action" {
 - Open powershell
 - Navigate to the repo folder
 - Run `docker build --tag action .`
-- (Optional) This step is only required when editing entrypoint.sh due to windows editors saving the file with windows line breaks instead of linux line breaks
-  - Download http://dos2unix.sourceforge.net/
-  - In another powershell window nagivate to the dos2unix folder /bin
-  - Run this command every time you modify entrypoint.sh `.\dos2unix.exe "{FULL_PATH_TO_REPO\entrypoint.sh}"`
 - Run `docker run action`
   
 ##### Instructions for debugging on linux
 - Please submit a PR for linux instructions :)
-
-
-#### ToDo
-- More examples
 
 #### Pull Requests Welcome!
