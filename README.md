@@ -36,6 +36,8 @@ jobs:
 5. Now you need to add a key to the `secrets` section in your project. To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for `ftp-password`
 6. Update your yaml file settings
 
+__Note: Only tracked files will be published by default. If you want to publish files that don't exist in github (example: files generated during the action run) you must add those files/folders to `.git-ftp-include`__
+
 ### Settings
 **Migrating from v2? See the [migration guide](v2-v3-migration.md)**
 
@@ -62,7 +64,7 @@ Below is an incomplete list of commonly used args:
 |------------------------|------------------------------------------------------------------------------------------------------|
 | `--dry-run`            | Does not upload or delete anything, but tries to get the .git-ftp.log file from remote host          |
 | `--silent`             | Be silent                                                                                            |
-| `--all`                | Transfer all files, even seemingly the same as the target site (default is differences only)         |
+| `--all`                | Transfer all files, even seemingly the same as the target site (default is differences only). Note: Only files committed to github are uploaded, if you'd like to upload files generated during the action run see `.git-ftp-include` |
 | `--lock`               | Locks remote files from being modified while a deployment is running                                 |
 | `--remote-root`        | Specifies the remote root directory to deploy to. The remote path in the URL is ignored              |
 | `--key`                | SSH private key file name for SFTP                                                                   |
@@ -241,7 +243,9 @@ jobs:
 
 ### Build and Publish React/Angular/Vue Website
 Make sure you have an npm script named 'build'. This config should work for most node built websites.
-If you don't commit your `build` folder to github you MUST create a `.git-ftp-include` file with the content `!build/` so the folder is always uploaded
+
+> #### If you don't commit your `build` folder to github you MUST create a `.git-ftp-include` file with the content `!build/` so the folder is always uploaded!
+
 ```yml
 on: push
 name: Build and Publish Front End Framework Website
@@ -273,7 +277,7 @@ jobs:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFTPUsername
         ftp-password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: build
+        local-dir: build # This folder is NOT going to upload by default unless you add it to .git-ftp-include
 ```
 
 ### Log only dry run: Use this mode for testing
@@ -306,17 +310,19 @@ jobs:
   * **Fix 1:** Verify your login credentials are correct, download a ftp client and test with the exact same host/username/password
   * **Fix 2:** Remember if you are using SFTP or FTPS you cannot use a normal FTP account username/password. You must use a elevated account. Each host has a different process to setup a FTPS or SFTP account. Please contact your host for help.
   * **Fix 3:** If you are using sftp or ftps you should add `git-ftp-args: --insecure`, most hosts setup certificates incorrectly :(
-2. `rm: Access failed: 553 Prohibited file name: ./.ftpquota`
+2. My files aren't uploading
+ * V3+ uses github to determine when files have changes and only publish differences. This means files that aren't committed to github will not upload by default. To change this behavior please see `.git-ftp-include` documentation
+3. `rm: Access failed: 553 Prohibited file name: ./.ftpquota`
   * **What is happening?** The `.ftpquota` file is created by some FTP Servers and cannot be modified by the user
   * **Fix:** Add `.ftpquota` to your `.git-ftp-ignore` file
-3. How to exclude .git files from the publish
+4. How to exclude .git files from the publish
   * **Fix:** See the `.git-ftp-ignore` example above
-4. All files are being uploaded instead of just different files
+5. All files are being uploaded instead of just different files
   * By default only different files are uploaded.
   * Verify you have `with: fetch-depth: 2` in your `actions/checkout@master` step. The last 2 checkins are required in order to determine differences
   * If you've had multiple git commits without deploying, all files will be uploaded to get back in sync
   * Verify you **don't** have the `--all` git-ftp-args flag set
-5. How do I set a upload timeout?
+6. How do I set a upload timeout?
   * github has a built-in `timeout-minutes` option. Place `timeout-minutes: X` before the `steps:` line. Timeout defaults to 360 minutes.
 
 
