@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
+import fs from 'fs';
 import { IActionArguments } from './types';
 
 async function run() {
@@ -8,7 +9,14 @@ async function run() {
     try {
       await exec.exec(`mkdir -v -p ${process.env['HOME']}/.ssh`);
       await exec.exec(`chmod 700 ${process.env['HOME']}/.ssh`);
-      await exec.exec(`echo "${userArguments.knownHosts}" > ${process.env['HOME']}/.ssh/known_hosts`);
+      fs.writeFile(
+        process.env['HOME'] + '/.ssh/known_hosts',
+        userArguments.knownHosts,
+        (err) => { 
+          if (err) throw err;
+          console.log('Wrote ' + process.env['HOME'] + '/.ssh/known_hosts');
+        }
+      );
       await exec.exec(`chmod 755 ${process.env['HOME']}/.ssh/known_hosts`);
       console.log("✅ Configured known_hosts");
     } catch( error ) {
