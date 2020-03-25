@@ -667,10 +667,10 @@ function run() {
         const userArguments = getUserArguments();
         if ('' !== userArguments.knownHosts) {
             try {
-                yield exec.exec(`mkdir -v -p $HOME/.ssh`);
-                yield exec.exec(`chmod 700 $HOME/.ssh`);
-                yield exec.exec(`echo ${userArguments.knownHosts} > $HOME/.ssh/known_hosts`);
-                yield exec.exec(`chmod 755 $HOME/.ssh/known_hosts`);
+                yield exec.exec(`mkdir -v -p ${process.env['HOME']}/.ssh`);
+                yield exec.exec(`chmod 700 ${process.env['HOME']}/.ssh`);
+                yield exec.exec(`echo "${userArguments.knownHosts}" > ${process.env['HOME']}/.ssh/known_hosts`);
+                yield exec.exec(`chmod 755 ${process.env['HOME']}/.ssh/known_hosts`);
                 console.log("✅ Configured known_hosts");
             }
             catch (error) {

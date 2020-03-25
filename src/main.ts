@@ -6,10 +6,10 @@ async function run() {
   const userArguments = getUserArguments();
   if ( '' !== userArguments.knownHosts ) {
     try {
-      await exec.exec(`mkdir -v -p $HOME/.ssh`);
-      await exec.exec(`chmod 700 $HOME/.ssh`);
-      await exec.exec(`echo ${userArguments.knownHosts} > $HOME/.ssh/known_hosts`);
-      await exec.exec(`chmod 755 $HOME/.ssh/known_hosts`);
+      await exec.exec(`mkdir -v -p ${process.env['HOME']}/.ssh`);
+      await exec.exec(`chmod 700 ${process.env['HOME']}/.ssh`);
+      await exec.exec(`echo "${userArguments.knownHosts}" > ${process.env['HOME']}/.ssh/known_hosts`);
+      await exec.exec(`chmod 755 ${process.env['HOME']}/.ssh/known_hosts`);
       console.log("✅ Configured known_hosts");
     } catch( error ) {
       console.error("⚠️ Error configuring known_hosts")
