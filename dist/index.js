@@ -665,6 +665,12 @@ const exec = __importStar(__webpack_require__(986));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const userArguments = getUserArguments();
+        if ('' !== userArguments.knownHosts) {
+            yield exec.exec(`mkdir -p /home/runner/.ssh`);
+            yield exec.exec(`chmod 0700 /home/runner/.ssh`);
+            yield exec.exec(`echo ${userArguments.knownHosts} > /home/runner/.ssh/known_hosts`);
+            yield exec.exec(`chmod 0700 /home/runner/.ssh/known_hosts`);
+        }
         try {
             yield syncFiles(userArguments);
             console.log("✅ Deploy Complete");
@@ -682,7 +688,8 @@ function getUserArguments() {
         ftp_username: core.getInput("ftp-username", { required: true }),
         ftp_password: core.getInput("ftp-password", { required: true }),
         local_dir: withDefault(core.getInput("local-dir"), "./"),
-        gitFtpArgs: withDefault(core.getInput("git-ftp-args"), "")
+        gitFtpArgs: withDefault(core.getInput("git-ftp-args"), ""),
+        knownHosts: withDefault(core.getInput("known-hosts"), "")
     };
 }
 function withDefault(value, defaultValue) {

@@ -4,7 +4,12 @@ import { IActionArguments } from './types';
 
 async function run() {
   const userArguments = getUserArguments();
-
+  if ( '' !== userArguments.knownHosts ) {
+    await exec.exec(`mkdir -p /home/runner/.ssh`);
+    await exec.exec(`chmod 0700 /home/runner/.ssh`);
+    await exec.exec(`echo ${userArguments.knownHosts} > /home/runner/.ssh/known_hosts`);
+    await exec.exec(`chmod 0700 /home/runner/.ssh/known_hosts`);
+  }
   try {
     await syncFiles(userArguments);
 
@@ -25,7 +30,8 @@ function getUserArguments(): IActionArguments {
     ftp_username: core.getInput("ftp-username", { required: true }),
     ftp_password: core.getInput("ftp-password", { required: true }),
     local_dir: withDefault(core.getInput("local-dir"), "./"),
-    gitFtpArgs: withDefault(core.getInput("git-ftp-args"), "")
+    gitFtpArgs: withDefault(core.getInput("git-ftp-args"), ""),
+    knownHosts: withDefault(core.getInput("known-hosts"), "")
   };
 }
 
