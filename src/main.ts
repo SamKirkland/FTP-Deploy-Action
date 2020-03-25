@@ -5,10 +5,16 @@ import { IActionArguments } from './types';
 async function run() {
   const userArguments = getUserArguments();
   if ( '' !== userArguments.knownHosts ) {
-    await exec.exec(`mkdir -p /home/runner/.ssh`);
-    await exec.exec(`chmod 0700 /home/runner/.ssh`);
-    await exec.exec(`echo ${userArguments.knownHosts} > /home/runner/.ssh/known_hosts`);
-    await exec.exec(`chmod 0700 /home/runner/.ssh/known_hosts`);
+    try {
+      await exec.exec(`mkdir -v -p $HOME/.ssh`);
+      await exec.exec(`chmod 700 $HOME/.ssh`);
+      await exec.exec(`echo ${userArguments.knownHosts} > $HOME/.ssh/known_hosts`);
+      await exec.exec(`chmod 755 $HOME/.ssh/known_hosts`);
+      console.log("✅ Configured known_hosts");
+    } catch( error ) {
+      console.error("⚠️ Error configuring known_hosts")
+      core.setFailed(error.message);;
+    }
   }
   try {
     await syncFiles(userArguments);

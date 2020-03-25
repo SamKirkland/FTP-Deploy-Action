@@ -666,10 +666,18 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const userArguments = getUserArguments();
         if ('' !== userArguments.knownHosts) {
-            yield exec.exec(`mkdir -p /home/runner/.ssh`);
-            yield exec.exec(`chmod 0700 /home/runner/.ssh`);
-            yield exec.exec(`echo ${userArguments.knownHosts} > /home/runner/.ssh/known_hosts`);
-            yield exec.exec(`chmod 0700 /home/runner/.ssh/known_hosts`);
+            try {
+                yield exec.exec(`mkdir -v -p $HOME/.ssh`);
+                yield exec.exec(`chmod 700 $HOME/.ssh`);
+                yield exec.exec(`echo ${userArguments.knownHosts} > $HOME/.ssh/known_hosts`);
+                yield exec.exec(`chmod 755 $HOME/.ssh/known_hosts`);
+                console.log("✅ Configured known_hosts");
+            }
+            catch (error) {
+                console.error("⚠️ Error configuring known_hosts");
+                core.setFailed(error.message);
+                ;
+            }
         }
         try {
             yield syncFiles(userArguments);
