@@ -74,7 +74,7 @@ Below is an incomplete list of commonly used args:
 | `--insecure`           | Don't verify server's certificate                                                                    |
 | `--cacert <file>`      | Use as CA certificate store. Useful when a server has a self-signed certificate                      |
 
-#### SFTP (FTP ovder SSH)
+#### SFTP (FTP over SSH)
 If you are getting a curl error similar to `SSL peer certificate or SSH remote key was not OK` and you are using SFTP (which is different from FTPS) then you need to supply a known_hosts entry via the `known-hosts` configuration option..
 
 If you are on Linux, or OSX (using homebrew) you can install the OpenSSH packages and use `ssh-keyscan <hostname>` to get the known_hosts value needed for the server you are connecting to.
