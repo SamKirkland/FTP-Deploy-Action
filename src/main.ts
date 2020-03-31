@@ -1,30 +1,16 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import fs from 'fs';
+import { promisify } from 'util';
 import { IActionArguments } from './types';
+
+const writeFileAsync = promisify(fs.writeFile);
 
 async function run() {
   const userArguments = getUserArguments();
-  if ( '' !== userArguments.knownHosts ) {
-    try {
-      await exec.exec(`mkdir -v -p ${process.env['HOME']}/.ssh`);
-      await exec.exec(`chmod 700 ${process.env['HOME']}/.ssh`);
-      fs.writeFile(
-        process.env['HOME'] + '/.ssh/known_hosts',
-        userArguments.knownHosts,
-        (err) => { 
-          if (err) throw err;
-          console.log('Wrote ' + process.env['HOME'] + '/.ssh/known_hosts');
-        }
-      );
-      await exec.exec(`chmod 755 ${process.env['HOME']}/.ssh/known_hosts`);
-      console.log("✅ Configured known_hosts");
-    } catch( error ) {
-      console.error("⚠️ Error configuring known_hosts")
-      core.setFailed(error.message);;
-    }
-  }
+  
   try {
+    await configureHost(userArguments);
     await syncFiles(userArguments);
 
     console.log("✅ Deploy Complete");
@@ -37,6 +23,26 @@ async function run() {
 
 run();
 
+async function configureHost(args: IActionArguments): Promise<void> {
+  if (args.knownHosts === "") {
+    return;
+  }
+
+  try {
+    const sshFolder = `${process.env['HOME']}/.ssh`;
+
+    await exec.exec(`mkdir -v -p ${sshFolder}`);
+    await exec.exec(`chmod 700 ${sshFolder}`);
+    writeFileAsync(`${sshFolder}/known_hosts`, args.knownHosts);
+    await exec.exec(`chmod 755 ${sshFolder}/known_hosts`);
+
+    console.log("✅ Configured known_hosts");
+  }
+  catch (error) {
+    console.error("⚠️ Error configuring known_hosts");
+    throw error;
+  }
+}
 
 function getUserArguments(): IActionArguments {
   return {
