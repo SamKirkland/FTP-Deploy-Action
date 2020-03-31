@@ -53,6 +53,7 @@ I recommend you store your `ftp-password` as a secret.
 | `ftp-password` | Yes       | CrazyUniquePassword&%123                      |         | FTP account password                                     |
 | `local-dir`    | No        | deploy/                                       | ./      | Which local folder to deploy, path should be relative to the root and should include trailing slash. `./` is the root of the project  |
 | `git-ftp-args` | No        | See `git-ftp-args` section below              |         | Custom git-ftp arguments, this field is passed through directly into the git-ftp script |
+| `known-hosts`  | No        | ```hostname ssh-rsa AAAAB3NzaC1y...```        |         | The desired contents of your .ssh/known_hosts file       |
 
 #### Advanced options using `git-ftp-args`
 Custom arguments, this field is passed through directly into the git-ftp script. See [git-ftp's manual](https://github.com/git-ftp/git-ftp/blob/master/man/git-ftp.1.md) for all options.
@@ -73,6 +74,10 @@ Below is an incomplete list of commonly used args:
 | `--insecure`           | Don't verify server's certificate                                                                    |
 | `--cacert <file>`      | Use as CA certificate store. Useful when a server has a self-signed certificate                      |
 
+#### SFTP (FTP ovder SSH)
+If you are getting a curl error similar to `SSL peer certificate or SSH remote key was not OK` and you are using SFTP (which is different from FTPS) then you need to supply a known_hosts entry via the `known-hosts` configuration option..
+
+If you are on Linux, or OSX (using homebrew) you can install the OpenSSH packages and use `ssh-keyscan <hostname>` to get the known_hosts value needed for the server you are connecting to.
 
 ### Ignore specific files when deploying
 Add patterns to `.git-ftp-ignore` and all matching file names will be ignored. The patterns are interpreted as shell glob patterns.

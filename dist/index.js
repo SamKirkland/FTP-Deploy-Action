@@ -666,28 +666,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
 const fs_1 = __importDefault(__webpack_require__(747));
+const util_1 = __webpack_require__(669);
+const writeFileAsync = util_1.promisify(fs_1.default.writeFile);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const userArguments = getUserArguments();
-        if ('' !== userArguments.knownHosts) {
-            try {
-                yield exec.exec(`mkdir -v -p ${process.env['HOME']}/.ssh`);
-                yield exec.exec(`chmod 700 ${process.env['HOME']}/.ssh`);
-                fs_1.default.writeFile(process.env['HOME'] + '/.ssh/known_hosts', userArguments.knownHosts, (err) => {
-                    if (err)
-                        throw err;
-                    console.log('Wrote ' + process.env['HOME'] + '/.ssh/known_hosts');
-                });
-                yield exec.exec(`chmod 755 ${process.env['HOME']}/.ssh/known_hosts`);
-                console.log("✅ Configured known_hosts");
-            }
-            catch (error) {
-                console.error("⚠️ Error configuring known_hosts");
-                core.setFailed(error.message);
-                ;
-            }
-        }
         try {
+            yield configureHost(userArguments);
             yield syncFiles(userArguments);
             console.log("✅ Deploy Complete");
         }
@@ -698,6 +683,25 @@ function run() {
     });
 }
 run();
+function configureHost(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (args.knownHosts === "") {
+            return;
+        }
+        try {
+            const sshFolder = `${process.env['HOME']}/.ssh`;
+            yield exec.exec(`mkdir -v -p ${sshFolder}`);
+            yield exec.exec(`chmod 700 ${sshFolder}`);
+            writeFileAsync(`${sshFolder}/known_hosts`, args.knownHosts);
+            yield exec.exec(`chmod 755 ${sshFolder}/known_hosts`);
+            console.log("✅ Configured known_hosts");
+        }
+        catch (error) {
+            console.error("⚠️ Error configuring known_hosts");
+            throw error;
+        }
+    });
+}
 function getUserArguments() {
     return {
         ftp_server: core.getInput("ftp-server", { required: true }),
@@ -1021,6 +1025,13 @@ module.exports = require("events");
 /***/ (function(module) {
 
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 669:
+/***/ (function(module) {
+
+module.exports = require("util");
 
 /***/ }),
 
