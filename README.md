@@ -53,6 +53,7 @@ I recommend you store your `ftp-password` as a secret.
 | `ftp-password` | Yes       | CrazyUniquePassword&%123                      |         | FTP account password                                     |
 | `local-dir`    | No        | deploy/                                       | ./      | Which local folder to deploy, path should be relative to the root and should include trailing slash. `./` is the root of the project  |
 | `git-ftp-args` | No        | See `git-ftp-args` section below              |         | Custom git-ftp arguments, this field is passed through directly into the git-ftp script |
+| `known-hosts`  | No        | hostname ssh-rsa AAAAB3NzaC1y ...             |         | The desired contents of your .ssh/known_hosts file. See [known hosts setup](#known-hosts-setup) |
 
 #### Advanced options using `git-ftp-args`
 Custom arguments, this field is passed through directly into the git-ftp script. See [git-ftp's manual](https://github.com/git-ftp/git-ftp/blob/master/man/git-ftp.1.md) for all options.
@@ -72,7 +73,6 @@ Below is an incomplete list of commonly used args:
 | `--pubkey`             | SSH public key file name. Used with `--key` option                                                   |
 | `--insecure`           | Don't verify server's certificate                                                                    |
 | `--cacert <file>`      | Use as CA certificate store. Useful when a server has a self-signed certificate                      |
-
 
 ### Ignore specific files when deploying
 Add patterns to `.git-ftp-ignore` and all matching file names will be ignored. The patterns are interpreted as shell glob patterns.
@@ -183,7 +183,7 @@ jobs:
 
 Use the legacy FTP over a secure encrypted connection.
 
-Notes about sftp:
+Notes about ftps:
 - Most hosts don't offer FTPS, it's more common on windows/.net hosts and less common on linux hosting
 - Most hosts don't have a correct certificate setup for ftp domains, [even my host doesn't do it right](https://ftp.samkirkland.com/). This means you'll likely have to add `--insecure` to `git-ftp-args`
 
@@ -219,6 +219,21 @@ Similar in name to FTP but this protocol is entirely new and requires SSH access
 - You will need to create a **SSH** user to deploy over SFTP. Normally this is your cpanel or hosting providers username and password
 - Most web hosts change the default port (21), check with your host for your port number
 
+
+##### [Setting up `known-hosts` allows you to remove the `--insecure` argument.](#known-hosts-setup)
+**Windows**  
+In powershell run `ssh-keyscan -p <sshport> <hostname>` and copy the hash output  
+Example for samkirkland.com `ssh-keyscan -p 7822 samkirkland.com`  
+
+
+**Linux, or OSX (using homebrew)**  
+Install the OpenSSH packages and use `ssh-keyscan <hostname>` and copy the hash output  
+
+Add the `known-hosts` argument with your hosts hash   
+Example: `knownhosts: ssh-rsa AAAAB3Nza...H1Q5Spw==`  
+
+*Note: If you receive a `Connection refused` error, you must specify the ssh port to your host*  
+
 ```yml
 on: push
 name: Publish Website over SFTP
@@ -237,7 +252,7 @@ jobs:
         ftp-server: sftp://ftp.samkirkland.com:7280/
         ftp-username: mySFTPUsername
         ftp-password: ${{ secrets.SFTP_PASSWORD }}
-        git-ftp-args: --insecure # if your certificate is setup correctly this can be removed
+        git-ftp-args: --insecure # if your certificate is setup correctly this can be removed (see known-hosts argument)
 ```
 
 
@@ -324,6 +339,9 @@ jobs:
   * Verify you **don't** have the `--all` git-ftp-args flag set
 6. How do I set a upload timeout?
   * github has a built-in `timeout-minutes` option. Place `timeout-minutes: X` before the `steps:` line. Timeout defaults to 360 minutes.
+7. If you are getting a curl error similar to `SSL peer certificate or SSH remote key was not OK`
+ * **Fix 1:** Whitelist your host via the `known-hosts` configuration option. See [known hosts setup](#known-hosts-setup) in SFTP
+ * **Fix 2:** Add `--insecure` option
 
 
 ### Debugging locally

@@ -659,13 +659,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
+const fs_1 = __importDefault(__webpack_require__(747));
+const util_1 = __webpack_require__(669);
+const writeFileAsync = util_1.promisify(fs_1.default.writeFile);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const userArguments = getUserArguments();
         try {
+            yield configureHost(userArguments);
             yield syncFiles(userArguments);
             console.log("✅ Deploy Complete");
         }
@@ -676,13 +683,33 @@ function run() {
     });
 }
 run();
+function configureHost(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (args.knownHosts === "") {
+            return;
+        }
+        try {
+            const sshFolder = `${process.env['HOME']}/.ssh`;
+            yield exec.exec(`mkdir -v -p ${sshFolder}`);
+            yield exec.exec(`chmod 700 ${sshFolder}`);
+            writeFileAsync(`${sshFolder}/known_hosts`, args.knownHosts);
+            yield exec.exec(`chmod 755 ${sshFolder}/known_hosts`);
+            console.log("✅ Configured known_hosts");
+        }
+        catch (error) {
+            console.error("⚠️ Error configuring known_hosts");
+            throw error;
+        }
+    });
+}
 function getUserArguments() {
     return {
         ftp_server: core.getInput("ftp-server", { required: true }),
         ftp_username: core.getInput("ftp-username", { required: true }),
         ftp_password: core.getInput("ftp-password", { required: true }),
         local_dir: withDefault(core.getInput("local-dir"), "./"),
-        gitFtpArgs: withDefault(core.getInput("git-ftp-args"), "")
+        gitFtpArgs: withDefault(core.getInput("git-ftp-args"), ""),
+        knownHosts: withDefault(core.getInput("known-hosts"), "")
     };
 }
 function withDefault(value, defaultValue) {
@@ -998,6 +1025,20 @@ module.exports = require("events");
 /***/ (function(module) {
 
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 669:
+/***/ (function(module) {
+
+module.exports = require("util");
+
+/***/ }),
+
+/***/ 747:
+/***/ (function(module) {
+
+module.exports = require("fs");
 
 /***/ }),
 

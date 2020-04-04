@@ -1,11 +1,16 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
+import fs from 'fs';
+import { promisify } from 'util';
 import { IActionArguments } from './types';
+
+const writeFileAsync = promisify(fs.writeFile);
 
 async function run() {
   const userArguments = getUserArguments();
-
+  
   try {
+    await configureHost(userArguments);
     await syncFiles(userArguments);
 
     console.log("✅ Deploy Complete");
@@ -18,6 +23,26 @@ async function run() {
 
 run();
 
+async function configureHost(args: IActionArguments): Promise<void> {
+  if (args.knownHosts === "") {
+    return;
+  }
+
+  try {
+    const sshFolder = `${process.env['HOME']}/.ssh`;
+
+    await exec.exec(`mkdir -v -p ${sshFolder}`);
+    await exec.exec(`chmod 700 ${sshFolder}`);
+    writeFileAsync(`${sshFolder}/known_hosts`, args.knownHosts);
+    await exec.exec(`chmod 755 ${sshFolder}/known_hosts`);
+
+    console.log("✅ Configured known_hosts");
+  }
+  catch (error) {
+    console.error("⚠️ Error configuring known_hosts");
+    throw error;
+  }
+}
 
 function getUserArguments(): IActionArguments {
   return {
@@ -25,7 +50,8 @@ function getUserArguments(): IActionArguments {
     ftp_username: core.getInput("ftp-username", { required: true }),
     ftp_password: core.getInput("ftp-password", { required: true }),
     local_dir: withDefault(core.getInput("local-dir"), "./"),
-    gitFtpArgs: withDefault(core.getInput("git-ftp-args"), "")
+    gitFtpArgs: withDefault(core.getInput("git-ftp-args"), ""),
+    knownHosts: withDefault(core.getInput("known-hosts"), "")
   };
 }
 
