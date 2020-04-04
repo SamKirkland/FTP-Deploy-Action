@@ -233,7 +233,6 @@ Add the `known-hosts` argument with your hosts hash
 Example: `knownhosts: ssh-rsa AAAAB3Nza...H1Q5Spw==`  
 
 *Note: If you receive a `Connection refused` error, you must specify the ssh port to your host*  
-*Note: You will have to repeat this step when your certificate renews (Let's Encrypt automatically renews every 60 days)*  
 
 ```yml
 on: push
