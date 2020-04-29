@@ -11,6 +11,9 @@ export interface IActionArguments {
 
     /** @default "" */
     knownHosts: string | undefined;
+
+    /** @default "true" */
+    ignoreGithub: string | undefined;
 }
 
 /**
