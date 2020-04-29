@@ -13,7 +13,7 @@ inputs:
     required: true
   local-dir:
     description: 'The local folder to copy, defaults to root project folder'
-    defaults: ./
+    default: ./
     required: false
   ignore-github:
     description: 'Whether the .github directory should be excluded from synchronization'
@@ -21,7 +21,7 @@ inputs:
     required: false
   git-ftp-args:
     description: 'Passes through options into git-ftp'
-    defaults: 
+    default:
     required: false
 runs:
   using: 'docker'
