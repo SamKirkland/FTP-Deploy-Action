@@ -50,6 +50,7 @@ function getUserArguments(): IActionArguments {
     ftp_username: core.getInput("ftp-username", { required: true }),
     ftp_password: core.getInput("ftp-password", { required: true }),
     local_dir: withDefault(core.getInput("local-dir"), "./"),
+    gitFtpCommand: withDefault(core.getInput("git-ftp-command"), "push"),
     gitFtpArgs: withDefault(core.getInput("git-ftp-args"), ""),
     knownHosts: withDefault(core.getInput("known-hosts"), "")
   };
@@ -69,7 +70,7 @@ function withDefault(value: string, defaultValue: string) {
 async function syncFiles(args: IActionArguments) {
   try {
     await core.group("Uploading files", async () => {
-      return await exec.exec(`git ftp push --force --auto-init --verbose --syncroot ${args.local_dir} --user ${args.ftp_username} --passwd ${args.ftp_password} ${args.gitFtpArgs} ${args.ftp_server}`);
+      return await exec.exec(`git ftp ${args.gitFtpCommand} --force --auto-init --verbose --syncroot ${args.local_dir} --user ${args.ftp_username} --passwd ${args.ftp_password} ${args.gitFtpArgs} ${args.ftp_server}`);
     });
   }
   catch (error) {

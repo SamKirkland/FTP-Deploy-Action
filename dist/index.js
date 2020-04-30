@@ -708,6 +708,7 @@ function getUserArguments() {
         ftp_username: core.getInput("ftp-username", { required: true }),
         ftp_password: core.getInput("ftp-password", { required: true }),
         local_dir: withDefault(core.getInput("local-dir"), "./"),
+        gitFtpCommand: withDefault(core.getInput("git-ftp-command"), "push"),
         gitFtpArgs: withDefault(core.getInput("git-ftp-args"), ""),
         knownHosts: withDefault(core.getInput("known-hosts"), "")
     };
@@ -725,7 +726,7 @@ function syncFiles(args) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield core.group("Uploading files", () => __awaiter(this, void 0, void 0, function* () {
-                return yield exec.exec(`git ftp push --force --auto-init --verbose --syncroot ${args.local_dir} --user ${args.ftp_username} --passwd ${args.ftp_password} ${args.gitFtpArgs} ${args.ftp_server}`);
+                return yield exec.exec(`git ftp ${args.gitFtpCommand} --force --auto-init --verbose --syncroot ${args.local_dir} --user ${args.ftp_username} --passwd ${args.ftp_password} ${args.gitFtpArgs} ${args.ftp_server}`);
             }));
         }
         catch (error) {

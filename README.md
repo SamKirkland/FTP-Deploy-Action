@@ -52,10 +52,11 @@ I recommend you store your `ftp-password` as a secret.
 | `ftp-username` | Yes       | username@samkirkland.com                      |         | FTP account username                                     |
 | `ftp-password` | Yes       | CrazyUniquePassword&%123                      |         | FTP account password                                     |
 | `local-dir`    | No        | deploy/                                       | ./      | Which local folder to deploy, path should be relative to the root and should include trailing slash. `./` is the root of the project  |
+| `git-ftp-command` | No        | See `git-ftp-command`  below              |         | defaults to push but use any other init, catchup etc. Use catchup to save action minutes first time |
 | `git-ftp-args` | No        | See `git-ftp-args` section below              |         | Custom git-ftp arguments, this field is passed through directly into the git-ftp script |
 | `known-hosts`  | No        | hostname ssh-rsa AAAAB3NzaC1y ...             |         | The desired contents of your .ssh/known_hosts file. See [known hosts setup](#known-hosts-setup) |
 
-#### Advanced options using `git-ftp-args`
+#### Advanced options using `git-ftp-command` and `git-ftp-args`
 Custom arguments, this field is passed through directly into the git-ftp script. See [git-ftp's manual](https://github.com/git-ftp/git-ftp/blob/master/man/git-ftp.1.md) for all options.
 You can use as many arguments as you want, seperate them with a space
 

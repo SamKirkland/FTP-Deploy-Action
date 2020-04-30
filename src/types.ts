@@ -8,7 +8,8 @@ export interface IActionArguments {
 
     /** @default "" */
     gitFtpArgs: string | undefined;
-
+    gitFtpCommand: string | undefined;
+    
     /** @default "" */
     knownHosts: string | undefined;
 }
