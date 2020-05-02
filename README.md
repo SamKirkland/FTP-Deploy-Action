@@ -4,11 +4,13 @@
 
 Automate deploying websites and more with this GitHub action
 
-![Action](images/action-preview.gif)
-
 ![Test FTP Deploy](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/Test%20FTP%20Deploy/badge.svg) ![Test SFTP Deploy](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/Test%20SFTP%20Deploy/badge.svg)
 
-### Usage Example (Your_Project/.github/workflows/main.yml)
+---
+
+### Usage Example
+
+Place the following in `Your_Project/.github/workflows/main.yml`
 ```yml
 on: push
 name: Publish Website
@@ -28,7 +30,10 @@ jobs:
         ftp-password: ${{ secrets.FTP_PASSWORD }}
 ```
 
-#### Setup Steps
+---
+
+### Setup Steps
+
 1. Select the repository you want to add the action to
 2. Select the `Actions` tab
 3. Select `Blank workflow file` or `Set up a workflow yourself`, if you don't see these options manually create a yaml file `Your_Project/.github/workflows/main.yml`
@@ -38,8 +43,12 @@ jobs:
 
 __Note: Only tracked files will be published by default. If you want to publish files that don't exist in github (example: files generated during the action run) you must add those files/folders to `.git-ftp-include`__
 
+Migrating from v2? See the [migration guide](v2-v3-migration.md)
+
+---
+
 ### Settings
-**Migrating from v2? See the [migration guide](v2-v3-migration.md)**
+
 
 Keys can be added directly to your .yml config file or referenced from your project `Secrets` storage.
 
@@ -151,7 +160,10 @@ vendor/:composer.lock
 ```
 But keep in mind that this will upload all files in the vendor folder, even those that are on the server already. And it will not delete files from that directory if local files are deleted.
 
-### Common Examples
+---
+
+# Common Examples
+
 Read more about the differences between these protocols [https://www.sftp.net/sftp-vs-ftps](https://www.sftp.net/sftp-vs-ftps)
 
 ### FTP (File Transfer Protocol)
@@ -255,7 +267,6 @@ jobs:
         git-ftp-args: --insecure # if your certificate is setup correctly this can be removed (see known-hosts argument)
 ```
 
-
 ### Build and Publish React/Angular/Vue Website
 Make sure you have an npm script named 'build'. This config should work for most node built websites.
 
@@ -318,33 +329,95 @@ jobs:
         git-ftp-args: --dry-run
 ```
 
-##### Want another example? Let me know by creating a github issue
+_Want another example? Let me know by creating a github issue_
+
+---
 
 ## FAQ
-1. `Can't access remote 'sftp://', exiting...` or `Can't access remote 'ftps://', exiting...`
+<details>
+  <summary>How to exclude .git files from the publish</summary>
+
+See the [`.git-ftp-ignore`](#ignore-specific-files-when-deploying) example section
+</details>
+
+<details>
+  <summary>All files are being uploaded instead of just different files</summary>
+
+By default only different files are uploaded.
+
+Verify you have `with: fetch-depth: 2` in your `actions/checkout@master` step. The last 2 checkins are required in order to determine differences
+
+If you've had multiple git commits without deploying, all files will be uploaded to get back in sync
+
+Verify you **don't** have the `--all` git-ftp-args flag set
+</details>
+
+<details>
+  <summary>How do I set a upload timeout?</summary>
+
+github has a built-in `timeout-minutes` option, see customized example below
+
+```yaml
+on: push
+name: Publish Website
+jobs:
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # time out after 15 minutes (default is 360 minutes)
+    steps:
+      ....
+```
+</details>
+
+---
+
+## Common Errors
+<details id="failed-to-upload">
+  <summary>Failed to upload files</summary>
+
   * **Fix 1:** Verify your login credentials are correct, download a ftp client and test with the exact same host/username/password
   * **Fix 2:** Remember if you are using SFTP or FTPS you cannot use a normal FTP account username/password. You must use a elevated account. Each host has a different process to setup a FTPS or SFTP account. Please contact your host for help.
   * **Fix 3:** If you are using sftp or ftps you should add `git-ftp-args: --insecure`, most hosts setup certificates incorrectly :(
-2. My files aren't uploading
- * V3+ uses github to determine when files have changes and only publish differences. This means files that aren't committed to github will not upload by default. To change this behavior please see `.git-ftp-include` documentation
-3. `rm: Access failed: 553 Prohibited file name: ./.ftpquota`
-  * **What is happening?** The `.ftpquota` file is created by some FTP Servers and cannot be modified by the user
-  * **Fix:** Add `.ftpquota` to your `.git-ftp-ignore` file
-4. How to exclude .git files from the publish
-  * **Fix:** See the `.git-ftp-ignore` example above
-5. All files are being uploaded instead of just different files
-  * By default only different files are uploaded.
-  * Verify you have `with: fetch-depth: 2` in your `actions/checkout@master` step. The last 2 checkins are required in order to determine differences
-  * If you've had multiple git commits without deploying, all files will be uploaded to get back in sync
-  * Verify you **don't** have the `--all` git-ftp-args flag set
-6. How do I set a upload timeout?
-  * github has a built-in `timeout-minutes` option. Place `timeout-minutes: X` before the `steps:` line. Timeout defaults to 360 minutes.
-7. If you are getting a curl error similar to `SSL peer certificate or SSH remote key was not OK`
- * **Fix 1:** Whitelist your host via the `known-hosts` configuration option. See [known hosts setup](#known-hosts-setup) in SFTP
- * **Fix 2:** Add `--insecure` option
+</details>
 
+<details id="cant-access-remote-sftp">
+  <summary>Can't access remote 'sftp://', exiting...</summary>
+  
+  See **"Failed to upload files"** section above
+</details>
 
-### Debugging locally
+<details id="cant-access-remote-ftps">
+  <summary>Can't access remote 'ftps://', exiting...</summary>
+  
+  See **"Failed to upload files"** section above
+</details>
+
+<details id="files-arent_uploading">
+  <summary>My files aren't uploading</summary>
+
+  V3+ uses github to determine when files have changes and only publish differences. This means files that aren't committed to github will not upload by default.
+
+  To change this behavior please see [`.git-ftp-ignore`](#ignore-specific-files-when-deploying) documentation.
+</details>
+
+<details id="prohibited-file-name">
+  <summary>rm: Access failed: 553 Prohibited file name: ./.ftpquota</summary>
+
+  The `.ftpquota` file is created by some FTP Servers and cannot be modified by the user
+
+  Add `.ftpquota` to your [`.git-ftp-ignore`](#ignore-specific-files-when-deploying) file
+</details>
+
+<details id="ssl-peer-certificate">
+  <summary>Error: SSL peer certificate or SSH remote key was not OK</summary>
+
+  Whitelist your host via the `known-hosts` configuration option (see [known hosts setup](#known-hosts-setup) in SFTP) or add the `--insecure` argument
+</details>
+
+---
+
+## Debugging locally
 ##### Instructions for debugging on windows
 - Install docker for windows
 - Open powershell
