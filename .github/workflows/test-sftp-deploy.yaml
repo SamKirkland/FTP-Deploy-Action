@@ -9,7 +9,7 @@ jobs:
       with:
         fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action-Typescript@master
+      uses: SamKirkland/FTP-Deploy-Action@master
       with:
         # deploy to a folder named "sftp-deploy-test.samkirkland.com" on my server
         ftp-server: sftp://ftp.samkirkland.com:7822/home/samkirkland/sftp-deploy-test.samkirkland.com/
