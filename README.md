@@ -232,7 +232,7 @@ Similar in name to FTP but this protocol is entirely new and requires SSH access
 - Most web hosts change the default port (21), check with your host for your port number
 
 
-##### [Setting up `known-hosts` allows you to remove the `--insecure` argument.](#known-hosts-setup)
+### Known Hosts Setup
 **Windows**  
 In powershell run `ssh-keyscan -p <sshport> <hostname>` and copy the hash output  
 Example for samkirkland.com `ssh-keyscan -p 7822 samkirkland.com`  
@@ -384,13 +384,13 @@ jobs:
 <details id="cant-access-remote-sftp">
   <summary>Can't access remote 'sftp://', exiting...</summary>
   
-  See **"Failed to upload files"** section above
+  See ["Failed to upload files"](#failed-to-upload) section above
 </details>
 
 <details id="cant-access-remote-ftps">
   <summary>Can't access remote 'ftps://', exiting...</summary>
   
-  See **"Failed to upload files"** section above
+  See ["Failed to upload files"](#failed-to-upload) section above
 </details>
 
 <details id="files-arent_uploading">

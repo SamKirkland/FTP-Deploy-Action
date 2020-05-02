@@ -5,18 +5,19 @@ import { promisify } from 'util';
 import { IActionArguments } from './types';
 
 const writeFileAsync = promisify(fs.writeFile);
+const errorDeploying = "⚠️ Error deploying";
 
 async function run() {
-  const userArguments = getUserArguments();
-  
   try {
+    const userArguments = getUserArguments();
+    
     await configureHost(userArguments);
     await syncFiles(userArguments);
 
     console.log("✅ Deploy Complete");
   }
   catch (error) {
-    console.error("⚠️ Error deploying");
+    console.error(errorDeploying);
     core.setFailed(error.message);
   }
 }
@@ -40,7 +41,7 @@ async function configureHost(args: IActionArguments): Promise<void> {
   }
   catch (error) {
     console.error("⚠️ Error configuring known_hosts");
-    throw error;
+    core.setFailed(error.message);
   }
 }
 
@@ -75,6 +76,5 @@ async function syncFiles(args: IActionArguments) {
   catch (error) {
     console.error("⚠️ Failed to upload files");
     core.setFailed(error.message);
-    throw error;
   }
 }
