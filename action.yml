@@ -13,11 +13,11 @@ inputs:
     required: true
   local-dir:
     description: 'The local folder to copy, defaults to root project folder'
-    defaults: ./
+    default: ./
     required: false
   git-ftp-args:
     description: 'Passes through options into git-ftp'
-    defaults: 
+    default: 
     required: false
 runs:
   using: 'docker'

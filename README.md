@@ -19,11 +19,11 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.0
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFtpUserName
@@ -179,11 +179,11 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.0
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFtpUserName
@@ -207,12 +207,12 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.0
       with:
         ftp-server: ftps://ftp.samkirkland.com:21/
         ftp-username: myFTPSUsername
@@ -254,12 +254,12 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.0
       with:
         ftp-server: sftp://ftp.samkirkland.com:7280/
         ftp-username: mySFTPUsername
@@ -280,7 +280,7 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
 
@@ -298,7 +298,7 @@ jobs:
       run: ls
       
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.0
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFTPUsername
@@ -316,12 +316,12 @@ jobs:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.0
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFTPUsername
@@ -345,7 +345,7 @@ See the [`.git-ftp-ignore`](#ignore-specific-files-when-deploying) example secti
 
 By default only different files are uploaded.
 
-Verify you have `with: fetch-depth: 2` in your `actions/checkout@master` step. The last 2 checkins are required in order to determine differences
+Verify you have `with: fetch-depth: 2` in your `actions/checkout@v2.1.0` step. The last 2 checkins are required in order to determine differences
 
 If you've had multiple git commits without deploying, all files will be uploaded to get back in sync
 

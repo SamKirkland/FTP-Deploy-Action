@@ -1,6 +1,6 @@
 # Migrating from v2 to v3
 
-`uses: actions/checkout@master` must now have the option `fetch-depth: 2`
+`uses: actions/checkout@v2.1.0` must now have the option `fetch-depth: 2`
 
 Without the `fetch-depth` option diffs cannot be calculated and all files will be uploaded.
 
