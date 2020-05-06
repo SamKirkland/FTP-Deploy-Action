@@ -418,14 +418,22 @@ jobs:
 ---
 
 ## Debugging locally
-##### Instructions for debugging on windows
-- Install docker for windows
+##### Instructions for debugging Windows
+- [Install docker](https://docs.docker.com/get-docker/)  
 - Open powershell
 - Navigate to the repo folder
 - Run `docker build --tag action .`
 - Run `docker run action`
-  
-##### Instructions for debugging on linux
-- Please submit a PR for linux instructions :)
+
+#### Instructions for debugging on Linux
+- [Install docker](https://docs.docker.com/get-docker/)  
+On Linux you can install docker using your package manager, for example, on a Debian-based distro you can run the following command to install docker:
+```
+sudo apt install docker docker.io
+```
+- Open the terminal
+- Navigate to the repo folder
+- Run `docker build --tag action .`
+- Run `docker run action`
 
 #### Pull Requests Welcome!
