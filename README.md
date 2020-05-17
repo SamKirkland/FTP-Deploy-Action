@@ -420,10 +420,13 @@ jobs:
 ## Debugging locally
 ##### Instructions for debugging Windows
 - [Install docker](https://docs.docker.com/get-docker/)  
-- Open powershell
+- Open powershell **as Administrator**
+- Install [act-cli](https://github.com/nektos/act#installation) by running `choco install act-cli`
 - Navigate to the repo folder
-- Run `docker build --tag action .`
-- Run `docker run action`
+- Run `npm install` - this will install all dependencies to build this project
+- Run `npm build` - this will build the action javascript and watch/rebuild when files change
+- Run `npm run build-docker` - this will build the docker container (only needs to be done once)
+- Run `npm run run-docker` - this will spin up a local copy of the action defined in `/debug/local-debug-deployment.yaml`. Update package.json to set any secret values
 
 #### Instructions for debugging on Linux
 - [Install docker](https://docs.docker.com/get-docker/)  
@@ -432,8 +435,11 @@ On Linux you can install docker using your package manager, for example, on a De
 sudo apt install docker docker.io
 ```
 - Open the terminal
+- Install [act-cli](https://github.com/nektos/act#installation)
 - Navigate to the repo folder
-- Run `docker build --tag action .`
-- Run `docker run action`
+- Run `npm install` - this will install all dependencies to build this project
+- Run `npm build` - this will build the action javascript and watch/rebuild when files change
+- Run `npm run build-docker` - this will build the docker container (only needs to be done once)
+- Run `npm run run-docker` - this will spin up a local copy of the action defined in `/debug/local-debug-deployment.yaml`. Update package.json to set any secret values
 
 #### Pull Requests Welcome!

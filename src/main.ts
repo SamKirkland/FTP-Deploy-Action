@@ -70,11 +70,22 @@ function withDefault(value: string, defaultValue: string) {
 async function syncFiles(args: IActionArguments) {
   try {
     await core.group("Uploading files", async () => {
-      return await exec.exec(`git ftp push --force --auto-init --verbose --syncroot ${args.local_dir} --user ${args.ftp_username} --passwd ${args.ftp_password} ${args.gitFtpArgs} ${args.ftp_server}`);
+      return await exec.exec(
+        "git ftp push",
+        [
+          "--force",
+          "--auto-init",
+          "--verbose",
+          `--syncroot=${args.local_dir}`,
+          `--user=${args.ftp_username}`,
+          `--passwd=${args.ftp_password}`,
+          args.gitFtpArgs!,
+          args.ftp_server!
+        ]
+      );
     });
   }
   catch (error) {
-    console.error("⚠️ Failed to upload files");
     core.setFailed(error.message);
   }
 }

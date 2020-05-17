@@ -1,0 +1,18 @@
+on: push
+name: Local Debug Deployment
+jobs:
+  Local-Debug-Deployment:
+    name: Local-Debug-Deployment
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.1.0
+      with:
+        fetch-depth: 2
+    
+    - name: FTP-Deploy-Action
+      uses: ./
+      with:
+        ftp-server: ftp://ftp.samkirkland.com/
+        ftp-username: ${{ secrets.username }}
+        ftp-password: ${{ secrets.password }}
+        git-ftp-args: --dry-run

@@ -25,7 +25,7 @@ export enum gitFTPExitCode {
     ErrorWhileDownloading = 5,
     UnknownProtocol = 6,
     RemoteLocked = 7,
-    NotAGitProject = 8,
+    GitRelatedError = 8,
     PreFTPPushHookFailed = 9,
     LocalFileOperationFailed = 10
 }
