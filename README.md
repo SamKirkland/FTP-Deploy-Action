@@ -23,7 +23,7 @@ jobs:
       with:
         fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFtpUserName
@@ -183,7 +183,7 @@ jobs:
       with:
         fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFtpUserName
@@ -212,7 +212,7 @@ jobs:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
         ftp-server: ftps://ftp.samkirkland.com:21/
         ftp-username: myFTPSUsername
@@ -259,7 +259,7 @@ jobs:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
         ftp-server: sftp://ftp.samkirkland.com:7280/
         ftp-username: mySFTPUsername
@@ -298,7 +298,7 @@ jobs:
       run: ls
       
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFTPUsername
@@ -321,7 +321,7 @@ jobs:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFTPUsername
