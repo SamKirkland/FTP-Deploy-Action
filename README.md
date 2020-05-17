@@ -429,11 +429,7 @@ jobs:
 - Run `npm run run-docker` - this will spin up a local copy of the action defined in `/debug/local-debug-deployment.yaml`. Update package.json to set any secret values
 
 #### Instructions for debugging on Linux
-- [Install docker](https://docs.docker.com/get-docker/)  
-On Linux you can install docker using your package manager, for example, on a Debian-based distro you can run the following command to install docker:
-```
-sudo apt install docker docker.io
-```
+- [Install docker](https://docs.docker.com/get-docker/) on a Debian-based distro you can run `sudo apt install docker docker.io`
 - Open the terminal
 - Install [act-cli](https://github.com/nektos/act#installation)
 - Navigate to the repo folder
