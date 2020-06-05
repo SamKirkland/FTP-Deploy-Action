@@ -264,7 +264,9 @@ jobs:
         ftp-server: sftp://ftp.samkirkland.com:7280/
         ftp-username: mySFTPUsername
         ftp-password: ${{ secrets.SFTP_PASSWORD }}
-        git-ftp-args: --insecure # if your certificate is setup correctly this can be removed (see known-hosts argument)
+        known-hosts: [samkirkland.com]:7822 ssh-rsa AAAA...5Spw==
+        # add the following line instead  if your certificate is setup incorrectly
+        # git-ftp-args: --insecure 
 ```
 
 ### Build and Publish React/Angular/Vue Website
