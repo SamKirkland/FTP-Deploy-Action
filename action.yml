@@ -19,6 +19,9 @@ inputs:
     description: 'Passes through options into git-ftp'
     default: 
     required: false
+  known-hosts:
+    description: The desired content of your `.ssh/known_hosts` file
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
