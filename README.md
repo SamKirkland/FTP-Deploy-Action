@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.1.0
       with:
-        fetch-depth: 2
+        fetch-depth: 0
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
@@ -181,7 +181,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.1.0
       with:
-        fetch-depth: 2
+        fetch-depth: 0
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
@@ -209,7 +209,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.1.0
       with:
-        fetch-depth: 2
+        fetch-depth: 0
 
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@3.1.1
@@ -256,7 +256,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.1.0
       with:
-        fetch-depth: 2
+        fetch-depth: 0
 
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@3.1.1
@@ -284,7 +284,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.1.0
       with:
-        fetch-depth: 2
+        fetch-depth: 0
 
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
@@ -320,7 +320,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.1.0
       with:
-        fetch-depth: 2
+        fetch-depth: 0
 
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@3.1.1
@@ -347,9 +347,7 @@ See the [`.git-ftp-ignore`](#ignore-specific-files-when-deploying) example secti
 
 By default only different files are uploaded.
 
-Verify you have `with: fetch-depth: 2` in your `actions/checkout@v2.1.0` step. The last 2 checkins are required in order to determine differences
-
-If you've had multiple git commits without deploying, all files will be uploaded to get back in sync
+Verify you have `with: fetch-depth: 0` in your `actions/checkout@v2.1.0` step. Setting this to `0` allows all commits to be retrieved in order to determine the changed files. You can set this to another number (e.g. 2) however only that many commits will be used for the comparison. If you have made more commits than that since the last deploy, all files will be uploaded to get back in sync. 
 
 Verify you **don't** have the `--all` git-ftp-args flag set
 </details>
