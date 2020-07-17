@@ -240,6 +240,7 @@ Example for samkirkland.com `ssh-keyscan -p 7822 samkirkland.com`
 
 **Linux, or OSX (using homebrew)**  
 Install the OpenSSH packages and use `ssh-keyscan <hostname>` and copy the hash output  
+On macOS you can use `ssh-keyscan <hostname> | pbcopy` to copy the hash output to your clipboard
 
 Add the `known-hosts` argument with your hosts hash   
 Example: `knownhosts: ssh-rsa AAAAB3Nza...H1Q5Spw==`  
