@@ -10,7 +10,10 @@ inputs:
     required: true
   ftp-password:
     description: 'FTP account password'
-    required: true
+    required: false
+  sftp-key:
+    description: 'SFTP account key'
+    required: false
   local-dir:
     description: 'The local folder to copy, defaults to root project folder'
     default: ./

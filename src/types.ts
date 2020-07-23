@@ -2,6 +2,7 @@ export interface IActionArguments {
     ftp_server: string | undefined;
     ftp_username: string | undefined;
     ftp_password: string | undefined;
+    sftp_key: string | undefined;
 
     /** @default "." */
     local_dir: string | undefined;
