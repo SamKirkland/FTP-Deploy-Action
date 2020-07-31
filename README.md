@@ -237,6 +237,8 @@ Similar in name to FTP but this protocol is entirely new and requires SSH access
 In powershell run `ssh-keyscan -p <sshport> <hostname>` and copy the hash output  
 Example for samkirkland.com `ssh-keyscan -p 7822 samkirkland.com`  
 
+If the above command did not work, you may also try `ssh-keyscan -t rsa <hostname>` or `ssh-keyscan -t rsa <ip_address>`
+
 
 **Linux, or OSX (using homebrew)**  
 Install the OpenSSH packages and use `ssh-keyscan <hostname>` and copy the hash output  
