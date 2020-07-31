@@ -25,7 +25,7 @@ jobs:
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
-        ftp-server: ftp://ftp.samkirkland.com/
+        ftp-server: ftp://ftp.samkirkland.com/path/to/folder/
         ftp-username: myFtpUserName
         ftp-password: ${{ secrets.FTP_PASSWORD }}
 ```
