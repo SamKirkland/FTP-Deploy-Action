@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v2.3.2
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-4
+      uses: SamKirkland/FTP-Deploy-Action@beta-v4
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -99,7 +99,7 @@ jobs:
         npm run build
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-4
+      uses: SamKirkland/FTP-Deploy-Action@beta-v4
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -119,7 +119,7 @@ jobs:
       uses: actions/checkout@v2.3.2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-4
+      uses: SamKirkland/FTP-Deploy-Action@beta-v4
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -141,7 +141,7 @@ jobs:
       uses: actions/checkout@v2.3.2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-4
+      uses: SamKirkland/FTP-Deploy-Action@beta-v4
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
