@@ -94,7 +94,17 @@ async function runDeployment() {
     const args = {
         server: core.getInput("server", { required: true }),
         username: core.getInput("username", { required: true }),
-        password: core.getInput("password", { required: true })
+        password: core.getInput("password", { required: true }),
+        protocol: core.getInput("protocol"),
+        port: core.getInput("port"),
+        "local-dir": core.getInput("local-dir"),
+        "server-dir": core.getInput("server-dir"),
+        "state-name": core.getInput("state-name"),
+        "dry-run": core.getInput("dry-run"),
+        "dangerous-clean-slate": core.getInput("dangerous-clean-slate"),
+        "include": core.getInput("include"),
+        "exclude": core.getInput("exclude"),
+        "log-level": core.getInput("log-level") // todo fix
     };
     try {
         await ftp_deploy_1.deploy(args);
