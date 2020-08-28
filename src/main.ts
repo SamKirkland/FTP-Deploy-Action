@@ -1,4 +1,4 @@
-import core from "@actions/core";
+import * as core from "@actions/core";
 import { deploy } from "@samkirkland/ftp-deploy";
 import { IFtpDeployArguments } from "@samkirkland/ftp-deploy/dist/module/types";
 

@@ -23,13 +23,13 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "@samkirkland/ftp-deploy": "^0.0.1",
+    "@samkirkland/ftp-deploy": "^0.9.1",
     "ts-node-dev": "^1.0.0-pre.56"
   },
   "devDependencies": {
     "@types/node": "^14.0.27",
     "@typescript-eslint/parser": "^3.8.0",
-    "@zeit/ncc": "^0.22.3",
+    "@vercel/ncc": "^0.24.0",
     "eslint": "^7.6.0",
     "js-yaml": "^3.14.0",
     "typescript": "^3.9.7"
