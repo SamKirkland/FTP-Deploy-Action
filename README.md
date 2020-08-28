@@ -9,16 +9,19 @@ Automate deploying websites and more with this GitHub action
 ![FTP test](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/FTP%20Test/badge.svg)
 ![FTPS test](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/FTPS%20Test/badge.svg)
 
+![npm](https://img.shields.io/npm/v/@samkirkland/ftp-deploy?style=flat-square)
+![npm](https://img.shields.io/npm/dt/@samkirkland/ftp-deploy)
+
 ---
 
 ### Usage Example
 Place the following in `/.github/workflows/main.yml`
 ```yml
 on: push
-name: Publish Website
+name: 🚀 Deploy website on push
 jobs:
   web-deploy:
-    name: 🚀 Deploy website every commit
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
@@ -66,10 +69,10 @@ I strongly recommend you store your `password` as a secret.
 | `local-dir`             | No       | `./myFolderToPublish/`     | `./`                                                     | Path to upload to on the server, must end with trailing slash `/`                                                                                            |
 | `server-dir`            | No       | `public_html/www/`         | `./`                                                     | Folder to upload from, must end with trailing slash `/`                                                                                                      |
 | `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                            | Custom                                                                                                                                                       |
-| `dry-run`               | No       | `true`                     | `false`                                                  | :warning: todo - Prints which modifications will be made with current config options, but doesn't actually make any changes                                  |
-| `dangerous-clean-slate` | No       | `true`                     | `false`                                                  | :warning: todo - Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                          |
-| `include`               | No       |                            | ``                                                       | :warning: todo - An array of glob patterns, these files will always be included in the publish/delete process - even if no change occurred                   |
-| `exclude`               | No       |                            | `.git*` `.git*/**` `node_modules/**` `node_modules/**/*` | :warning: todo - An array of glob patterns, these files will not be included in the publish/delete process                                                   |
+| `dry-run`               | No       | `true`                     | `false`                                                  | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                   |
+| `dangerous-clean-slate` | No       | `true`                     | `false`                                                  | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                           |
+| `include`               | No       |                            | ``                                                       | :warning: not implemented yet - An array of glob patterns, these files will always be included in the publish/delete process - even if no change occurred    |
+| `exclude`               | No       |                            | `.git*` `.git*/**` `node_modules/**` `node_modules/**/*` | An array of glob patterns, these files will not be included in the publish/delete process                                                                    |
 | `log-level`             | No       | `info`                     | `info`                                                   | `warn`: only important/warning info, `info`: default, log important/warning info & progress info, `debug`: log everything for debugging                      |
 
 
@@ -79,10 +82,10 @@ Make sure you have an npm script named 'build'. This config should work for most
 
 ```yml
 on: push
-name: Publish Website
+name: 🚀 Deploy website on push
 jobs:
   web-deploy:
-    name: 🚀 Deploy website every commit
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
@@ -109,10 +112,10 @@ jobs:
 #### FTPS
 ```yml
 on: push
-name: Publish Website Dry Run
+name: 🚀 Deploy website on push
 jobs:
   web-deploy:
-    name: 🚀 Deploy website every commit
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
@@ -125,16 +128,17 @@ jobs:
         username: myFtpUserName
         password: ${{ secrets.password }}
         protocol: ftps
+        port: 1234 # todo replace with your web hosts ftps port
 ```
 
 #### Log only dry run: Use this mode for testing
 Ouputs a list of files that will be created/modified to sync your source without making any actual changes
 ```yml
 on: push
-name: Publish Website Dry Run
+name: 🚀 Deploy website on push
 jobs:
   web-deploy:
-    name: 🚀 Deploy website every commit
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code

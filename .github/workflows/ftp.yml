@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  deploy: # make sure the action works on a clean machine without building
+  deploy:
     name: 🚀 Deploy website every commit
     runs-on: ubuntu-latest
     steps:
