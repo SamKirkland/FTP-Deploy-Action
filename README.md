@@ -74,6 +74,7 @@ I strongly recommend you store your `password` as a secret.
 | `include`               | No       |                            | ``                                                       | :warning: not implemented yet - An array of glob patterns, these files will always be included in the publish/delete process - even if no change occurred    |
 | `exclude`               | No       |                            | `.git*` `.git*/**` `node_modules/**` `node_modules/**/*` | An array of glob patterns, these files will not be included in the publish/delete process                                                                    |
 | `log-level`             | No       | `info`                     | `info`                                                   | `warn`: only important/warning info, `info`: default, log important/warning info & progress info, `debug`: log everything for debugging                      |
+| `security`              | No       | `strict`                   | `loose`                                                  | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate     |
 
 
 # Common Examples
