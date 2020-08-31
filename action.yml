@@ -31,7 +31,7 @@ inputs:
       description: 'Prints which modifications will be made with current config options, but doesn't actually make any changes'
     dangerous-clean-slate:
       required: false
-      description: 'Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument'
+      description: 'Deletes ALL contents of server-dir, even items in excluded with exclude argument'
     include:
       required: false
       description: 'An array of glob patterns, these files will always be included in the publish/delete process - even if no change occurred'
