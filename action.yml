@@ -11,6 +11,39 @@ inputs:
     password:
       required: true
       description: 'ftp password'
+    protocol:
+      required: false
+      description: 'protocol to deploy with - ftp, ftps, or ftps-legacy'
+    port:
+      required: false
+      description: 'Server port to connect to (read your web hosts docs)'
+    local-dir:
+      required: false
+      description: 'Folder to upload from, must end with trailing slash /'
+    server-dir:
+      required: false
+      description: 'Path to upload to on the server. Must end with trailing slash /'
+    state-name:
+      required: false
+      description: 'Path and name of the state file - this file is used to track which files have been deployed'
+    dry-run:
+      required: false
+      description: 'Prints which modifications will be made with current config options, but doesn't actually make any changes'
+    dangerous-clean-slate:
+      required: false
+      description: 'Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument'
+    include:
+      required: false
+      description: 'An array of glob patterns, these files will always be included in the publish/delete process - even if no change occurred'
+    exclude:
+      required: false
+      description: 'An array of glob patterns, these files will not be included in the publish/delete process'
+    log-level:
+      required: false
+      description: 'How verbose should the information be - warn, info, debug'
+    security:
+      required: false
+      description: 'strict or loose'
 runs:
   using: 'node12'
   main: 'dist/index.js'
