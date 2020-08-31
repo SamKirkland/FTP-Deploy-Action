@@ -28,7 +28,7 @@ inputs:
       description: 'Path and name of the state file - this file is used to track which files have been deployed'
     dry-run:
       required: false
-      description: 'Prints which modifications will be made with current config options, but doesn't actually make any changes'
+      description: 'Prints which modifications will be made with current config options, but doesnt actually make any changes'
     dangerous-clean-slate:
       required: false
       description: 'Deletes ALL contents of server-dir, even items in excluded with exclude argument'
