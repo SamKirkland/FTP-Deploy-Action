@@ -5779,7 +5779,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -5884,7 +5884,8 @@ function includeExcludeFilter(stat, args) {
 }
 function getLocalFiles(args) {
     return __awaiter(this, void 0, void 0, function () {
-        var files, records, _i, files_1, stat, _a, _b, _c;
+        var files, records, _i, files_1, stat, _a, _b;
+        var _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0: return [4 /*yield*/, readdir_enhanced_1.default.async(args["local-dir"], { deep: true, stats: true, sep: "/", filter: function (stat) { return includeExcludeFilter(stat, args); } })];
@@ -6240,7 +6241,7 @@ function getServerFiles(client, logger, args) {
                     _a.sent();
                     logger.all("Clear complete");
                     throw new Error("nope");
-                case 3: return [4 /*yield*/, downloadFileList(client, args["state-name"])];
+                case 3: return [4 /*yield*/, downloadFileList(client, args["server-dir"] + args["state-name"])];
                 case 4:
                     serverFiles = _a.sent();
                     logger.all("----------------------------------------------------------------");
@@ -6249,7 +6250,7 @@ function getServerFiles(client, logger, args) {
                 case 5:
                     e_3 = _a.sent();
                     logger.all("----------------------------------------------------------------");
-                    logger.all("No file exists on the server \"" + args["state-name"] + "\" - this much be your first publish! \uD83C\uDF89");
+                    logger.all("No file exists on the server \"" + (args["server-dir"] + args["state-name"]) + "\" - this much be your first publish! \uD83C\uDF89");
                     logger.all("The first publish will take a while... but once the initial sync is done only differences are published!");
                     logger.all("If you get this message and its NOT your first publish, something is wrong.");
                     // set the server state to nothing, because we don't know what the server state is
@@ -6266,6 +6267,16 @@ function getServerFiles(client, logger, args) {
 }
 function getDefaultSettings(withoutDefaults) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    if (withoutDefaults["local-dir"] !== undefined) {
+        if (!withoutDefaults["local-dir"].endsWith("/")) {
+            throw new Error("local-dir should be a folder (must end with /)");
+        }
+    }
+    if (withoutDefaults["server-dir"] !== undefined) {
+        if (!withoutDefaults["server-dir"].endsWith("/")) {
+            throw new Error("server-dir should be a folder (must end with /)");
+        }
+    }
     return {
         "server": withoutDefaults.server,
         "username": withoutDefaults.username,
@@ -6362,8 +6373,8 @@ function syncLocalToServer(client, diffs, logger, args) {
                     return [3 /*break*/, 17];
                 case 20:
                     logger.all("----------------------------------------------------------------");
-                    logger.all("\uD83C\uDF89 Sync complete. Saving current server state to \"" + args["state-name"] + "\"");
-                    return [4 /*yield*/, client.uploadFrom(args["state-name"], args["state-name"])];
+                    logger.all("\uD83C\uDF89 Sync complete. Saving current server state to \"" + (args["server-dir"] + args["state-name"]) + "\"");
+                    return [4 /*yield*/, client.uploadFrom(args["state-name"], args["server-dir"] + args["state-name"])];
                 case 21:
                     _k.sent();
                     return [2 /*return*/];
@@ -6552,7 +6563,7 @@ var ErrorCode;
 /***/ }),
 
 /***/ 5739:
-/***/ (function(__unused_webpack_module, exports, __nested_webpack_require_223229__) {
+/***/ (function(__unused_webpack_module, exports, __nested_webpack_require_223769__) {
 
 "use strict";
 
@@ -6561,7 +6572,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Timer = exports.Timings = exports.pluralize = exports.Logger = void 0;
-var pretty_ms_1 = __importDefault(__nested_webpack_require_223229__(1127));
+var pretty_ms_1 = __importDefault(__nested_webpack_require_223769__(1127));
 var Logger = /** @class */ (function () {
     function Logger(level) {
         this.level = level !== null && level !== void 0 ? level : "info";
@@ -6731,7 +6742,7 @@ module.exports = __webpack_require__(669);
 /******/ 	var __webpack_module_cache__ = {};
 /******/ 	
 /******/ 	// The require function
-/******/ 	function __nested_webpack_require_227574__(moduleId) {
+/******/ 	function __nested_webpack_require_228114__(moduleId) {
 /******/ 		// Check if module is in cache
 /******/ 		if(__webpack_module_cache__[moduleId]) {
 /******/ 			return __webpack_module_cache__[moduleId].exports;
@@ -6746,7 +6757,7 @@ module.exports = __webpack_require__(669);
 /******/ 		// Execute the module function
 /******/ 		var threw = true;
 /******/ 		try {
-/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nested_webpack_require_227574__);
+/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nested_webpack_require_228114__);
 /******/ 			threw = false;
 /******/ 		} finally {
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
@@ -6759,11 +6770,11 @@ module.exports = __webpack_require__(669);
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
-/******/ 	__nested_webpack_require_227574__.ab = __dirname + "/";/************************************************************************/
+/******/ 	__nested_webpack_require_228114__.ab = __dirname + "/";/************************************************************************/
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __nested_webpack_require_227574__(6611);
+/******/ 	return __nested_webpack_require_228114__(6611);
 /******/ })()
 ;
 
@@ -6789,7 +6800,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
