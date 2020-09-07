@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.5",
-    "@samkirkland/ftp-deploy": "^0.9.5",
+    "@samkirkland/ftp-deploy": "^0.9.6",
     "ts-node-dev": "^1.0.0-pre.62"
   },
   "devDependencies": {
