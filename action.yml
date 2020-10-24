@@ -11,12 +11,12 @@ inputs:
     password:
       required: true
       description: 'ftp password'
-    protocol:
-      required: false
-      description: 'protocol to deploy with - ftp, ftps, or ftps-legacy'
     port:
       required: false
       description: 'Server port to connect to (read your web hosts docs)'
+    protocol:
+      required: false
+      description: 'protocol to deploy with - ftp, ftps, or ftps-legacy'
     local-dir:
       required: false
       description: 'Folder to upload from, must end with trailing slash /'
@@ -32,9 +32,6 @@ inputs:
     dangerous-clean-slate:
       required: false
       description: 'Deletes ALL contents of server-dir, even items in excluded with exclude argument'
-    include:
-      required: false
-      description: 'An array of glob patterns, these files will always be included in the publish/delete process - even if no change occurred'
     exclude:
       required: false
       description: 'An array of glob patterns, these files will not be included in the publish/delete process'
@@ -46,7 +43,7 @@ inputs:
       description: 'strict or loose'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: 'dist/main.js'
 branding:
   icon: 'upload-cloud'
   color: 'orange'

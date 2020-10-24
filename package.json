@@ -1,13 +1,12 @@
 {
   "name": "ftp-deploy-action",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Automate deploying websites and more with this GitHub action",
   "main": "dist/main.js",
   "scripts": {
-    "build": "ncc build src/main.ts --no-cache",
-    "lint": "eslint src/**/*.ts",
-    "all": "npm run build && npm run lint"
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -22,14 +21,13 @@
   "author": "Sam Kirkland",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.5",
-    "@samkirkland/ftp-deploy": "^0.9.6",
+    "@actions/core": "^1.2.6",
+    "@samkirkland/ftp-deploy": "^0.9.7",
     "ts-node-dev": "^1.0.0-pre.62"
   },
   "devDependencies": {
     "@types/node": "^14.0.27",
     "@typescript-eslint/parser": "^4.0.1",
-    "@vercel/ncc": "^0.24.0",
     "eslint": "^7.8.1",
     "js-yaml": "^3.14.0",
     "typescript": "^4.0.2"

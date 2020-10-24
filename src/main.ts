@@ -7,14 +7,13 @@ async function runDeployment() {
     server: core.getInput("server", { required: true }),
     username: core.getInput("username", { required: true }),
     password: core.getInput("password", { required: true }),
-    protocol: optionalProtocol("protocol", core.getInput("protocol")),
     port: optionalInt("port", core.getInput("port")),
+    protocol: optionalProtocol("protocol", core.getInput("protocol")),
     "local-dir": optionalString(core.getInput("local-dir")),
     "server-dir": optionalString(core.getInput("server-dir")),
     "state-name": optionalString(core.getInput("state-name")),
     "dry-run": optionalBoolean("dry-run", core.getInput("dry-run")),
     "dangerous-clean-slate": optionalBoolean("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
-    "include": optionalStringArray("include", core.getInput("include")),
     "exclude": optionalStringArray("exclude", core.getInput("exclude")),
     "log-level": optionalLogLevel("log-level", core.getInput("log-level")),
     "security": optionalSecurity("security", core.getInput("security"))
@@ -80,23 +79,23 @@ function optionalProtocol(argumentName: string, rawValue: string): "ftp" | "ftps
   core.setFailed(`${argumentName}: invalid parameter - you provided "${rawValue}". Try "ftp", "ftps", or "ftps-legacy" instead.`);
 }
 
-function optionalLogLevel(argumentName: string, rawValue: string): "warn" | "info" | "debug" | undefined {
+function optionalLogLevel(argumentName: string, rawValue: string): "minimal" | "standard" | "verbose" | undefined {
   if (rawValue.length === 0) {
     return undefined;
   }
 
   const cleanValue = rawValue.toLowerCase();
-  if (cleanValue === "warn") {
-    return "warn";
+  if (cleanValue === "minimal") {
+    return "minimal";
   }
-  if (cleanValue === "info") {
-    return "info";
+  if (cleanValue === "standard") {
+    return "standard";
   }
-  if (cleanValue === "debug") {
-    return "debug";
+  if (cleanValue === "verbose") {
+    return "verbose";
   }
 
-  core.setFailed(`${argumentName}: invalid parameter - you provided "${rawValue}". Try "warn", "info", or "debug" instead.`);
+  core.setFailed(`${argumentName}: invalid parameter - you provided "${rawValue}". Try "minimal", "standard", or "verbose" instead.`);
 }
 
 function optionalSecurity(argumentName: string, rawValue: string): "loose" | "strict" | undefined {

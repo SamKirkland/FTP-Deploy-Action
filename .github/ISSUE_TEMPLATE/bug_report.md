@@ -23,4 +23,5 @@ jobs:
 **My Action Log**
 ```
    # Paste Log here
+   # you may want enable verbose logging with   log-level: verbose
 ```

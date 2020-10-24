@@ -9,9 +9,6 @@ Automate deploying websites and more with this GitHub action
 ![FTP test](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/FTP%20Test/badge.svg)
 ![FTPS test](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/FTPS%20Test/badge.svg)
 
-![npm](https://img.shields.io/npm/v/@samkirkland/ftp-deploy?style=flat-square)
-![npm](https://img.shields.io/npm/dt/@samkirkland/ftp-deploy)
-
 ---
 
 ### Usage Example
@@ -71,9 +68,8 @@ I strongly recommend you store your `password` as a secret.
 | `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                            | Path and name of the state file - this file is used to track which files have been deployed                                                                  |
 | `dry-run`               | No       | `true`                     | `false`                                                  | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                   |
 | `dangerous-clean-slate` | No       | `true`                     | `false`                                                  | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                           |
-| `include`               | No       |                            | ``                                                       | :warning: not implemented yet - An array of glob patterns, these files will always be included in the publish/delete process - even if no change occurred    |
 | `exclude`               | No       |                            | `.git*` `.git*/**` `node_modules/**` `node_modules/**/*` | An array of glob patterns, these files will not be included in the publish/delete process                                                                    |
-| `log-level`             | No       | `info`                     | `info`                                                   | `warn`: only important/warning info, `info`: default, log important/warning info & progress info, `debug`: log everything for debugging                      |
+| `log-level`             | No       | `minimal`                  | `standard`                                               | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                           |
 | `security`              | No       | `strict`                   | `loose`                                                  | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate     |
 
 
@@ -190,17 +186,14 @@ jobs:
 ```
 </details>
 
+## Debugging your config locally
+This action is a basic wrapper around my `@samkirkland/ftp-deploy` npm package. To test your config you can install [@samkirkland/ftp-deploy](https://github.com/SamKirkland/ftp-deploy) and then convert your config to a yml action. Settings are one-to-one, this action is only a wrapper.
 
-## Debugging locally
+
+## Contributing to this project
+To run this code locally you will need to setup docker and act to run a environment similar to the one github uses for actions.
+- Download/install docker for windows, make sure it is running
+- `choco install act-cli` install [act](https://github.com/nektos/act)
 - Install the npm package using `npm install --dev-only @samkirkland/ftp-deploy`
-- Add a new key to your `package.json` file under `scripts`
+- Update the `deploy` script in `package.json` with a actual server/username/password
 - You can run the script using the following command `npm run deploy` (run this in the folder that has the `package.json` file)
-
-Example of `package.json`:
-```json
-{
-  "scripts": {
-    "deploy": "ftp-deploy --server ftp.samkirkland.com --username test@samkirkland.com --password \"CrazyUniquePassword&%123\"",
-  },
-}
-```
