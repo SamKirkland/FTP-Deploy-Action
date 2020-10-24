@@ -43,7 +43,7 @@ inputs:
       description: 'strict or loose'
 runs:
   using: 'node12'
-  main: 'dist/main.js'
+  main: 'dist/index.js'
 branding:
   icon: 'upload-cloud'
   color: 'orange'
