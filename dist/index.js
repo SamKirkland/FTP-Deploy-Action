@@ -1991,7 +1991,7 @@ function createFolder(client, folderPath, logger, timings, dryRun) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         logger.all(`creating folder "${folderPath + "/"}"`);
-        if (dryRun === false) {
+        if (dryRun === true) {
             return;
         }
         const path = getFileBreadcrumbs(folderPath + "/");
