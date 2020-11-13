@@ -2,9 +2,7 @@
   <img alt="FTP Deploy Action - Continuous integration for everyone" src="images/ftp-deploy-logo-small.png">
 </p>
 
-> :warning: **This is a beta branch, use at your own risk**
-
-Automate deploying websites and more with this GitHub action
+Automate deploying websites and more with this GitHub action. **It's free!**
 
 ![FTP test](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/FTP%20Test/badge.svg)
 ![FTPS test](https://github.com/SamKirkland/FTP-Deploy-Action/workflows/FTPS%20Test/badge.svg)
@@ -25,7 +23,7 @@ jobs:
       uses: actions/checkout@v2.3.2
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-v4
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -35,7 +33,7 @@ jobs:
 ---
 
 ### Requirements
-- You must have ftp access to your server. If your host requires ssh please use my web-deploy action
+- You must have ftp access to your server. If your host requires ssh please use my web-deploy action (coming soon)
 - Some web hosts change the default port (21), check with your host for your port number
 
 ---
@@ -47,6 +45,7 @@ jobs:
 4. Paste the example above into your yaml file and save
 5. Now you need to add a key to the `secrets` section in your project. To add a `secret` go to the `Settings` tab in your project then select `Secrets`. Add a new `Secret` for `password`
 6. Update your yaml file settings
+7. If you appreciate this github action give it a :star: or show off with one of the [badges below](#badge).
 
 ---
 
@@ -56,21 +55,21 @@ Keys can be added directly to your .yml config file or referenced from your proj
 To add a `secret` go to the `Settings` tab in your project then select `Secrets`.
 I strongly recommend you store your `password` as a secret.
 
-| Key Name                | Required | Example                    | Default Value                                            | Description                                                                                                                                                  |
-|-------------------------|----------|----------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `server`                | Yes      | `ftp.samkirkland.com`      |                                                          | Deployment destination server                                                                                                                                |
-| `username`              | Yes      | `username@samkirkland.com` |                                                          | FTP user name                                                                                                                                                |
-| `password`              | Yes      | `CrazyUniquePassword&%123` |                                                          | FTP password, be sure to escape quotes and spaces                                                                                                            |
-| `port`                  | No       | `990`                      | `21`                                                     | Server port to connect to (read your web hosts docs)                                                                                                         |
-| `protocol`              | No       | `ftps`                     | `ftp`                                                    | ftp: provides no encryption, ftps: full encryption newest standard (aka "explicit" ftps), ftps-legacy: full encryption legacy standard (aka "implicit" ftps) |
-| `local-dir`             | No       | `./myFolderToPublish/`     | `./`                                                     | Path to upload to on the server, must end with trailing slash `/`                                                                                            |
-| `server-dir`            | No       | `public_html/www/`         | `./`                                                     | Folder to upload from, must end with trailing slash `/`                                                                                                      |
-| `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                            | Path and name of the state file - this file is used to track which files have been deployed                                                                  |
-| `dry-run`               | No       | `true`                     | `false`                                                  | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                   |
-| `dangerous-clean-slate` | No       | `true`                     | `false`                                                  | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                           |
-| `exclude`               | No       |                            | `.git*` `.git*/**` `node_modules/**` `node_modules/**/*` | An array of glob patterns, these files will not be included in the publish/delete process                                                                    |
-| `log-level`             | No       | `minimal`                  | `standard`                                               | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                           |
-| `security`              | No       | `strict`                   | `loose`                                                  | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate     |
+| Key Name                | Required | Example                    | Default Value                                            | Description                                                                                                                                                        |
+|-------------------------|----------|----------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `server`                | Yes      | `ftp.samkirkland.com`      |                                                          | Deployment destination server                                                                                                                                      |
+| `username`              | Yes      | `username@samkirkland.com` |                                                          | FTP user name                                                                                                                                                      |
+| `password`              | Yes      | `CrazyUniquePassword&%123` |                                                          | FTP password, be sure to escape quotes and spaces                                                                                                                  |
+| `port`                  | No       | `990`                      | `21`                                                     | Server port to connect to (read your web hosts docs)                                                                                                               |
+| `protocol`              | No       | `ftps`                     | `ftp`                                                    | `ftp`: provides no encryption, `ftps`: full encryption newest standard (aka "explicit" ftps), `ftps-legacy`: full encryption legacy standard (aka "implicit" ftps) |
+| `local-dir`             | No       | `./myFolderToPublish/`     | `./`                                                     | Path to upload to on the server, must end with trailing slash `/`                                                                                                  |
+| `server-dir`            | No       | `public_html/www/`         | `./`                                                     | Folder to upload from, must end with trailing slash `/`                                                                                                            |
+| `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                            | Path and name of the state file - this file is used to track which files have been deployed                                                                        |
+| `dry-run`               | No       | `true`                     | `false`                                                  | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                         |
+| `dangerous-clean-slate` | No       | `true`                     | `false`                                                  | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                                 |
+| `exclude`               | No       |                            | `.git*` `.git*/**` `node_modules/**` `node_modules/**/*` | An array of glob patterns, these files will not be included in the publish/delete process                                                                          |
+| `log-level`             | No       | `minimal`                  | `standard`                                               | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                                 |
+| `security`              | No       | `strict`                   | `loose`                                                  | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate           |
 
 
 # Common Examples
@@ -99,7 +98,7 @@ jobs:
         npm run build
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-v4
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -119,7 +118,7 @@ jobs:
       uses: actions/checkout@v2.3.2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-v4
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -142,7 +141,7 @@ jobs:
       uses: actions/checkout@v2.3.2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@beta-v4
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -154,9 +153,9 @@ _Want another example? Let me know by creating a [github issue](https://github.c
 
 ---
 
-## Badges
+## Badge
 
-If you appreciate this github action give it a :star: or show off with one of the badges below.
+If you appreciate this github action give it a :star: or show off with one of the badges below. Feel free to edit the text or color.
 
 [<img alt="Deployed with FTP Deploy Action" src="https://img.shields.io/badge/Deployed With-FTP DEPLOY ACTION-%3CCOLOR%3E?style=for-the-badge&color=0077b6">](https://github.com/SamKirkland/FTP-Deploy-Action)
 
@@ -239,7 +238,7 @@ jobs:
 This action is a basic wrapper around my `@samkirkland/ftp-deploy` npm package. To test your config you can install [@samkirkland/ftp-deploy](https://github.com/SamKirkland/ftp-deploy) and then convert your config to a yml action. Settings are one-to-one, this action is only a wrapper.
 
 ## Contributing to this project
-To run this code locally you will need to setup docker and act to run a environment similar to the one github uses for actions.
+To test this action locally you will need to setup **docker** and **act** to run a environment similar to the one github uses for actions.
 - Download/install docker for windows, make sure it is running
 - `choco install act-cli` install [act](https://github.com/nektos/act)
 - Install the npm package using `npm install --dev-only @samkirkland/ftp-deploy`
