@@ -6654,7 +6654,7 @@ function optionalStringArray(argumentName, rawValue) {
         return undefined;
     }
     // split value by space and comma
-    return rawValue.split("\n").filter(str => str !== "");
+    return rawValue.split(" - ").filter(str => str !== "");
 }
 
 
