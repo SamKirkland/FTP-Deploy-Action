@@ -129,10 +129,12 @@ function optionalInt(argumentName: string, rawValue: string): number | undefined
 }
 
 function optionalStringArray(argumentName: string, rawValue: string): string[] | undefined {
+  console.log(rawValue);
+
   if (rawValue.length === 0) {
     return undefined;
   }
 
   // split value by space and comma
-  return rawValue.split(", ");
+  return rawValue.split("\n").filter(str => str !== "");
 }
