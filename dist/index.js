@@ -6651,7 +6651,6 @@ function optionalInt(argumentName, rawValue) {
     core.setFailed(`${argumentName}: invalid parameter - you provided "${rawValue}". Try a whole number (no decimals) instead like 1234`);
 }
 function optionalStringArray(argumentName, rawValue) {
-    console.log(rawValue);
     if (rawValue.length === 0) {
         return undefined;
     }
