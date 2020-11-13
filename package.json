@@ -1,39 +1,36 @@
 {
-  "name": "typescript-action",
-  "version": "1.0.0",
+  "name": "ftp-deploy-action",
+  "version": "4.0.0",
   "private": true,
-  "description": "TypeScript template action",
-  "main": "dist/main.js",
-  "engines": {
-    "node": ">=12.0.0"
-  },
+  "description": "Automate deploying websites and more with this GitHub action",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/main.ts -o dist --watch",
-    "build-docker": "docker build --tag action .",
-    "run-docker": "act --workflows ./debug/ --secret username=UserNameHere --secret password=PasswordHere"
+    "build": "ncc build src/main.ts --no-cache",
+    "lint": "eslint src/**/*.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/SamKirkland/FTP-Deploy-Action.git"
   },
   "keywords": [
-    "actions",
-    "node",
-    "setup"
+    "website deploy",
+    "continuous integration",
+    "ftp",
+    "ftps"
   ],
-  "author": "SamKirkland",
+  "author": "Sam Kirkland",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "1.2.4",
-    "@actions/exec": "1.0.4"
+    "@actions/core": "^1.2.6",
+    "@samkirkland/ftp-deploy": "^1.0.0",
+    "ts-node-dev": "^1.0.0-pre.62"
   },
   "devDependencies": {
-    "@types/jest": "25.2.1",
-    "@types/node": "12.12.8",
-    "@zeit/ncc": "0.22.1",
-    "jest": "25.5.3",
-    "jest-circus": "25.5.3",
-    "ts-jest": "25.4.0",
-    "typescript": "3.8.3"
+    "@types/node": "^14.0.27",
+    "@typescript-eslint/parser": "^4.0.1",
+    "@vercel/ncc": "^0.24.0",
+    "eslint": "^7.8.1",
+    "js-yaml": "^3.14.0",
+    "typescript": "^4.0.2"
   }
 }
