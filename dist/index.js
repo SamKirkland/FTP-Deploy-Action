@@ -2177,7 +2177,9 @@ function syncLocalToServer(client, diffs, logger, timings, args) {
         }
         logger.all(`----------------------------------------------------------------`);
         logger.all(`🎉 Sync complete. Saving current server state to "${args["server-dir"] + args["state-name"]}"`);
-        yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.uploadFrom(args["local-dir"] + args["state-name"], args["state-name"]); }));
+        if (args["dry-run"] === false) {
+            yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.uploadFrom(args["local-dir"] + args["state-name"], args["server-dir"] + args["state-name"]); }));
+        }
     });
 }
 function deploy(deployArgs) {
