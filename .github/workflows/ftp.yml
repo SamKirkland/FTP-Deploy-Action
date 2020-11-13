@@ -3,8 +3,6 @@ name: FTP Test
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   deploy:
@@ -12,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.2
 
       - name: 📂 Sync files
         uses: ./

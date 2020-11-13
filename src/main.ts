@@ -134,5 +134,5 @@ function optionalStringArray(argumentName: string, rawValue: string): string[] |
   }
 
   // split value by space and comma
-  return rawValue.split(", ");
+  return rawValue.split(" - ").filter(str => str !== "");
 }

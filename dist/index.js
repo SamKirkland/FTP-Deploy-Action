@@ -1739,12 +1739,11 @@ exports.HashDiff = HashDiff;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.prettyError = void 0;
 const types_1 = __webpack_require__(6703);
-function outputOriginalErrorAndExit(logger, error) {
+function logOriginalError(logger, error) {
     logger.all();
     logger.all(`----------------------------------------------------------------`);
     logger.all(`----------------------  Full Error below  ----------------------`);
     logger.all(error);
-    process.exit();
 }
 /**
  * Converts a exception to helpful debug info
@@ -1755,41 +1754,36 @@ function prettyError(logger, args, error) {
     logger.all(`----------------------------------------------------------------`);
     logger.all(`---------------  🔥🔥🔥 A error occurred  🔥🔥🔥  --------------`);
     logger.all(`----------------------------------------------------------------`);
+    const ftpError = error;
     if (typeof error.code === "string") {
         const errorCode = error.code;
         if (errorCode === "ENOTFOUND") {
             logger.all(`The server "${args.server}" doesn't seem to exist. Do you have a typo?`);
-            outputOriginalErrorAndExit(logger, error);
         }
     }
-    if (typeof error.name === "string") {
+    else if (typeof error.name === "string") {
         const errorName = error.name;
         if (errorName.includes("ERR_TLS_CERT_ALTNAME_INVALID")) {
             logger.all(`The certificate for "${args.server}" is likely shared. The host did not place your server on the list of valid domains for this cert.`);
             logger.all(`This is a common issue with shared hosts. You have a few options:`);
             logger.all(` - Ignore this error by setting security back to loose`);
             logger.all(` - Contact your hosting provider and ask them for your servers hostname`);
-            outputOriginalErrorAndExit(logger, error);
         }
     }
-    const ftpError = error;
-    if (typeof ftpError.code === "number") {
+    else if (typeof ftpError.code === "number") {
         if (ftpError.code === types_1.ErrorCode.NotLoggedIn) {
             const serverRequiresFTPS = ftpError.message.toLowerCase().includes("must use encryption");
             if (serverRequiresFTPS) {
                 logger.all(`The server you are connecting to requires encryption (ftps)`);
                 logger.all(`Enable FTPS by using the protocol option.`);
-                outputOriginalErrorAndExit(logger, error);
             }
             else {
                 logger.all(`Could not login with the username "${args.username}" and password "${args.password}".`);
                 logger.all(`Make sure you can login with those credentials. If you have a space or a quote in your username or password be sure to escape them!`);
-                outputOriginalErrorAndExit(logger, error);
             }
         }
     }
-    // unknown error :(
-    outputOriginalErrorAndExit(logger, error);
+    logOriginalError(logger, error);
 }
 exports.prettyError = prettyError;
 
@@ -1833,7 +1827,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.deploy = exports.excludeDefaults = void 0;
+exports.deploy = exports.getLocalFiles = exports.excludeDefaults = void 0;
 const ftp = __importStar(__webpack_require__(7957));
 const readdir_enhanced_1 = __importDefault(__webpack_require__(8811));
 const crypto_1 = __importDefault(__webpack_require__(6417));
@@ -1902,7 +1896,7 @@ function getLocalFiles(args) {
                     type: "file",
                     name: stat.path,
                     size: stat.size,
-                    hash: yield fileHash(stat.path, "sha256")
+                    hash: yield fileHash(args["local-dir"] + stat.path, "sha256")
                 });
                 continue;
             }
@@ -1912,12 +1906,13 @@ function getLocalFiles(args) {
         }
         return {
             description: types_1.syncFileDescription,
-            version: types_1.currentVersion,
+            version: types_1.currentSyncFileVersion,
             generatedTime: new Date().getTime(),
             data: records
         };
     });
 }
+exports.getLocalFiles = getLocalFiles;
 function downloadFileList(client, logger, path) {
     return __awaiter(this, void 0, void 0, function* () {
         // note: originally this was using a writable stream instead of a buffer file
@@ -2116,7 +2111,7 @@ function getServerFiles(client, logger, timings, args) {
             // set the server state to nothing, because we don't know what the server state is
             return {
                 description: types_1.syncFileDescription,
-                version: types_1.currentVersion,
+                version: types_1.currentSyncFileVersion,
                 generatedTime: new Date().getTime(),
                 data: [],
             };
@@ -2182,7 +2177,9 @@ function syncLocalToServer(client, diffs, logger, timings, args) {
         }
         logger.all(`----------------------------------------------------------------`);
         logger.all(`🎉 Sync complete. Saving current server state to "${args["server-dir"] + args["state-name"]}"`);
-        yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.uploadFrom(args["local-dir"] + args["state-name"], args["state-name"]); }));
+        if (args["dry-run"] === false) {
+            yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.uploadFrom(args["local-dir"] + args["state-name"], args["server-dir"] + args["state-name"]); }));
+        }
     });
 }
 function deploy(deployArgs) {
@@ -2194,7 +2191,7 @@ function deploy(deployArgs) {
         // header
         // todo allow swapping out library/version text based on if we are using action
         logger.all(`----------------------------------------------------------------`);
-        logger.all(`🚀 Thanks for using ftp-deploy version ${types_1.currentVersion}. Let's deploy some stuff!   `);
+        logger.all(`🚀 Thanks for using ftp-deploy version ${types_1.currentSyncFileVersion}. Let's deploy some stuff!   `);
         logger.all(`----------------------------------------------------------------`);
         logger.all(`If you found this project helpful, please support it`);
         logger.all(`by giving it a ⭐ on Github --> https://github.com/SamKirkland/FTP-Deploy-Action`);
@@ -2216,8 +2213,10 @@ function deploy(deployArgs) {
             yield global.reconnect();
             try {
                 const serverFiles = yield getServerFiles(client, logger, timings, args);
+                timings.start("logging");
                 const diffTool = new HashDiff_1.HashDiff();
                 const diffs = diffTool.getDiffs(localFiles, serverFiles, logger);
+                timings.stop("logging");
                 totalBytesUploaded = diffs.sizeUpload + diffs.sizeReplace;
                 timings.start("upload");
                 try {
@@ -2226,11 +2225,9 @@ function deploy(deployArgs) {
                 catch (e) {
                     if (e.code === types_1.ErrorCode.FileNameNotAllowed) {
                         logger.all("Error 553 FileNameNotAllowed, you don't have access to upload that file");
-                        logger.all(e);
-                        process.exit();
                     }
                     logger.all(e);
-                    process.exit();
+                    throw e;
                 }
                 finally {
                     timings.stop("upload");
@@ -2246,6 +2243,7 @@ function deploy(deployArgs) {
         }
         catch (error) {
             errorHandling_1.prettyError(logger, args, error);
+            throw error;
         }
         finally {
             client.close();
@@ -2258,6 +2256,7 @@ function deploy(deployArgs) {
         logger.all(`Time spent connecting to server:  ${timings.getTimeFormatted("connecting")}`);
         logger.all(`Time spent deploying:             ${timings.getTimeFormatted("upload")} (${uploadSpeed}/second)`);
         logger.all(`  - changing dirs:                ${timings.getTimeFormatted("changingDir")}`);
+        logger.all(`  - logging:                      ${timings.getTimeFormatted("logging")}`);
         logger.all(`----------------------------------------------------------------`);
         logger.all(`Total time:                       ${timings.getTimeFormatted("total")}`);
         logger.all(`----------------------------------------------------------------`);
@@ -2274,8 +2273,8 @@ exports.deploy = deploy;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ErrorCode = exports.syncFileDescription = exports.currentVersion = void 0;
-exports.currentVersion = "1.0.0";
+exports.ErrorCode = exports.syncFileDescription = exports.currentSyncFileVersion = void 0;
+exports.currentSyncFileVersion = "1.0.0";
 exports.syncFileDescription = "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action";
 var ErrorCode;
 (function (ErrorCode) {
@@ -3303,12 +3302,8 @@ class Client {
                     return res;
                 }
                 catch (err) {
-                    // Receiving an FTPError means that the last transfer strategy failed and we should
-                    // try the next one. Any other exception should stop the evaluation of strategies because
-                    // something else went wrong.
-                    if (!(err instanceof FtpContext_1.FTPError)) {
-                        throw err;
-                    }
+                    // Try the next candidate no matter the exact error. It's possible that a server
+                    // answered incorrectly to a strategy, for example a PASV answer to an EPSV.
                 }
             }
             throw new Error("None of the available transfer strategies work.");
@@ -3970,9 +3965,10 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
     o[k2] = m[k];
 }));
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.enterPassiveModeIPv6 = exports.enterPassiveModeIPv4 = void 0;
 /**
  * Public API
  */
@@ -4131,7 +4127,7 @@ function positiveIntermediate(code) {
 }
 exports.positiveIntermediate = positiveIntermediate;
 function isNotBlank(str) {
-    return str !== "";
+    return str.trim() !== "";
 }
 
 
@@ -4157,7 +4153,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -6659,7 +6655,7 @@ function optionalStringArray(argumentName, rawValue) {
         return undefined;
     }
     // split value by space and comma
-    return rawValue.split(", ");
+    return rawValue.split(" - ").filter(str => str !== "");
 }
 
 

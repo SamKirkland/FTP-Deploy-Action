@@ -1,6 +1,6 @@
 {
   "name": "ftp-deploy-action",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": true,
   "description": "Automate deploying websites and more with this GitHub action",
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@samkirkland/ftp-deploy": "^1.0.0",
+    "@samkirkland/ftp-deploy": "^1.0.2",
     "ts-node-dev": "^1.0.0-pre.62"
   },
   "devDependencies": {
