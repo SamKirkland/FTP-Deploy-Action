@@ -1,11 +1,12 @@
 {
   "name": "ftp-deploy-action",
-  "version": "4.0.1",
+  "version": "4.0.0",
   "private": true,
   "description": "Automate deploying websites and more with this GitHub action",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/main.ts --no-cache",
+    "test": "jest",
     "lint": "eslint src/**/*.ts"
   },
   "repository": {
@@ -22,7 +23,10 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@samkirkland/ftp-deploy": "^1.0.2",
+    "@samkirkland/ftp-deploy": "^1.0.3",
+    "@types/jest": "^26.0.15",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.4.4",
     "ts-node-dev": "^1.0.0-pre.62"
   },
   "devDependencies": {
