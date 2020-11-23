@@ -67,7 +67,7 @@ I strongly recommend you store your `password` as a secret.
 | `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                           | Path and name of the state file - this file is used to track which files have been deployed                                                                        |
 | `dry-run`               | No       | `true`                     | `false`                                                 | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                         |
 | `dangerous-clean-slate` | No       | `true`                     | `false`                                                 | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                                 |
-| `exclude`               | No       |                            | `[.git*, .git*/**, node_modules/**, node_modules/**/*]` | An array of glob patterns, these files will not be included in the publish/delete process                                                                          |
+| `exclude`               | No       |                            | `.git*` `.git*/**` `node_modules/**` `node_modules/**/*` | An array of glob patterns, these files will not be included in the publish/delete process. [List must be in yaml array format](#exclude-files)                                                                          |
 | `log-level`             | No       | `minimal`                  | `standard`                                              | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                                 |
 | `security`              | No       | `strict`                   | `loose`                                                 | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate           |
 
@@ -147,6 +147,32 @@ jobs:
         username: myFtpUserName
         password: ${{ secrets.password }}
         dry-run: true
+```
+
+#### Exclude files
+Excludes files
+```yml
+on: push
+name: 🚀 Deploy website on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2.3.2
+
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server: ftp.samkirkland.com
+        username: myFtpUserName
+        password: ${{ secrets.password }}
+        exclude: .git*
+          - .git*/**
+          -  **/.git*/**
+          - node_modules/**
+          - node_modules/**/*
 ```
 
 _Want another example? Let me know by creating a [github issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/new)_
