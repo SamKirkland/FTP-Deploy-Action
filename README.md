@@ -168,9 +168,10 @@ jobs:
         server: ftp.samkirkland.com
         username: myFtpUserName
         password: ${{ secrets.password }}
-        exclude: .git*
+        exclude: 
+          - .git*
           - .git*/**
-          -  **/.git*/**
+          - '**/.git*/**'
           - node_modules/**
           - node_modules/**/*
 ```
