@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v2.3.2
+      uses: actions/checkout@v2.3.4
     
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
