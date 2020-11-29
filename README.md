@@ -168,7 +168,7 @@ jobs:
         server: ftp.samkirkland.com
         username: myFtpUserName
         password: ${{ secrets.password }}
-        exclude: '[".git*",".git*/**", "**/.git*/**", "node_modules/**", "node_modules/**/*"]'
+        exclude: '[.git*, .git*/**, **/.git*/**, node_modules/**, node_modules/**/*]'
 ```
 
 _Want another example? Let me know by creating a [github issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/new)_
