@@ -1,0 +1,22 @@
+name: FTPS Test
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    name: 🚀 Deploy website every commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2.3.2
+  
+      - name: 📂 Sync files
+        uses: ./
+        with:
+          server: ftp.samkirkland.com
+          username: test@samkirkland.com
+          password: ${{ secrets.ftp_password }}
+          protocol: ftps
+          security: strict
