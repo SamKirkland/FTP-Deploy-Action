@@ -175,6 +175,34 @@ jobs:
           - node_modules/**/*
 ```
 
+#### Only run an action if a deployment happened
+
+```yml
+on: push
+name: 🚀 Deploy website on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2.3.2
+
+    - name: 📂 Sync files
+      id: deployment
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server: ftp.samkirkland.com
+        username: myFtpUserName
+        password: ${{ secrets.password }}
+        protocol: ftps
+        port: 1234 # todo replace with your web hosts ftps port
+
+    - name: ✉️ Notify
+      if: steps.deployment.deployed == 'true'
+      run: notify-people-of-my-deployment
+```
+
 _Want another example? Let me know by creating a [github issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/new)_
 
 ---
