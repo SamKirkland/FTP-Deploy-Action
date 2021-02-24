@@ -22,9 +22,11 @@ async function runDeployment() {
     };
 
     await deploy(args);
+    core.setOutput('deployed', 'true');
   }
   catch (error) {
     core.setFailed(error);
+    core.setOutput('deployed', 'false');
   }
 }
 

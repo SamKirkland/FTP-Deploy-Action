@@ -6570,9 +6570,11 @@ async function runDeployment() {
             "security": parse_1.optionalSecurity("security", core.getInput("security"))
         };
         await ftp_deploy_1.deploy(args);
+        core.setOutput('deployed', 'true');
     }
     catch (error) {
         core.setFailed(error);
+        core.setOutput('deployed', 'false');
     }
 }
 runDeployment();
