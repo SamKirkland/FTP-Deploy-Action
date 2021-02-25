@@ -199,7 +199,7 @@ jobs:
         port: 1234 # todo replace with your web hosts ftps port
 
     - name: ✉️ Notify
-      if: steps.deployment.deployed == 'true'
+      if: steps.deployment.outputs.deployed == 'true'
       run: notify-people-of-my-deployment
 ```
 
