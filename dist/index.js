@@ -2069,7 +2069,7 @@ function connect(client, args, logger) {
             secure = "implicit";
         }
         client.ftp.verbose = args["log-level"] === "verbose";
-        const rejectUnauthorized = args.security === "loose";
+        const rejectUnauthorized = args.security === "strict";
         yield client.access({
             host: args.server,
             user: args.username,
