@@ -2,7 +2,7 @@ name: FTP Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   deploy:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v2.3.2
+        uses: actions/checkout@v2
 
       - name: 📂 Sync files
         uses: ./
@@ -18,4 +18,3 @@ jobs:
           server: ftp.samkirkland.com
           username: test@samkirkland.com
           password: ${{ secrets.ftp_password }}
-
