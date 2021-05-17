@@ -2105,7 +2105,7 @@ function getServerFiles(client, logger, timings, args) {
         }
         catch (e) {
             logger.all(`----------------------------------------------------------------`);
-            logger.all(`No file exists on the server "${args["server-dir"] + args["state-name"]}" - this much be your first publish! 🎉`);
+            logger.all(`No file exists on the server "${args["server-dir"] + args["state-name"]}" - this must be your first publish! 🎉`);
             logger.all(`The first publish will take a while... but once the initial sync is done only differences are published!`);
             logger.all(`If you get this message and its NOT your first publish, something is wrong.`);
             // set the server state to nothing, because we don't know what the server state is
