@@ -1752,7 +1752,7 @@ function logOriginalError(logger, error) {
 function prettyError(logger, args, error) {
     logger.all();
     logger.all(`----------------------------------------------------------------`);
-    logger.all(`---------------  🔥🔥🔥 A error occurred  🔥🔥🔥  --------------`);
+    logger.all(`---------------  🔥🔥🔥 An error occurred  🔥🔥🔥  --------------`);
     logger.all(`----------------------------------------------------------------`);
     const ftpError = error;
     if (typeof error.code === "string") {
