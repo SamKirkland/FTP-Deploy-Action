@@ -1,49 +1,49 @@
-name: 'FTP Deploy'
-description: 'Automate deploying websites and more with this GitHub action'
-author: 'Sam Kirkland'
+name: "FTP Deploy"
+description: "Automate deploying websites and more with this GitHub action via FTP and FTPS"
+author: "Sam Kirkland"
 inputs:
-    server:
-      required: true
-      description: 'ftp server'
-    username:
-      required: true
-      description: 'ftp username'
-    password:
-      required: true
-      description: 'ftp password'
-    port:
-      required: false
-      description: 'Server port to connect to (read your web hosts docs)'
-    protocol:
-      required: false
-      description: 'protocol to deploy with - ftp, ftps, or ftps-legacy'
-    local-dir:
-      required: false
-      description: 'Folder to upload from, must end with trailing slash /'
-    server-dir:
-      required: false
-      description: 'Path to upload to on the server. Must end with trailing slash /'
-    state-name:
-      required: false
-      description: 'Path and name of the state file - this file is used to track which files have been deployed'
-    dry-run:
-      required: false
-      description: 'Prints which modifications will be made with current config options, but doesnt actually make any changes'
-    dangerous-clean-slate:
-      required: false
-      description: 'Deletes ALL contents of server-dir, even items in excluded with exclude argument'
-    exclude:
-      required: false
-      description: 'An array of glob patterns, these files will not be included in the publish/delete process'
-    log-level:
-      required: false
-      description: 'How verbose should the information be - warn, info, debug'
-    security:
-      required: false
-      description: 'strict or loose'
+  server:
+    required: true
+    description: "ftp server"
+  username:
+    required: true
+    description: "ftp username"
+  password:
+    required: true
+    description: "ftp password"
+  port:
+    required: false
+    description: "Server port to connect to (read your web hosts docs)"
+  protocol:
+    required: false
+    description: "protocol to deploy with - ftp, ftps, or ftps-legacy"
+  local-dir:
+    required: false
+    description: "Folder to upload from, must end with trailing slash /"
+  server-dir:
+    required: false
+    description: "Path to upload to on the server. Must end with trailing slash /"
+  state-name:
+    required: false
+    description: "Path and name of the state file - this file is used to track which files have been deployed"
+  dry-run:
+    required: false
+    description: "Prints which modifications will be made with current config options, but doesnt actually make any changes"
+  dangerous-clean-slate:
+    required: false
+    description: "Deletes ALL contents of server-dir, even items in excluded with exclude argument"
+  exclude:
+    required: false
+    description: "An array of glob patterns, these files will not be included in the publish/delete process"
+  log-level:
+    required: false
+    description: "How verbose should the information be - minimal, standard, or verbose"
+  security:
+    required: false
+    description: "strict or loose"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
 branding:
-  icon: 'upload-cloud'
-  color: 'orange'
+  icon: "upload-cloud"
+  color: "orange"

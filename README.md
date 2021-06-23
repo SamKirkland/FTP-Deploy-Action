@@ -23,7 +23,7 @@ jobs:
       uses: actions/checkout@v2
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.1.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -55,21 +55,21 @@ Keys can be added directly to your .yml config file or referenced from your proj
 To add a `secret` go to the `Settings` tab in your project then select `Secrets`.
 I strongly recommend you store your `password` as a secret.
 
-| Key Name                | Required | Example                    | Default Value                                                                    | Description                                                                                                                                                        |
-|-------------------------|----------|----------------------------|----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `server`                | Yes      | `ftp.samkirkland.com`      |                                                                                  | Deployment destination server                                                                                                                                      |
-| `username`              | Yes      | `username@samkirkland.com` |                                                                                  | FTP user name                                                                                                                                                      |
-| `password`              | Yes      | `CrazyUniquePassword&%123` |                                                                                  | FTP password, be sure to escape quotes and spaces                                                                                                                  |
-| `port`                  | No       | `990`                      | `21`                                                                             | Server port to connect to (read your web hosts docs)                                                                                                               |
-| `protocol`              | No       | `ftps`                     | `ftp`                                                                            | `ftp`: provides no encryption, `ftps`: full encryption newest standard (aka "explicit" ftps), `ftps-legacy`: full encryption legacy standard (aka "implicit" ftps) |
-| `local-dir`             | No       | `./myFolderToPublish/`     | `./`                                                                             | Folder to upload from, must end with trailing slash `/`                                                                                                            |
-| `server-dir`            | No       | `public_html/www/`         | `./`                                                                             | Folder to upload to (on the server), must end with trailing slash `/`                                                                                              |
-| `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                                                    | Path and name of the state file - this file is used to track which files have been deployed                                                                        |
-| `dry-run`               | No       | `true`                     | `false`                                                                          | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                         |
-| `dangerous-clean-slate` | No       | `true`                     | `false`                                                                          | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                                 |
-| `exclude`               | No       |                            | `.git*` `**.git*` `.git*/**` `**/.git*/**` `node_modules/**` `node_modules/**/*` | An array of glob patterns, these files will not be included in the publish/delete process. [List must be in yaml array format](#exclude-files)                     |
-| `log-level`             | No       | `minimal`                  | `standard`                                                                       | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                                 |
-| `security`              | No       | `strict`                   | `loose`                                                                          | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate           |
+| Key Name                | Required | Example                    | Default Value                                 | Description                                                                                                                                                        |
+|-------------------------|----------|----------------------------|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `server`                | Yes      | `ftp.samkirkland.com`      |                                               | Deployment destination server                                                                                                                                      |
+| `username`              | Yes      | `username@samkirkland.com` |                                               | FTP user name                                                                                                                                                      |
+| `password`              | Yes      | `CrazyUniquePassword&%123` |                                               | FTP password, be sure to escape quotes and spaces                                                                                                                  |
+| `port`                  | No       | `990`                      | `21`                                          | Server port to connect to (read your web hosts docs)                                                                                                               |
+| `protocol`              | No       | `ftps`                     | `ftp`                                         | `ftp`: provides no encryption, `ftps`: full encryption newest standard (aka "explicit" ftps), `ftps-legacy`: full encryption legacy standard (aka "implicit" ftps) |
+| `local-dir`             | No       | `./myFolderToPublish/`     | `./`                                          | Folder to upload from, must end with trailing slash `/`                                                                                                            |
+| `server-dir`            | No       | `public_html/www/`         | `./`                                          | Folder to upload to (on the server), must end with trailing slash `/`                                                                                              |
+| `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                 | Path and name of the state file - this file is used to track which files have been deployed                                                                        |
+| `dry-run`               | No       | `true`                     | `false`                                       | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                         |
+| `dangerous-clean-slate` | No       | `true`                     | `false`                                       | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                                 |
+| `exclude`               | No       |                            | `**/.git*` `**/.git*/**` `**/node_modules/**` | An array of glob patterns, these files will not be included in the publish/delete process. [List must be in yaml array format](#exclude-files)                     |
+| `log-level`             | No       | `minimal`                  | `standard`                                    | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                                 |
+| `security`              | No       | `strict`                   | `loose`                                       | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate           |
 
 
 # Common Examples
@@ -98,7 +98,7 @@ jobs:
         npm run build
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.1.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -118,7 +118,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.1.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -141,7 +141,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.1.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -163,17 +163,16 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.1.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
         password: ${{ secrets.password }}
-        exclude: .git*
-          - **.git*
-          - .git*/**
-          -  **/.git*/**
-          - node_modules/**
-          - node_modules/**/*
+        exclude:
+          - **/.git*
+          - **/.git*/**
+          - **/node_modules/**
+          - fileToExclude.txt
 ```
 
 _Want another example? Let me know by creating a [github issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/new)_
@@ -237,7 +236,8 @@ Git files are excluded by default! If you customize the `exclude` option make su
 You can use the `exclude` option to ignore specific files/folders from the publish. Keep in mind you will need to re-add the default exclude options if you want to keep them. For example the below option excludes all `.txt` files.
 
 ```yml
-exclude: '*.txt'
+exclude:
+ - *.txt
 ```
 
 </details>
