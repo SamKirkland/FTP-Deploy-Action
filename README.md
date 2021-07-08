@@ -67,7 +67,7 @@ I strongly recommend you store your `password` as a secret.
 | `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                 | Path and name of the state file - this file is used to track which files have been deployed                                                                        |
 | `dry-run`               | No       | `true`                     | `false`                                       | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                         |
 | `dangerous-clean-slate` | No       | `true`                     | `false`                                       | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                                 |
-| `exclude`               | No       |                            | `**/.git*` `**/.git*/**` `**/node_modules/**` | An array of glob patterns, these files will not be included in the publish/delete process. [List must be in yaml array format](#exclude-files). You can use [a glob tester](https://www.digitalocean.com/community/tools/glob?comments=true&glob=%2A%2A%2F.git%2A%2F%2A%2A&matches=false&tests=test%2Fsam&tests=.git%2F&tests=.github%2F&tests=.git%2Ftest&tests=.gitattributes&tests=.gitignore&tests=.git%2Fconfig&tests=.git%2Ftest%2Ftest&tests=.github%2Fworkflows%2Fmain.yml&tests=test%2F.git%2Fworkflows%2Fmain.yml&tests=node_modules%2Ffolder%2F&tests=node_modules%2Fotherfolder%2F&tests=subfolder%2Fnode_modules%2F) to test your pattern(s).                     |
+| `exclude`               | No       |                            | `'[ **/.git* , **/.git*/** , **/node_modules/** ]'` | A stringified array of glob patterns, these files will not be included in the publish/delete process. [List must be in yaml array format](#exclude-files). You can use [a glob tester](https://www.digitalocean.com/community/tools/glob?comments=true&glob=%2A%2A%2F.git%2A%2F%2A%2A&matches=false&tests=test%2Fsam&tests=.git%2F&tests=.github%2F&tests=.git%2Ftest&tests=.gitattributes&tests=.gitignore&tests=.git%2Fconfig&tests=.git%2Ftest%2Ftest&tests=.github%2Fworkflows%2Fmain.yml&tests=test%2F.git%2Fworkflows%2Fmain.yml&tests=node_modules%2Ffolder%2F&tests=node_modules%2Fotherfolder%2F&tests=subfolder%2Fnode_modules%2F) to test your pattern(s).                     |
 | `log-level`             | No       | `minimal`                  | `standard`                                    | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                                 |
 | `security`              | No       | `strict`                   | `loose`                                       | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate           |
 
@@ -168,11 +168,12 @@ jobs:
         server: ftp.samkirkland.com
         username: myFtpUserName
         password: ${{ secrets.password }}
-        exclude:
+        exclude: '
           - **/.git*
           - **/.git*/**
           - **/node_modules/**
           - fileToExclude.txt
+          '
 ```
 
 _Want another example? Let me know by creating a [github issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/new)_
@@ -236,8 +237,9 @@ Git files are excluded by default! If you customize the `exclude` option make su
 You can use the `exclude` option to ignore specific files/folders from the publish. Keep in mind you will need to re-add the default exclude options if you want to keep them. For example the below option excludes all `.txt` files.
 
 ```yml
-exclude:
+exclude: '
  - *.txt
+'
 ```
 
 </details>
