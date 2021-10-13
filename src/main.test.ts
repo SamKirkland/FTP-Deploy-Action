@@ -1,4 +1,4 @@
-import { optionalBoolean, optionalInt, optionalLogLevel, optionalProtocol, optionalSecurity, optionalString, optionalStringArray } from "./parse";
+import { optionalBoolean, optionalInt, optionalLogLevel, optionalProtocol, optionalSecurity, optionalString } from "./parse";
 
 describe("boolean", () => {
     test("false", () => {
@@ -101,35 +101,5 @@ describe("security", () => {
 
     test("strict", () => {
         expect(optionalSecurity("test", "strict")).toBe("strict");
-    });
-});
-
-describe("array", () => {
-    test("empty", () => {
-        expect(optionalStringArray("test", "")).toEqual(undefined);
-    });
-
-    test("empty array", () => {
-        expect(optionalStringArray("test", "[]")).toEqual([]);
-    });
-
-    test(`["test.txt"]`, () => {
-        expect(optionalStringArray("test", "[test.txt]")).toEqual(["test.txt"]);
-    });
-
-    test(`[ "test.txt" ]`, () => {
-        expect(optionalStringArray("test", "[ test.txt ]")).toEqual(["test.txt"]);
-    });
-
-    test(`["test.txt", "folder/**/*"]`, () => {
-        expect(optionalStringArray("test", "[test.txt, folder/**/*]")).toEqual(["test.txt", "folder/**/*"]);
-    });
-
-    test(`["test.txt", "folder/**/*", "*other"]`, () => {
-        expect(optionalStringArray("test", `test.txt\n  - folder/**/*\n  - *other`)).toEqual(["test.txt", "folder/**/*", "*other"]);
-    });
-
-    test(`["test.txt", "folder/**/*", "*other"]`, () => {
-        expect(optionalStringArray("test", `\n  - test.txt\n  - folder/**/*\n  - *other`)).toEqual(["test.txt", "folder/**/*", "*other"]);
     });
 });

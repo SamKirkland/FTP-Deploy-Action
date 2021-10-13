@@ -1,3 +1,18 @@
+# Migrating from v4.1.0 to v4.2.0
+
+`v4.2.0` parses the `exclude` option in a more standard way.
+
+Going forward the `exclude` option **must** be in the following format
+```yml
+exclude: |
+  **/.git*
+  **/.git*/**
+  **/node_modules/**
+  fileToExclude.txt
+```
+
+---
+
 # Migrating from v3 to v4
 
 Migrating from v3 to v4 should be fairly straightforward. Version 4 was designed with speed and ease of initial setup in mind. Going forward version 4 will be the only supported version.

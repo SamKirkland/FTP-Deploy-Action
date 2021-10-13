@@ -23,7 +23,7 @@ jobs:
       uses: actions/checkout@v2
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      uses: SamKirkland/FTP-Deploy-Action@4.2.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -55,21 +55,21 @@ Keys can be added directly to your .yml config file or referenced from your proj
 To add a `secret` go to the `Settings` tab in your project then select `Secrets`.
 I strongly recommend you store your `password` as a secret.
 
-| Key Name                | Required | Example                    | Default Value                                 | Description                                                                                                                                                        |
-|-------------------------|----------|----------------------------|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `server`                | Yes      | `ftp.samkirkland.com`      |                                               | Deployment destination server                                                                                                                                      |
-| `username`              | Yes      | `username@samkirkland.com` |                                               | FTP user name                                                                                                                                                      |
-| `password`              | Yes      | `CrazyUniquePassword&%123` |                                               | FTP password, be sure to escape quotes and spaces                                                                                                                  |
-| `port`                  | No       | `990`                      | `21`                                          | Server port to connect to (read your web hosts docs)                                                                                                               |
-| `protocol`              | No       | `ftps`                     | `ftp`                                         | `ftp`: provides no encryption, `ftps`: full encryption newest standard (aka "explicit" ftps), `ftps-legacy`: full encryption legacy standard (aka "implicit" ftps) |
-| `local-dir`             | No       | `./myFolderToPublish/`     | `./`                                          | Folder to upload from, must end with trailing slash `/`                                                                                                            |
-| `server-dir`            | No       | `public_html/www/`         | `./`                                          | Folder to upload to (on the server), must end with trailing slash `/`                                                                                              |
-| `state-name`            | No       | `folder/.sync-state.json`  | `.ftp-deploy-sync-state.json`                 | Path and name of the state file - this file is used to track which files have been deployed                                                                        |
-| `dry-run`               | No       | `true`                     | `false`                                       | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                         |
-| `dangerous-clean-slate` | No       | `true`                     | `false`                                       | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                                 |
-| `exclude`               | No       |                            | `**/.git*` `**/.git*/**` `**/node_modules/**` | An array of glob patterns, these files will not be included in the publish/delete process. [List must be in yaml array format](#exclude-files). You can use [a glob tester](https://www.digitalocean.com/community/tools/glob?comments=true&glob=%2A%2A%2F.git%2A%2F%2A%2A&matches=false&tests=test%2Fsam&tests=.git%2F&tests=.github%2F&tests=.git%2Ftest&tests=.gitattributes&tests=.gitignore&tests=.git%2Fconfig&tests=.git%2Ftest%2Ftest&tests=.github%2Fworkflows%2Fmain.yml&tests=test%2F.git%2Fworkflows%2Fmain.yml&tests=node_modules%2Ffolder%2F&tests=node_modules%2Fotherfolder%2F&tests=subfolder%2Fnode_modules%2F) to test your pattern(s).                     |
-| `log-level`             | No       | `minimal`                  | `standard`                                    | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                                 |
-| `security`              | No       | `strict`                   | `loose`                                       | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate           |
+| Key Name                | Required | Example                       | Default Value                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|-------------------------|----------|-------------------------------|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `server`                | Yes      | `ftp.samkirkland.com`         |                               | Deployment destination server                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `username`              | Yes      | `username@samkirkland.com`    |                               | FTP user name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `password`              | Yes      | `CrazyUniquePassword&%123`    |                               | FTP password, be sure to escape quotes and spaces                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `port`                  | No       | `990`                         | `21`                          | Server port to connect to (read your web hosts docs)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `protocol`              | No       | `ftps`                        | `ftp`                         | `ftp`: provides no encryption, `ftps`: full encryption newest standard (aka "explicit" ftps), `ftps-legacy`: full encryption legacy standard (aka "implicit" ftps)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `local-dir`             | No       | `./myFolderToPublish/`        | `./`                          | Folder to upload from, must end with trailing slash `/`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `server-dir`            | No       | `public_html/www/`            | `./`                          | Folder to upload to (on the server), must end with trailing slash `/`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `state-name`            | No       | `folder/.sync-state.json`     | `.ftp-deploy-sync-state.json` | Path and name of the state file - this file is used to track which files have been deployed                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `dry-run`               | No       | `true`                        | `false`                       | Prints which modifications will be made with current config options, but doesn't actually make any changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `dangerous-clean-slate` | No       | `true`                        | `false`                       | Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `exclude`               | No       | [See Example](#exclude-files) | [See Example](#exclude-files) | An array of glob patterns, these files will not be included in the publish/delete process. [List MUST be in this format](#exclude-files). You can use [a glob tester](https://www.digitalocean.com/community/tools/glob?comments=true&glob=%2A%2A%2F.git%2A%2F%2A%2A&matches=false&tests=test%2Fsam&tests=.git%2F&tests=.github%2F&tests=.git%2Ftest&tests=.gitattributes&tests=.gitignore&tests=.git%2Fconfig&tests=.git%2Ftest%2Ftest&tests=.github%2Fworkflows%2Fmain.yml&tests=test%2F.git%2Fworkflows%2Fmain.yml&tests=node_modules%2Ffolder%2F&tests=node_modules%2Fotherfolder%2F&tests=subfolder%2Fnode_modules%2F) to test your pattern(s). |
+| `log-level`             | No       | `minimal`                     | `standard`                    | `minimal`: only important info, `standard`: important info and basic file changes, `verbose`: print everything the script is doing                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `security`              | No       | `strict`                      | `loose`                       | `strict`: Reject any connection which is not authorized with the list of supplied CAs. `loose`: Allow connection even when the domain is not certificate                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 
 # Common Examples
@@ -98,7 +98,7 @@ jobs:
         npm run build
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      uses: SamKirkland/FTP-Deploy-Action@4.2.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -118,7 +118,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      uses: SamKirkland/FTP-Deploy-Action@4.2.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -127,7 +127,7 @@ jobs:
         port: 1234 # todo replace with your web hosts ftps port
 ```
 
-#### Log only dry run: Use this mode for testing
+#### Log only dry run: Use this option for testing
 Ouputs a list of files that will be created/modified to sync your source without making any actual changes
 ```yml
 on: push
@@ -141,7 +141,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      uses: SamKirkland/FTP-Deploy-Action@4.2.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -163,17 +163,29 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      uses: SamKirkland/FTP-Deploy-Action@4.2.0
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
         password: ${{ secrets.password }}
-        exclude:
-          - **/.git*
-          - **/.git*/**
-          - **/node_modules/**
-          - fileToExclude.txt
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          fileToExclude.txt
 ```
+
+`exclude` has the following default value
+```yml
+exclude: |
+  **/.git*
+  **/.git*/**
+  **/node_modules/**
+```
+if you overwrite the default value you will probably want to respecify them
+
+
+---
 
 _Want another example? Let me know by creating a [github issue](https://github.com/SamKirkland/FTP-Deploy-Action/issues/new)_
 
