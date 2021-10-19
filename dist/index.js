@@ -2354,7 +2354,7 @@ class FTPSyncProvider {
                 }
             }
             // navigate back to the root folder
-            yield this.upDir((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length - 1);
+            // yield this.upDir((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length);
             this.logger.verbose(`  completed`);
         });
     }
