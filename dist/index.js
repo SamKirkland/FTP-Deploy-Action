@@ -2314,7 +2314,7 @@ class FTPSyncProvider {
                 yield ensureDir(this.client, this.logger, this.timings, path.folders.join("/"));
             }
             // navigate back to the root folder
-            yield this.upDir((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length);
+            yield this.upDir((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length - 1);
             this.logger.verbose(`  completed`);
         });
     }
