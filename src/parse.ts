@@ -95,9 +95,5 @@ export function optionalStringArray(argumentName: string, rawValue: string[]): s
         throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". This option expects an list in the EXACT format described in the readme`);
     }
 
-    if (rawValue.length === 0) {
-        return undefined;
-    }
-
     return rawValue;
 }
