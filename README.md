@@ -18,6 +18,7 @@ jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
+    environment: myenvironment
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
