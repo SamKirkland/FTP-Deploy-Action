@@ -16,14 +16,14 @@ async function runDeployment() {
       "state-name": optionalString(core.getInput("state-name")),
       "dry-run": optionalBoolean("dry-run", core.getInput("dry-run")),
       "dangerous-clean-slate": optionalBoolean("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
-      "exclude": optionalStringArray("exclude", core.getInput("exclude")),
+      "exclude": optionalStringArray("exclude", core.getMultilineInput("exclude")),
       "log-level": optionalLogLevel("log-level", core.getInput("log-level")),
       "security": optionalSecurity("security", core.getInput("security"))
     };
 
     await deploy(args);
   }
-  catch (error) {
+  catch (error: any) {
     core.setFailed(error);
   }
 }

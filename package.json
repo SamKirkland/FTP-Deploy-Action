@@ -1,6 +1,6 @@
 {
   "name": "ftp-deploy-action",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "private": true,
   "description": "Automate deploying websites and more with this GitHub action",
   "main": "dist/index.js",
@@ -22,20 +22,20 @@
   "author": "Sam Kirkland",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.4.0",
-    "@samkirkland/ftp-deploy": "^1.1.0",
-    "@types/jest": "^26.0.23",
-    "jest": "^27.0.5",
-    "ts-jest": "^27.0.3",
-    "ts-node-dev": "^1.1.6"
+    "@actions/core": "^1.6.0",
+    "@samkirkland/ftp-deploy": "^1.1.1",
+    "@types/jest": "^27.0.2",
+    "jest": "^27.2.5",
+    "ts-jest": "^27.0.5",
+    "ts-node-dev": "^1.1.8"
   },
   "devDependencies": {
     "@types/node": "^14.0.27",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
-    "@typescript-eslint/parser": "^4.28.0",
-    "@vercel/ncc": "^0.28.6",
+    "@typescript-eslint/parser": "^4.33.0",
+    "@vercel/ncc": "^0.31.1",
     "eslint": "^7.29.0",
     "eslint-plugin-jest": "^24.3.6",
-    "typescript": "^4.3.4"
+    "typescript": "^4.4.3"
   }
 }
