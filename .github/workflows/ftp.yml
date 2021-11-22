@@ -18,4 +18,3 @@ jobs:
           server: ftp.samkirkland.com
           username: test@samkirkland.com
           password: ${{ secrets.ftp_password }}
-          dangerous-clean-slate: true
