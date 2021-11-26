@@ -3138,7 +3138,6 @@ class FTPSyncProvider {
         });
     }
     removeFolder(folderPath) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.all(`removing folder "${folderPath + "/"}"`);
             const path = this.getFileBreadcrumbs(folderPath + "/");
@@ -3146,14 +3145,11 @@ class FTPSyncProvider {
                 this.logger.verbose(`  no need to change dir`);
             }
             else {
-                const relativeFolderPath = path.folders[((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length) - 1] + "/";
-                this.logger.verbose(`  removing folder "${relativeFolderPath}"`);
+                this.logger.verbose(`  removing folder "${path.folders.join("/") + "/"}"`);
                 if (this.dryRun === false) {
-                    yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(relativeFolderPath); }));
+                    yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(path.folders.join("/")); }));
                 }
             }
-            // navigate back to the root folder
-            yield this.upDir((_b = path.folders) === null || _b === void 0 ? void 0 : _b.length);
             this.logger.verbose(`  completed`);
         });
     }
@@ -3193,8 +3189,12 @@ class FTPSyncProvider {
                 yield this.removeFile(file.name);
             }
             // delete old folders
+            let lastFileName = '///'
             for (const file of diffs.delete.filter(item => item.type === "folder")) {
-                yield this.removeFolder(file.name);
+                if(!file.name.startsWith(lastFileName + '/')) {
+                    yield this.removeFolder(file.name);
+                }
+                lastFileName = file.name
             }
             this.logger.all(`----------------------------------------------------------------`);
             this.logger.all(`🎉 Sync complete. Saving current server state to "${this.serverPath + this.stateName}"`);
@@ -4122,7 +4122,7 @@ class Client {
             await this.clearWorkingDir();
             if (remoteDirPath !== "/") {
                 await this.cdup();
-                await this.removeEmptyDir(remoteDirPath);
+                await this.removeEmptyDir(remoteDirPath.replace(/.*\//,''));
             }
         });
     }
