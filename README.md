@@ -87,10 +87,10 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
 
-    - name: Use Node.js 12
-      uses: actions/setup-node@v2-beta
+    - name: Use Node.js 14
+      uses: actions/setup-node@v2
       with:
-        node-version: '12'
+        node-version: '14'
       
     - name: 🔨 Build Project
       run: |
