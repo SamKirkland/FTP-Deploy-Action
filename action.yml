@@ -26,6 +26,9 @@ inputs:
   state-name:
     required: false
     description: "Path and name of the state file - this file is used to track which files have been deployed"
+  force:
+    required: false
+    description: "Force the deploy process, cleaning the 'state-name' file and doing the deploy from scratch"
   dry-run:
     required: false
     description: "Prints which modifications will be made with current config options, but doesnt actually make any changes"
