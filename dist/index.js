@@ -2544,9 +2544,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.HashDiff = exports.fileHash = void 0;
 const fs_1 = __importDefault(__nccwpck_require__(5747));
 const crypto_1 = __importDefault(__nccwpck_require__(6417));
-function formatNumber(number) {
-    return number.toLocaleString();
-}
 function fileHash(filename, algorithm) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
@@ -2575,23 +2572,18 @@ function fileHash(filename, algorithm) {
 }
 exports.fileHash = fileHash;
 class HashDiff {
-    getDiffs(localFiles, serverFiles, logger) {
+    getDiffs(localFiles, serverFiles) {
         var _a, _b, _c;
         const uploadList = [];
         const deleteList = [];
         const replaceList = [];
+        const sameList = [];
         let sizeUpload = 0;
         let sizeDelete = 0;
         let sizeReplace = 0;
         // alphabetize each list based off path
         const localFilesSorted = localFiles.data.sort((first, second) => first.name.localeCompare(second.name));
         const serverFilesSorted = serverFiles.data.sort((first, second) => first.name.localeCompare(second.name));
-        logger.standard(`----------------------------------------------------------------`);
-        logger.standard(`Local Files:\t${formatNumber(localFilesSorted.length)}`);
-        logger.standard(`Server Files:\t${formatNumber(localFilesSorted.length)}`);
-        logger.standard(`----------------------------------------------------------------`);
-        logger.standard(`Calculating differences between client & server`);
-        logger.standard(`----------------------------------------------------------------`);
         let localPosition = 0;
         let serverPosition = 0;
         while (localPosition + serverPosition < localFilesSorted.length + serverFilesSorted.length) {
@@ -2608,15 +2600,11 @@ class HashDiff {
                 fileNameCompare = localFile.name.localeCompare(serverFile.name);
             }
             if (fileNameCompare < 0) {
-                let icon = localFile.type === "folder" ? `📁 Create` : `➕ Upload`;
-                logger.standard(`${icon}: ${localFile.name}`);
                 uploadList.push(localFile);
                 sizeUpload += (_a = localFile.size) !== null && _a !== void 0 ? _a : 0;
                 localPosition += 1;
             }
             else if (fileNameCompare > 0) {
-                let icon = serverFile.type === "folder" ? `📁` : `🗑️`;
-                logger.standard(`${icon}  Delete: ${serverFile.name}    `);
                 deleteList.push(serverFile);
                 sizeDelete += (_b = serverFile.size) !== null && _b !== void 0 ? _b : 0;
                 serverPosition += 1;
@@ -2625,10 +2613,9 @@ class HashDiff {
                 // paths are a match
                 if (localFile.type === "file" && serverFile.type === "file") {
                     if (localFile.hash === serverFile.hash) {
-                        logger.standard(`⚖️  File content is the same, doing nothing: ${localFile.name}`);
+                        sameList.push(localFile);
                     }
                     else {
-                        logger.standard(`🔁 File replace: ${localFile.name}`);
                         sizeReplace += (_c = localFile.size) !== null && _c !== void 0 ? _c : 0;
                         replaceList.push(localFile);
                     }
@@ -2637,10 +2624,26 @@ class HashDiff {
                 serverPosition += 1;
             }
         }
+        // optimize modifications
+        let foldersToDelete = deleteList.filter((item) => item.type === "folder");
+        // remove files/folders that have a nested parent folder we plan on deleting
+        const optimizedDeleteList = deleteList.filter((itemToDelete) => {
+            const parentFolderIsBeingDeleted = foldersToDelete.find((folder) => {
+                const isSameFile = itemToDelete.name === folder.name;
+                const parentFolderExists = itemToDelete.name.startsWith(folder.name);
+                return parentFolderExists && !isSameFile;
+            }) !== undefined;
+            if (parentFolderIsBeingDeleted) {
+                // a parent folder is being deleted, no need to delete this one
+                return false;
+            }
+            return true;
+        });
         return {
             upload: uploadList,
-            delete: deleteList,
+            delete: optimizedDeleteList,
             replace: replaceList,
+            same: sameList,
             sizeDelete,
             sizeReplace,
             sizeUpload
@@ -2764,6 +2767,11 @@ function getServerFiles(client, logger, timings, args) {
             const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
             logger.all(`----------------------------------------------------------------`);
             logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" })}`);
+            // apply exclude options to server
+            if (args.exclude.length > 0) {
+                const filteredData = serverFiles.data.filter((item) => utilities_1.applyExcludeFilter({ path: item.name, isDirectory: () => item.type === "folder" }, args.exclude));
+                serverFiles.data = filteredData;
+            }
             return serverFiles;
         }
         catch (error) {
@@ -2810,7 +2818,33 @@ function deploy(args, logger, timings) {
             const serverFiles = yield getServerFiles(client, logger, timings, args);
             timings.start("logging");
             const diffTool = new HashDiff_1.HashDiff();
-            const diffs = diffTool.getDiffs(localFiles, serverFiles, logger);
+            logger.standard(`----------------------------------------------------------------`);
+            logger.standard(`Local Files:\t${utilities_1.formatNumber(localFiles.data.length)}`);
+            logger.standard(`Server Files:\t${utilities_1.formatNumber(serverFiles.data.length)}`);
+            logger.standard(`----------------------------------------------------------------`);
+            logger.standard(`Calculating differences between client & server`);
+            logger.standard(`----------------------------------------------------------------`);
+            const diffs = diffTool.getDiffs(localFiles, serverFiles);
+            diffs.upload.filter((itemUpload) => itemUpload.type === "folder").map((itemUpload) => {
+                logger.standard(`📁 Create: ${itemUpload.name}`);
+            });
+            diffs.upload.filter((itemUpload) => itemUpload.type === "file").map((itemUpload) => {
+                logger.standard(`📄 Upload: ${itemUpload.name}`);
+            });
+            diffs.replace.map((itemReplace) => {
+                logger.standard(`🔁 File replace: ${itemReplace.name}`);
+            });
+            diffs.delete.filter((itemUpload) => itemUpload.type === "file").map((itemDelete) => {
+                logger.standard(`📄 Delete: ${itemDelete.name}    `);
+            });
+            diffs.delete.filter((itemUpload) => itemUpload.type === "folder").map((itemDelete) => {
+                logger.standard(`📁 Delete: ${itemDelete.name}    `);
+            });
+            diffs.same.map((itemSame) => {
+                if (itemSame.type === "file") {
+                    logger.standard(`⚖️  File content is the same, doing nothing: ${itemSame.name}`);
+                }
+            });
             timings.stop("logging");
             totalBytesUploaded = diffs.sizeUpload + diffs.sizeReplace;
             timings.start("upload");
@@ -2835,7 +2869,7 @@ function deploy(args, logger, timings) {
         logger.all(`----------------------------------------------------------------`);
         logger.all(`Time spent hashing: ${timings.getTimeFormatted("hash")}`);
         logger.all(`Time spent connecting to server: ${timings.getTimeFormatted("connecting")}`);
-        logger.all(`Time spent deploying: ${timings.getTimeFormatted("upload")}(${uploadSpeed} / second)`);
+        logger.all(`Time spent deploying: ${timings.getTimeFormatted("upload")} (${uploadSpeed}/second)`);
         logger.all(`  - changing dirs: ${timings.getTimeFormatted("changingDir")}`);
         logger.all(`  - logging: ${timings.getTimeFormatted("logging")}`);
         logger.all(`----------------------------------------------------------------`);
@@ -2927,26 +2961,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getLocalFiles = exports.applyExcludeFilter = void 0;
+exports.getLocalFiles = void 0;
 const readdir_enhanced_1 = __importDefault(__nccwpck_require__(8811));
 const types_1 = __nccwpck_require__(6703);
 const HashDiff_1 = __nccwpck_require__(9946);
-const multimatch_1 = __importDefault(__nccwpck_require__(8222));
-function applyExcludeFilter(stat, excludeFilter) {
-    // match exclude, return immediatley
-    if (excludeFilter.length > 0) {
-        const pathWithFolderSlash = stat.path + (stat.isDirectory() ? "/" : "");
-        const excludeMatch = multimatch_1.default(pathWithFolderSlash, excludeFilter, { matchBase: true, dot: true });
-        if (excludeMatch.length > 0) {
-            return false;
-        }
-    }
-    return true;
-}
-exports.applyExcludeFilter = applyExcludeFilter;
+const utilities_1 = __nccwpck_require__(4389);
 function getLocalFiles(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        const files = yield readdir_enhanced_1.default.async(args["local-dir"], { deep: true, stats: true, sep: "/", filter: (stat) => applyExcludeFilter(stat, args.exclude) });
+        const files = yield readdir_enhanced_1.default.async(args["local-dir"], { deep: true, stats: true, sep: "/", filter: (stat) => utilities_1.applyExcludeFilter(stat, args.exclude) });
         const records = [];
         for (let stat of files) {
             if (stat.isDirectory()) {
@@ -3138,22 +3160,12 @@ class FTPSyncProvider {
         });
     }
     removeFolder(folderPath) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.all(`removing folder "${folderPath + "/"}"`);
-            const path = this.getFileBreadcrumbs(folderPath + "/");
-            if (path.folders === null) {
-                this.logger.verbose(`  no need to change dir`);
+            const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
+            this.logger.all(`removing folder "${absoluteFolderPath}"`);
+            if (this.dryRun === false) {
+                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(absoluteFolderPath); }));
             }
-            else {
-                const relativeFolderPath = path.folders[((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length) - 1] + "/";
-                this.logger.verbose(`  removing folder "${relativeFolderPath}"`);
-                if (this.dryRun === false) {
-                    yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(relativeFolderPath); }));
-                }
-            }
-            // navigate back to the root folder
-            yield this.upDir((_b = path.folders) === null || _b === void 0 ? void 0 : _b.length);
             this.logger.verbose(`  completed`);
         });
     }
@@ -3304,10 +3316,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getDefaultSettings = exports.Timer = exports.Timings = exports.retryRequest = exports.pluralize = exports.Logger = void 0;
+exports.applyExcludeFilter = exports.applyFolderFiltersToSubItems = exports.getDefaultSettings = exports.Timer = exports.Timings = exports.retryRequest = exports.formatNumber = exports.pluralize = exports.Logger = void 0;
 const pretty_ms_1 = __importDefault(__nccwpck_require__(1127));
 const module_1 = __nccwpck_require__(8347);
 const types_1 = __nccwpck_require__(6703);
+const multimatch_1 = __importDefault(__nccwpck_require__(8222));
 class Logger {
     constructor(level) {
         this.level = level;
@@ -3336,6 +3349,10 @@ function pluralize(count, singular, plural) {
     return plural;
 }
 exports.pluralize = pluralize;
+function formatNumber(number) {
+    return number.toLocaleString();
+}
+exports.formatNumber = formatNumber;
 /**
  * retry a request
  *
@@ -3446,12 +3463,34 @@ function getDefaultSettings(withoutDefaults) {
         "state-name": (_e = withoutDefaults["state-name"]) !== null && _e !== void 0 ? _e : ".ftp-deploy-sync-state.json",
         "dry-run": (_f = withoutDefaults["dry-run"]) !== null && _f !== void 0 ? _f : false,
         "dangerous-clean-slate": (_g = withoutDefaults["dangerous-clean-slate"]) !== null && _g !== void 0 ? _g : false,
-        "exclude": (_h = withoutDefaults.exclude) !== null && _h !== void 0 ? _h : module_1.excludeDefaults,
+        "exclude": applyFolderFiltersToSubItems((_h = withoutDefaults.exclude) !== null && _h !== void 0 ? _h : module_1.excludeDefaults),
         "log-level": (_j = withoutDefaults["log-level"]) !== null && _j !== void 0 ? _j : "standard",
         "security": (_k = withoutDefaults.security) !== null && _k !== void 0 ? _k : "loose",
     };
 }
 exports.getDefaultSettings = getDefaultSettings;
+/**
+ * automatically exclude all sub-files/sub-folders if we exclude a folder.
+ * For example "test/" should also exclude "test/file.txt"
+ * to do this we add "**" to all folder paths
+ */
+function applyFolderFiltersToSubItems(excludeFilters) {
+    return excludeFilters.map(filter => filter.endsWith("/") ? `${filter}**` : filter);
+}
+exports.applyFolderFiltersToSubItems = applyFolderFiltersToSubItems;
+function applyExcludeFilter(stat, excludeFilters) {
+    // match exclude, return immediatley
+    if (excludeFilters.length > 0) {
+        // todo this could be a performance problem...
+        const pathWithFolderSlash = stat.path + (stat.isDirectory() ? "/" : "");
+        const excludeMatch = multimatch_1.default(pathWithFolderSlash, excludeFilters, { matchBase: true, dot: true });
+        if (excludeMatch.length > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+exports.applyExcludeFilter = applyExcludeFilter;
 
 
 /***/ }),
@@ -7956,9 +7995,6 @@ exports.optionalInt = optionalInt;
 function optionalStringArray(argumentName, rawValue) {
     if (typeof rawValue === "string") {
         throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". This option expects an list in the EXACT format described in the readme`);
-    }
-    if (rawValue.length === 0) {
-        return undefined;
     }
     return rawValue;
 }
