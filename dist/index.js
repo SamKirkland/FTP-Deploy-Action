@@ -3316,7 +3316,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.applyExcludeFilter = exports.applyFolderFiltersToSubItems = exports.getDefaultSettings = exports.Timer = exports.Timings = exports.retryRequest = exports.formatNumber = exports.pluralize = exports.Logger = void 0;
+exports.applyExcludeFilter = exports.getDefaultSettings = exports.Timer = exports.Timings = exports.retryRequest = exports.formatNumber = exports.pluralize = exports.Logger = void 0;
 const pretty_ms_1 = __importDefault(__nccwpck_require__(1127));
 const module_1 = __nccwpck_require__(8347);
 const types_1 = __nccwpck_require__(6703);
@@ -3463,21 +3463,12 @@ function getDefaultSettings(withoutDefaults) {
         "state-name": (_e = withoutDefaults["state-name"]) !== null && _e !== void 0 ? _e : ".ftp-deploy-sync-state.json",
         "dry-run": (_f = withoutDefaults["dry-run"]) !== null && _f !== void 0 ? _f : false,
         "dangerous-clean-slate": (_g = withoutDefaults["dangerous-clean-slate"]) !== null && _g !== void 0 ? _g : false,
-        "exclude": applyFolderFiltersToSubItems((_h = withoutDefaults.exclude) !== null && _h !== void 0 ? _h : module_1.excludeDefaults),
+        "exclude": (_h = withoutDefaults.exclude) !== null && _h !== void 0 ? _h : module_1.excludeDefaults,
         "log-level": (_j = withoutDefaults["log-level"]) !== null && _j !== void 0 ? _j : "standard",
         "security": (_k = withoutDefaults.security) !== null && _k !== void 0 ? _k : "loose",
     };
 }
 exports.getDefaultSettings = getDefaultSettings;
-/**
- * automatically exclude all sub-files/sub-folders if we exclude a folder.
- * For example "test/" should also exclude "test/file.txt"
- * to do this we add "**" to all folder paths
- */
-function applyFolderFiltersToSubItems(excludeFilters) {
-    return excludeFilters.map(filter => filter.endsWith("/") ? `${filter}**` : filter);
-}
-exports.applyFolderFiltersToSubItems = applyFolderFiltersToSubItems;
 function applyExcludeFilter(stat, excludeFilters) {
     // match exclude, return immediatley
     if (excludeFilters.length > 0) {
