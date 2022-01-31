@@ -7984,6 +7984,9 @@ function optionalInt(argumentName, rawValue) {
 }
 exports.optionalInt = optionalInt;
 function optionalStringArray(argumentName, rawValue) {
+    if (rawValue.length === 0) {
+        return undefined;
+    }
     if (typeof rawValue === "string") {
         throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". This option expects an list in the EXACT format described in the readme`);
     }

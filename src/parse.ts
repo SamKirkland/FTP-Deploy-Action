@@ -91,6 +91,10 @@ export function optionalInt(argumentName: string, rawValue: string): number | un
 }
 
 export function optionalStringArray(argumentName: string, rawValue: string[]): string[] | undefined {
+    if (rawValue.length === 0) {
+        return undefined;
+    }
+
     if (typeof rawValue === "string") {
         throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". This option expects an list in the EXACT format described in the readme`);
     }
