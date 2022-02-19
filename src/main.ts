@@ -15,6 +15,7 @@ async function runDeployment() {
       "server-dir": optionalString(core.getInput("server-dir")),
       "state-name": optionalString(core.getInput("state-name")),
       "dry-run": optionalBoolean("dry-run", core.getInput("dry-run")),
+      "sync-posix-modes": optionalBoolean("sync-posix-modes", core.getInput("sync-posix-modes")),
       "dangerous-clean-slate": optionalBoolean("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
       "exclude": optionalStringArray("exclude", core.getMultilineInput("exclude")),
       "log-level": optionalLogLevel("log-level", core.getInput("log-level")),

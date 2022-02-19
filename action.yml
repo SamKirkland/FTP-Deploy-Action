@@ -29,6 +29,9 @@ inputs:
   dry-run:
     required: false
     description: "Prints which modifications will be made with current config options, but doesnt actually make any changes"
+  sync-posix-modes:
+    required: false
+    description: "Tries to sync posix file modes from source to destination"
   dangerous-clean-slate:
     required: false
     description: "Deletes ALL contents of server-dir, even items in excluded with exclude argument"
