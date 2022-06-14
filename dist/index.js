@@ -2523,939 +2523,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 /***/ }),
 
-/***/ 9946:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.HashDiff = exports.fileHash = void 0;
-const fs_1 = __importDefault(__nccwpck_require__(5747));
-const crypto_1 = __importDefault(__nccwpck_require__(6417));
-function formatNumber(number) {
-    return number.toLocaleString();
-}
-function fileHash(filename, algorithm) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            // Algorithm depends on availability of OpenSSL on platform
-            // Another algorithms: "sha1", "md5", "sha256", "sha512" ...
-            let shasum = crypto_1.default.createHash(algorithm);
-            try {
-                let s = fs_1.default.createReadStream(filename);
-                s.on("data", function (data) {
-                    shasum.update(data);
-                });
-                s.on("error", function (error) {
-                    reject(error);
-                });
-                // making digest
-                s.on("end", function () {
-                    const hash = shasum.digest("hex");
-                    return resolve(hash);
-                });
-            }
-            catch (error) {
-                return reject("calc fail");
-            }
-        });
-    });
-}
-exports.fileHash = fileHash;
-class HashDiff {
-    getDiffs(localFiles, serverFiles, logger) {
-        var _a, _b, _c;
-        const uploadList = [];
-        const deleteList = [];
-        const replaceList = [];
-        let sizeUpload = 0;
-        let sizeDelete = 0;
-        let sizeReplace = 0;
-        // alphabetize each list based off path
-        const localFilesSorted = localFiles.data.sort((first, second) => first.name.localeCompare(second.name));
-        const serverFilesSorted = serverFiles.data.sort((first, second) => first.name.localeCompare(second.name));
-        logger.standard(`----------------------------------------------------------------`);
-        logger.standard(`Local Files:\t${formatNumber(localFilesSorted.length)}`);
-        logger.standard(`Server Files:\t${formatNumber(localFilesSorted.length)}`);
-        logger.standard(`----------------------------------------------------------------`);
-        logger.standard(`Calculating differences between client & server`);
-        logger.standard(`----------------------------------------------------------------`);
-        let localPosition = 0;
-        let serverPosition = 0;
-        while (localPosition + serverPosition < localFilesSorted.length + serverFilesSorted.length) {
-            let localFile = localFilesSorted[localPosition];
-            let serverFile = serverFilesSorted[serverPosition];
-            let fileNameCompare = 0;
-            if (localFile === undefined) {
-                fileNameCompare = 1;
-            }
-            if (serverFile === undefined) {
-                fileNameCompare = -1;
-            }
-            if (localFile !== undefined && serverFile !== undefined) {
-                fileNameCompare = localFile.name.localeCompare(serverFile.name);
-            }
-            if (fileNameCompare < 0) {
-                let icon = localFile.type === "folder" ? `📁 Create` : `➕ Upload`;
-                logger.standard(`${icon}: ${localFile.name}`);
-                uploadList.push(localFile);
-                sizeUpload += (_a = localFile.size) !== null && _a !== void 0 ? _a : 0;
-                localPosition += 1;
-            }
-            else if (fileNameCompare > 0) {
-                let icon = serverFile.type === "folder" ? `📁` : `🗑️`;
-                logger.standard(`${icon}  Delete: ${serverFile.name}    `);
-                deleteList.push(serverFile);
-                sizeDelete += (_b = serverFile.size) !== null && _b !== void 0 ? _b : 0;
-                serverPosition += 1;
-            }
-            else if (fileNameCompare === 0) {
-                // paths are a match
-                if (localFile.type === "file" && serverFile.type === "file") {
-                    if (localFile.hash === serverFile.hash) {
-                        logger.standard(`⚖️  File content is the same, doing nothing: ${localFile.name}`);
-                    }
-                    else {
-                        logger.standard(`🔁 File replace: ${localFile.name}`);
-                        sizeReplace += (_c = localFile.size) !== null && _c !== void 0 ? _c : 0;
-                        replaceList.push(localFile);
-                    }
-                }
-                localPosition += 1;
-                serverPosition += 1;
-            }
-        }
-        return {
-            upload: uploadList,
-            delete: deleteList,
-            replace: replaceList,
-            sizeDelete,
-            sizeReplace,
-            sizeUpload
-        };
-    }
-}
-exports.HashDiff = HashDiff;
-
-
-/***/ }),
-
-/***/ 232:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.deploy = void 0;
-const ftp = __importStar(__nccwpck_require__(7957));
-const fs_1 = __importDefault(__nccwpck_require__(5747));
-const types_1 = __nccwpck_require__(6703);
-const HashDiff_1 = __nccwpck_require__(9946);
-const utilities_1 = __nccwpck_require__(4389);
-const pretty_bytes_1 = __importDefault(__nccwpck_require__(5168));
-const errorHandling_1 = __nccwpck_require__(3678);
-const syncProvider_1 = __nccwpck_require__(1904);
-const localFiles_1 = __nccwpck_require__(8660);
-function downloadFileList(client, logger, path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // note: originally this was using a writable stream instead of a buffer file
-        // basic-ftp doesn't seam to close the connection when using steams over some ftps connections. This appears to be dependent on the ftp server
-        const tempFileNameHack = ".ftp-deploy-sync-server-state-buffer-file---delete.json";
-        yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.downloadTo(tempFileNameHack, path); }));
-        const fileAsString = fs_1.default.readFileSync(tempFileNameHack, { encoding: "utf-8" });
-        const fileAsObject = JSON.parse(fileAsString);
-        fs_1.default.unlinkSync(tempFileNameHack);
-        return fileAsObject;
-    });
-}
-function createLocalState(localFiles, logger, args) {
-    logger.verbose(`Creating local state at ${args["local-dir"]}${args["state-name"]}`);
-    fs_1.default.writeFileSync(`${args["local-dir"]}${args["state-name"]}`, JSON.stringify(localFiles, undefined, 4), { encoding: "utf8" });
-    logger.verbose("Local state created");
-}
-function connect(client, args, logger) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let secure = false;
-        if (args.protocol === "ftps") {
-            secure = true;
-        }
-        else if (args.protocol === "ftps-legacy") {
-            secure = "implicit";
-        }
-        client.ftp.verbose = args["log-level"] === "verbose";
-        const rejectUnauthorized = args.security === "strict";
-        try {
-            yield client.access({
-                host: args.server,
-                user: args.username,
-                password: args.password,
-                port: args.port,
-                secure: secure,
-                secureOptions: {
-                    rejectUnauthorized: rejectUnauthorized
-                }
-            });
-        }
-        catch (error) {
-            logger.all("Failed to connect, are you sure your server works via FTP or FTPS? Users sometimes get this error when the server only supports SFTP.");
-            throw error;
-        }
-        if (args["log-level"] === "verbose") {
-            client.trackProgress(info => {
-                logger.verbose(`${info.type} progress for "${info.name}". Progress: ${info.bytes} bytes of ${info.bytesOverall} bytes`);
-            });
-        }
-    });
-}
-function getServerFiles(client, logger, timings, args) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield syncProvider_1.ensureDir(client, logger, timings, args["server-dir"]);
-            if (args["dangerous-clean-slate"]) {
-                logger.all(`----------------------------------------------------------------`);
-                logger.all("🗑️ Removing all files on the server because 'dangerous-clean-slate' was set, this will make the deployment very slow...");
-                yield client.clearWorkingDir();
-                logger.all("Clear complete");
-                throw new Error("nope");
-            }
-            const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
-            logger.all(`----------------------------------------------------------------`);
-            logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" })}`);
-            return serverFiles;
-        }
-        catch (error) {
-            logger.all(`----------------------------------------------------------------`);
-            logger.all(`No file exists on the server "${args["server-dir"] + args["state-name"]}" - this must be your first publish! 🎉`);
-            logger.all(`The first publish will take a while... but once the initial sync is done only differences are published!`);
-            logger.all(`If you get this message and its NOT your first publish, something is wrong.`);
-            // set the server state to nothing, because we don't know what the server state is
-            return {
-                description: types_1.syncFileDescription,
-                version: types_1.currentSyncFileVersion,
-                generatedTime: new Date().getTime(),
-                data: [],
-            };
-        }
-    });
-}
-function deploy(args, logger, timings) {
-    return __awaiter(this, void 0, void 0, function* () {
-        timings.start("total");
-        // header
-        logger.all(`----------------------------------------------------------------`);
-        logger.all(`🚀 Thanks for using ftp-deploy. Let's deploy some stuff!   `);
-        logger.all(`----------------------------------------------------------------`);
-        logger.all(`If you found this project helpful, please support it`);
-        logger.all(`by giving it a ⭐ on Github --> https://github.com/SamKirkland/FTP-Deploy-Action`);
-        logger.all(`or add a badge 🏷️ to your projects readme --> https://github.com/SamKirkland/FTP-Deploy-Action#badge`);
-        logger.verbose(`Using the following excludes filters: ${JSON.stringify(args.exclude)}`);
-        timings.start("hash");
-        const localFiles = yield localFiles_1.getLocalFiles(args);
-        timings.stop("hash");
-        createLocalState(localFiles, logger, args);
-        const client = new ftp.Client();
-        global.reconnect = function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                timings.start("connecting");
-                yield connect(client, args, logger);
-                timings.stop("connecting");
-            });
-        };
-        let totalBytesUploaded = 0;
-        try {
-            yield global.reconnect();
-            const serverFiles = yield getServerFiles(client, logger, timings, args);
-            timings.start("logging");
-            const diffTool = new HashDiff_1.HashDiff();
-            const diffs = diffTool.getDiffs(localFiles, serverFiles, logger);
-            timings.stop("logging");
-            totalBytesUploaded = diffs.sizeUpload + diffs.sizeReplace;
-            timings.start("upload");
-            try {
-                const syncProvider = new syncProvider_1.FTPSyncProvider(client, logger, timings, args["local-dir"], args["server-dir"], args["state-name"], args["dry-run"]);
-                yield syncProvider.syncLocalToServer(diffs);
-            }
-            finally {
-                timings.stop("upload");
-            }
-        }
-        catch (error) {
-            errorHandling_1.prettyError(logger, args, error);
-            throw error;
-        }
-        finally {
-            client.close();
-            timings.stop("total");
-        }
-        const uploadSpeed = pretty_bytes_1.default(totalBytesUploaded / (timings.getTime("upload") / 1000));
-        // footer
-        logger.all(`----------------------------------------------------------------`);
-        logger.all(`Time spent hashing: ${timings.getTimeFormatted("hash")}`);
-        logger.all(`Time spent connecting to server: ${timings.getTimeFormatted("connecting")}`);
-        logger.all(`Time spent deploying: ${timings.getTimeFormatted("upload")}(${uploadSpeed} / second)`);
-        logger.all(`  - changing dirs: ${timings.getTimeFormatted("changingDir")}`);
-        logger.all(`  - logging: ${timings.getTimeFormatted("logging")}`);
-        logger.all(`----------------------------------------------------------------`);
-        logger.all(`Total time: ${timings.getTimeFormatted("total")}`);
-        logger.all(`----------------------------------------------------------------`);
-    });
-}
-exports.deploy = deploy;
-
-
-/***/ }),
-
-/***/ 3678:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.prettyError = void 0;
-const types_1 = __nccwpck_require__(6703);
-function logOriginalError(logger, error) {
-    logger.all();
-    logger.all(`----------------------------------------------------------------`);
-    logger.all(`----------------------  full error below  ----------------------`);
-    logger.all(`----------------------------------------------------------------`);
-    logger.all();
-    logger.all(error);
-}
-/**
- * Converts a exception to helpful debug info
- * @param error exception
- */
-function prettyError(logger, args, error) {
-    logger.all();
-    logger.all(`----------------------------------------------------------------`);
-    logger.all(`--------------  🔥🔥🔥 an error occurred  🔥🔥🔥  --------------`);
-    logger.all(`----------------------------------------------------------------`);
-    const ftpError = error;
-    if (typeof error.code === "string") {
-        const errorCode = error.code;
-        if (errorCode === "ENOTFOUND") {
-            logger.all(`The server "${args.server}" doesn't seem to exist. Do you have a typo?`);
-        }
-    }
-    else if (typeof error.name === "string") {
-        const errorName = error.name;
-        if (errorName.includes("ERR_TLS_CERT_ALTNAME_INVALID")) {
-            logger.all(`The certificate for "${args.server}" is likely shared. The host did not place your server on the list of valid domains for this cert.`);
-            logger.all(`This is a common issue with shared hosts. You have a few options:`);
-            logger.all(` - Ignore this error by setting security back to loose`);
-            logger.all(` - Contact your hosting provider and ask them for your servers hostname`);
-        }
-    }
-    else if (typeof ftpError.code === "number") {
-        if (ftpError.code === types_1.ErrorCode.NotLoggedIn) {
-            const serverRequiresFTPS = ftpError.message.toLowerCase().includes("must use encryption");
-            if (serverRequiresFTPS) {
-                logger.all(`The server you are connecting to requires encryption (ftps)`);
-                logger.all(`Enable FTPS by using the protocol option.`);
-            }
-            else {
-                logger.all(`Could not login with the username "${args.username}" and password "${args.password}".`);
-                logger.all(`Make sure you can login with those credentials. If you have a space or a quote in your username or password be sure to escape them!`);
-            }
-        }
-    }
-    logOriginalError(logger, error);
-}
-exports.prettyError = prettyError;
-
-
-/***/ }),
-
-/***/ 8660:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getLocalFiles = exports.applyExcludeFilter = void 0;
-const readdir_enhanced_1 = __importDefault(__nccwpck_require__(8811));
-const types_1 = __nccwpck_require__(6703);
-const HashDiff_1 = __nccwpck_require__(9946);
-const multimatch_1 = __importDefault(__nccwpck_require__(8222));
-function applyExcludeFilter(stat, excludeFilter) {
-    // match exclude, return immediatley
-    if (excludeFilter.length > 0) {
-        const pathWithFolderSlash = stat.path + (stat.isDirectory() ? "/" : "");
-        const excludeMatch = multimatch_1.default(pathWithFolderSlash, excludeFilter, { matchBase: true, dot: true });
-        if (excludeMatch.length > 0) {
-            return false;
-        }
-    }
-    return true;
-}
-exports.applyExcludeFilter = applyExcludeFilter;
-function getLocalFiles(args) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const files = yield readdir_enhanced_1.default.async(args["local-dir"], { deep: true, stats: true, sep: "/", filter: (stat) => applyExcludeFilter(stat, args.exclude) });
-        const records = [];
-        for (let stat of files) {
-            if (stat.isDirectory()) {
-                records.push({
-                    type: "folder",
-                    name: stat.path,
-                    size: undefined
-                });
-                continue;
-            }
-            if (stat.isFile()) {
-                records.push({
-                    type: "file",
-                    name: stat.path,
-                    size: stat.size,
-                    hash: yield HashDiff_1.fileHash(args["local-dir"] + stat.path, "sha256")
-                });
-                continue;
-            }
-            if (stat.isSymbolicLink()) {
-                console.warn("This script is currently unable to handle symbolic links - please add a feature request if you need this");
-            }
-        }
-        return {
-            description: types_1.syncFileDescription,
-            version: types_1.currentSyncFileVersion,
-            generatedTime: new Date().getTime(),
-            data: records
-        };
-    });
-}
-exports.getLocalFiles = getLocalFiles;
-
-
-/***/ }),
-
-/***/ 8347:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.deploy = exports.excludeDefaults = void 0;
-const deploy_1 = __nccwpck_require__(232);
-const utilities_1 = __nccwpck_require__(4389);
-/**
- * Default excludes, ignores all git files and the node_modules folder
- * **\/.git* ignores all FILES that start with .git(in any folder or sub-folder)
- * **\/.git*\/** ignores all FOLDERS that start with .git (in any folder or sub-folder)
- * **\/node_modules\/** ignores all FOLDERS named node_modules (in any folder or sub-folder)
- */
-exports.excludeDefaults = ["**/.git*", "**/.git*/**", "**/node_modules/**"];
-/**
- * Syncs a local folder with a remote folder over FTP.
- * After the initial sync only differences are synced, making deployments super fast!
- */
-function deploy(args) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const argsWithDefaults = utilities_1.getDefaultSettings(args);
-        const logger = new utilities_1.Logger(argsWithDefaults["log-level"]);
-        const timings = new utilities_1.Timings();
-        yield deploy_1.deploy(argsWithDefaults, logger, timings);
-    });
-}
-exports.deploy = deploy;
-
-
-/***/ }),
-
-/***/ 1904:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FTPSyncProvider = exports.ensureDir = void 0;
-const pretty_bytes_1 = __importDefault(__nccwpck_require__(5168));
-const types_1 = __nccwpck_require__(6703);
-const utilities_1 = __nccwpck_require__(4389);
-function ensureDir(client, logger, timings, folder) {
-    return __awaiter(this, void 0, void 0, function* () {
-        timings.start("changingDir");
-        logger.verbose(`  changing dir to ${folder}`);
-        yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.ensureDir(folder); }));
-        logger.verbose(`  dir changed`);
-        timings.stop("changingDir");
-    });
-}
-exports.ensureDir = ensureDir;
-class FTPSyncProvider {
-    constructor(client, logger, timings, localPath, serverPath, stateName, dryRun) {
-        this.client = client;
-        this.logger = logger;
-        this.timings = timings;
-        this.localPath = localPath;
-        this.serverPath = serverPath;
-        this.stateName = stateName;
-        this.dryRun = dryRun;
-    }
-    /**
-     * Converts a file path (ex: "folder/otherfolder/file.txt") to an array of folder and a file path
-     * @param fullPath
-     */
-    getFileBreadcrumbs(fullPath) {
-        var _a;
-        // todo see if this regex will work for nonstandard folder names
-        // todo what happens if the path is relative to the root dir? (starts with /)
-        const pathSplit = fullPath.split("/");
-        const file = (_a = pathSplit === null || pathSplit === void 0 ? void 0 : pathSplit.pop()) !== null && _a !== void 0 ? _a : ""; // get last item
-        const folders = pathSplit.filter(folderName => folderName != "");
-        return {
-            folders: folders.length === 0 ? null : folders,
-            file: file === "" ? null : file
-        };
-    }
-    /**
-     * Navigates up {dirCount} number of directories from the current working dir
-     */
-    upDir(dirCount) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof dirCount !== "number") {
-                return;
-            }
-            // navigate back to the starting folder
-            for (let i = 0; i < dirCount; i++) {
-                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.cdup(); }));
-            }
-        });
-    }
-    createFolder(folderPath) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            this.logger.all(`creating folder "${folderPath + "/"}"`);
-            if (this.dryRun === true) {
-                return;
-            }
-            const path = this.getFileBreadcrumbs(folderPath + "/");
-            if (path.folders === null) {
-                this.logger.verbose(`  no need to change dir`);
-            }
-            else {
-                yield ensureDir(this.client, this.logger, this.timings, path.folders.join("/"));
-            }
-            // navigate back to the root folder
-            yield this.upDir((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length);
-            this.logger.verbose(`  completed`);
-        });
-    }
-    removeFile(filePath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.logger.all(`removing "${filePath}"`);
-            if (this.dryRun === false) {
-                try {
-                    yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.remove(filePath); }));
-                }
-                catch (e) {
-                    // this error is common when a file was deleted on the server directly
-                    if (e.code === types_1.ErrorCode.FileNotFoundOrNoAccess) {
-                        this.logger.standard("File not found or you don't have access to the file - skipping...");
-                    }
-                    else {
-                        throw e;
-                    }
-                }
-            }
-            this.logger.verbose(`  file removed`);
-            this.logger.verbose(`  completed`);
-        });
-    }
-    removeFolder(folderPath) {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            this.logger.all(`removing folder "${folderPath + "/"}"`);
-            const path = this.getFileBreadcrumbs(folderPath + "/");
-            if (path.folders === null) {
-                this.logger.verbose(`  no need to change dir`);
-            }
-            else {
-                const relativeFolderPath = path.folders[((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length) - 1] + "/";
-                this.logger.verbose(`  removing folder "${relativeFolderPath}"`);
-                if (this.dryRun === false) {
-                    yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(relativeFolderPath); }));
-                }
-            }
-            // navigate back to the root folder
-            yield this.upDir((_b = path.folders) === null || _b === void 0 ? void 0 : _b.length);
-            this.logger.verbose(`  completed`);
-        });
-    }
-    uploadFile(filePath, type = "upload") {
-        return __awaiter(this, void 0, void 0, function* () {
-            const typePresent = type === "upload" ? "uploading" : "replacing";
-            const typePast = type === "upload" ? "uploaded" : "replaced";
-            this.logger.all(`${typePresent} "${filePath}"`);
-            if (this.dryRun === false) {
-                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.uploadFrom(this.localPath + filePath, filePath); }));
-            }
-            this.logger.verbose(`  file ${typePast}`);
-        });
-    }
-    syncLocalToServer(diffs) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const totalCount = diffs.delete.length + diffs.upload.length + diffs.replace.length;
-            this.logger.all(`----------------------------------------------------------------`);
-            this.logger.all(`Making changes to ${totalCount} ${utilities_1.pluralize(totalCount, "file/folder", "files/folders")} to sync server state`);
-            this.logger.all(`Uploading: ${pretty_bytes_1.default(diffs.sizeUpload)} -- Deleting: ${pretty_bytes_1.default(diffs.sizeDelete)} -- Replacing: ${pretty_bytes_1.default(diffs.sizeReplace)}`);
-            this.logger.all(`----------------------------------------------------------------`);
-            // create new folders
-            for (const file of diffs.upload.filter(item => item.type === "folder")) {
-                yield this.createFolder(file.name);
-            }
-            // upload new files
-            for (const file of diffs.upload.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
-                yield this.uploadFile(file.name, "upload");
-            }
-            // replace new files
-            for (const file of diffs.replace.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
-                // note: FTP will replace old files with new files. We run replacements after uploads to limit downtime
-                yield this.uploadFile(file.name, "replace");
-            }
-            // delete old files
-            for (const file of diffs.delete.filter(item => item.type === "file")) {
-                yield this.removeFile(file.name);
-            }
-            // delete old folders
-            for (const file of diffs.delete.filter(item => item.type === "folder")) {
-                yield this.removeFolder(file.name);
-            }
-            this.logger.all(`----------------------------------------------------------------`);
-            this.logger.all(`🎉 Sync complete. Saving current server state to "${this.serverPath + this.stateName}"`);
-            if (this.dryRun === false) {
-                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.uploadFrom(this.localPath + this.stateName, this.stateName); }));
-            }
-        });
-    }
-}
-exports.FTPSyncProvider = FTPSyncProvider;
-
-
-/***/ }),
-
-/***/ 6703:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ErrorCode = exports.syncFileDescription = exports.currentSyncFileVersion = void 0;
-exports.currentSyncFileVersion = "1.0.0";
-exports.syncFileDescription = "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action";
-var ErrorCode;
-(function (ErrorCode) {
-    // The requested action is being initiated, expect another reply before proceeding with a new command.
-    ErrorCode[ErrorCode["RestartMarkerReplay"] = 110] = "RestartMarkerReplay";
-    ErrorCode[ErrorCode["ServiceReadyInNNNMinutes"] = 120] = "ServiceReadyInNNNMinutes";
-    ErrorCode[ErrorCode["DataConnectionAlreadyOpenStartingTransfer"] = 125] = "DataConnectionAlreadyOpenStartingTransfer";
-    ErrorCode[ErrorCode["FileStatusOkayOpeningDataConnection"] = 150] = "FileStatusOkayOpeningDataConnection";
-    // The requested action has been successfully completed.
-    ErrorCode[ErrorCode["CommandNotImplemented"] = 202] = "CommandNotImplemented";
-    ErrorCode[ErrorCode["SystemStatus"] = 211] = "SystemStatus";
-    ErrorCode[ErrorCode["DirectoryStatus"] = 212] = "DirectoryStatus";
-    ErrorCode[ErrorCode["FileStatus"] = 213] = "FileStatus";
-    ErrorCode[ErrorCode["HelpMessage"] = 214] = "HelpMessage";
-    ErrorCode[ErrorCode["IANAOfficialName"] = 215] = "IANAOfficialName";
-    ErrorCode[ErrorCode["ReadyForNewUser"] = 220] = "ReadyForNewUser";
-    ErrorCode[ErrorCode["ClosingControlConnection"] = 221] = "ClosingControlConnection";
-    ErrorCode[ErrorCode["DataConnectionOpen"] = 225] = "DataConnectionOpen";
-    ErrorCode[ErrorCode["SuccessNowClosingDataConnection"] = 226] = "SuccessNowClosingDataConnection";
-    ErrorCode[ErrorCode["EnteringPassiveMode"] = 227] = "EnteringPassiveMode";
-    ErrorCode[ErrorCode["EnteringLongPassiveMode"] = 228] = "EnteringLongPassiveMode";
-    ErrorCode[ErrorCode["EnteringExtendedPassiveMode"] = 229] = "EnteringExtendedPassiveMode";
-    ErrorCode[ErrorCode["UserLoggedIn"] = 230] = "UserLoggedIn";
-    ErrorCode[ErrorCode["UserLoggedOut"] = 231] = "UserLoggedOut";
-    ErrorCode[ErrorCode["LogoutWillCompleteWhenTransferDone"] = 232] = "LogoutWillCompleteWhenTransferDone";
-    ErrorCode[ErrorCode["ServerAcceptsAuthenticationMethod"] = 234] = "ServerAcceptsAuthenticationMethod";
-    ErrorCode[ErrorCode["ActionComplete"] = 250] = "ActionComplete";
-    ErrorCode[ErrorCode["PathNameCreated"] = 257] = "PathNameCreated";
-    // The command has been accepted, but the requested action is on hold, pending receipt of further information.
-    ErrorCode[ErrorCode["UsernameOkayPasswordNeeded"] = 331] = "UsernameOkayPasswordNeeded";
-    ErrorCode[ErrorCode["NeedAccountForLogin"] = 332] = "NeedAccountForLogin";
-    ErrorCode[ErrorCode["RequestedFileActionPendingFurtherInformation"] = 350] = "RequestedFileActionPendingFurtherInformation";
-    // The command was not accepted and the requested action did not take place, but the error condition is temporary and the action may be requested again.
-    ErrorCode[ErrorCode["ServiceNotAvailable"] = 421] = "ServiceNotAvailable";
-    ErrorCode[ErrorCode["CantOpenDataConnection"] = 425] = "CantOpenDataConnection";
-    ErrorCode[ErrorCode["ConnectionClosed"] = 426] = "ConnectionClosed";
-    ErrorCode[ErrorCode["InvalidUsernameOrPassword"] = 430] = "InvalidUsernameOrPassword";
-    ErrorCode[ErrorCode["HostUnavailable"] = 434] = "HostUnavailable";
-    ErrorCode[ErrorCode["FileActionNotTaken"] = 450] = "FileActionNotTaken";
-    ErrorCode[ErrorCode["LocalErrorProcessing"] = 451] = "LocalErrorProcessing";
-    ErrorCode[ErrorCode["InsufficientStorageSpaceOrFileInUse"] = 452] = "InsufficientStorageSpaceOrFileInUse";
-    // Syntax error, command unrecognized and the requested action did not take place. This may include errors such as command line too long.
-    ErrorCode[ErrorCode["SyntaxErrorInParameters"] = 501] = "SyntaxErrorInParameters";
-    ErrorCode[ErrorCode["CommandNotImpemented"] = 502] = "CommandNotImpemented";
-    ErrorCode[ErrorCode["BadSequenceOfCommands"] = 503] = "BadSequenceOfCommands";
-    ErrorCode[ErrorCode["CommandNotImplementedForThatParameter"] = 504] = "CommandNotImplementedForThatParameter";
-    ErrorCode[ErrorCode["NotLoggedIn"] = 530] = "NotLoggedIn";
-    ErrorCode[ErrorCode["NeedAccountForStoringFiles"] = 532] = "NeedAccountForStoringFiles";
-    ErrorCode[ErrorCode["CouldNotConnectToServerRequiresSSL"] = 534] = "CouldNotConnectToServerRequiresSSL";
-    ErrorCode[ErrorCode["FileNotFoundOrNoAccess"] = 550] = "FileNotFoundOrNoAccess";
-    ErrorCode[ErrorCode["UnknownPageType"] = 551] = "UnknownPageType";
-    ErrorCode[ErrorCode["ExceededStorageAllocation"] = 552] = "ExceededStorageAllocation";
-    ErrorCode[ErrorCode["FileNameNotAllowed"] = 553] = "FileNameNotAllowed";
-    // Replies regarding confidentiality and integrity
-    ErrorCode[ErrorCode["IntegrityProtectedReply"] = 631] = "IntegrityProtectedReply";
-    ErrorCode[ErrorCode["ConfidentialityAndIntegrityProtectedReply"] = 632] = "ConfidentialityAndIntegrityProtectedReply";
-    ErrorCode[ErrorCode["ConfidentialityProtectedReply"] = 633] = "ConfidentialityProtectedReply";
-    // Common Winsock Error Codes[2] (These are not FTP return codes)
-    ErrorCode[ErrorCode["ConnectionClosedByServer"] = 10054] = "ConnectionClosedByServer";
-    ErrorCode[ErrorCode["CannotConnect"] = 10060] = "CannotConnect";
-    ErrorCode[ErrorCode["CannotConnectRefusedByServer"] = 10061] = "CannotConnectRefusedByServer";
-    ErrorCode[ErrorCode["DirectoryNotEmpty"] = 10066] = "DirectoryNotEmpty";
-    ErrorCode[ErrorCode["TooManyUsers"] = 10068] = "TooManyUsers";
-})(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {}));
-;
-
-
-/***/ }),
-
-/***/ 4389:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getDefaultSettings = exports.Timer = exports.Timings = exports.retryRequest = exports.pluralize = exports.Logger = void 0;
-const pretty_ms_1 = __importDefault(__nccwpck_require__(1127));
-const module_1 = __nccwpck_require__(8347);
-const types_1 = __nccwpck_require__(6703);
-class Logger {
-    constructor(level) {
-        this.level = level;
-    }
-    all(...data) {
-        console.log(...data);
-    }
-    standard(...data) {
-        if (this.level === "minimal") {
-            return;
-        }
-        console.log(...data);
-    }
-    verbose(...data) {
-        if (this.level !== "verbose") {
-            return;
-        }
-        console.log(...data);
-    }
-}
-exports.Logger = Logger;
-function pluralize(count, singular, plural) {
-    if (count === 1) {
-        return singular;
-    }
-    return plural;
-}
-exports.pluralize = pluralize;
-/**
- * retry a request
- *
- * @example retryRequest(logger, async () => await item());
- */
-function retryRequest(logger, callback) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            return yield callback();
-        }
-        catch (e) {
-            if (e.code >= 400 && e.code <= 499) {
-                logger.standard("400 level error from server when performing action - retrying...");
-                logger.standard(e);
-                if (e.code === types_1.ErrorCode.ConnectionClosed) {
-                    logger.all("Connection closed. This library does not currently handle reconnects");
-                    // await global.reconnect();
-                    // todo reset current working dir
-                    throw e;
-                }
-                return yield callback();
-            }
-            else {
-                throw e;
-            }
-        }
-    });
-}
-exports.retryRequest = retryRequest;
-class Timings {
-    constructor() {
-        this.timers = {};
-    }
-    start(type) {
-        if (this.timers[type] === undefined) {
-            this.timers[type] = new Timer();
-        }
-        this.timers[type].start();
-    }
-    stop(type) {
-        this.timers[type].stop();
-    }
-    getTime(type) {
-        const timer = this.timers[type];
-        if (timer === undefined || timer.time === null) {
-            return 0;
-        }
-        return timer.time;
-    }
-    getTimeFormatted(type) {
-        const timer = this.timers[type];
-        if (timer === undefined || timer.time === null) {
-            return "💣 Failed";
-        }
-        return pretty_ms_1.default(timer.time, { verbose: true });
-    }
-}
-exports.Timings = Timings;
-class Timer {
-    constructor() {
-        this.totalTime = null;
-        this.startTime = null;
-        this.endTime = null;
-    }
-    start() {
-        this.startTime = process.hrtime();
-    }
-    stop() {
-        if (this.startTime === null) {
-            throw new Error("Called .stop() before calling .start()");
-        }
-        this.endTime = process.hrtime(this.startTime);
-        const currentSeconds = this.totalTime === null ? 0 : this.totalTime[0];
-        const currentNS = this.totalTime === null ? 0 : this.totalTime[1];
-        this.totalTime = [
-            currentSeconds + this.endTime[0],
-            currentNS + this.endTime[1]
-        ];
-    }
-    get time() {
-        if (this.totalTime === null) {
-            return null;
-        }
-        return (this.totalTime[0] * 1000) + (this.totalTime[1] / 1000000);
-    }
-}
-exports.Timer = Timer;
-function getDefaultSettings(withoutDefaults) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-    if (withoutDefaults["local-dir"] !== undefined) {
-        if (!withoutDefaults["local-dir"].endsWith("/")) {
-            throw new Error("local-dir should be a folder (must end with /)");
-        }
-    }
-    if (withoutDefaults["server-dir"] !== undefined) {
-        if (!withoutDefaults["server-dir"].endsWith("/")) {
-            throw new Error("server-dir should be a folder (must end with /)");
-        }
-    }
-    return {
-        "server": withoutDefaults.server,
-        "username": withoutDefaults.username,
-        "password": withoutDefaults.password,
-        "port": (_a = withoutDefaults.port) !== null && _a !== void 0 ? _a : 21,
-        "protocol": (_b = withoutDefaults.protocol) !== null && _b !== void 0 ? _b : "ftp",
-        "local-dir": (_c = withoutDefaults["local-dir"]) !== null && _c !== void 0 ? _c : "./",
-        "server-dir": (_d = withoutDefaults["server-dir"]) !== null && _d !== void 0 ? _d : "./",
-        "state-name": (_e = withoutDefaults["state-name"]) !== null && _e !== void 0 ? _e : ".ftp-deploy-sync-state.json",
-        "dry-run": (_f = withoutDefaults["dry-run"]) !== null && _f !== void 0 ? _f : false,
-        "dangerous-clean-slate": (_g = withoutDefaults["dangerous-clean-slate"]) !== null && _g !== void 0 ? _g : false,
-        "exclude": (_h = withoutDefaults.exclude) !== null && _h !== void 0 ? _h : module_1.excludeDefaults,
-        "log-level": (_j = withoutDefaults["log-level"]) !== null && _j !== void 0 ? _j : "standard",
-        "security": (_k = withoutDefaults.security) !== null && _k !== void 0 ? _k : "loose",
-    };
-}
-exports.getDefaultSettings = getDefaultSettings;
-
-
-/***/ }),
-
 /***/ 6554:
 /***/ ((module) => {
 
@@ -6140,6 +5207,994 @@ var isArray = Array.isArray || function (xs) {
 
 /***/ }),
 
+/***/ 9526:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.HashDiff = exports.fileHash = void 0;
+const fs_1 = __importDefault(__nccwpck_require__(5747));
+const crypto_1 = __importDefault(__nccwpck_require__(6417));
+function fileHash(filename, algorithm) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            // Algorithm depends on availability of OpenSSL on platform
+            // Another algorithms: "sha1", "md5", "sha256", "sha512" ...
+            let shasum = crypto_1.default.createHash(algorithm);
+            try {
+                let s = fs_1.default.createReadStream(filename);
+                s.on("data", function (data) {
+                    shasum.update(data);
+                });
+                s.on("error", function (error) {
+                    reject(error);
+                });
+                // making digest
+                s.on("end", function () {
+                    const hash = shasum.digest("hex");
+                    return resolve(hash);
+                });
+            }
+            catch (error) {
+                return reject("calc fail");
+            }
+        });
+    });
+}
+exports.fileHash = fileHash;
+class HashDiff {
+    getDiffs(localFiles, serverFiles) {
+        var _a, _b, _c;
+        const uploadList = [];
+        const deleteList = [];
+        const replaceList = [];
+        const sameList = [];
+        let sizeUpload = 0;
+        let sizeDelete = 0;
+        let sizeReplace = 0;
+        // alphabetize each list based off path
+        const localFilesSorted = localFiles.data.sort((first, second) => first.name.localeCompare(second.name));
+        const serverFilesSorted = serverFiles.data.sort((first, second) => first.name.localeCompare(second.name));
+        let localPosition = 0;
+        let serverPosition = 0;
+        while (localPosition + serverPosition < localFilesSorted.length + serverFilesSorted.length) {
+            let localFile = localFilesSorted[localPosition];
+            let serverFile = serverFilesSorted[serverPosition];
+            let fileNameCompare = 0;
+            if (localFile === undefined) {
+                fileNameCompare = 1;
+            }
+            if (serverFile === undefined) {
+                fileNameCompare = -1;
+            }
+            if (localFile !== undefined && serverFile !== undefined) {
+                fileNameCompare = localFile.name.localeCompare(serverFile.name);
+            }
+            if (fileNameCompare < 0) {
+                uploadList.push(localFile);
+                sizeUpload += (_a = localFile.size) !== null && _a !== void 0 ? _a : 0;
+                localPosition += 1;
+            }
+            else if (fileNameCompare > 0) {
+                deleteList.push(serverFile);
+                sizeDelete += (_b = serverFile.size) !== null && _b !== void 0 ? _b : 0;
+                serverPosition += 1;
+            }
+            else if (fileNameCompare === 0) {
+                // paths are a match
+                if (localFile.type === "file" && serverFile.type === "file") {
+                    if (localFile.hash === serverFile.hash) {
+                        sameList.push(localFile);
+                    }
+                    else {
+                        sizeReplace += (_c = localFile.size) !== null && _c !== void 0 ? _c : 0;
+                        replaceList.push(localFile);
+                    }
+                }
+                localPosition += 1;
+                serverPosition += 1;
+            }
+        }
+        // optimize modifications
+        let foldersToDelete = deleteList.filter((item) => item.type === "folder");
+        // remove files/folders that have a nested parent folder we plan on deleting
+        const optimizedDeleteList = deleteList.filter((itemToDelete) => {
+            const parentFolderIsBeingDeleted = foldersToDelete.find((folder) => {
+                const isSameFile = itemToDelete.name === folder.name;
+                const parentFolderExists = itemToDelete.name.startsWith(folder.name);
+                return parentFolderExists && !isSameFile;
+            }) !== undefined;
+            if (parentFolderIsBeingDeleted) {
+                // a parent folder is being deleted, no need to delete this one
+                return false;
+            }
+            return true;
+        });
+        return {
+            upload: uploadList,
+            delete: optimizedDeleteList,
+            replace: replaceList,
+            same: sameList,
+            sizeDelete,
+            sizeReplace,
+            sizeUpload
+        };
+    }
+}
+exports.HashDiff = HashDiff;
+
+
+/***/ }),
+
+/***/ 9952:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.deploy = void 0;
+const ftp = __importStar(__nccwpck_require__(7957));
+const fs_1 = __importDefault(__nccwpck_require__(5747));
+const types_1 = __nccwpck_require__(1479);
+const HashDiff_1 = __nccwpck_require__(9526);
+const utilities_1 = __nccwpck_require__(6665);
+const pretty_bytes_1 = __importDefault(__nccwpck_require__(5168));
+const errorHandling_1 = __nccwpck_require__(9352);
+const syncProvider_1 = __nccwpck_require__(2363);
+const localFiles_1 = __nccwpck_require__(4835);
+function downloadFileList(client, logger, path) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // note: originally this was using a writable stream instead of a buffer file
+        // basic-ftp doesn't seam to close the connection when using steams over some ftps connections. This appears to be dependent on the ftp server
+        const tempFileNameHack = ".ftp-deploy-sync-server-state-buffer-file---delete.json";
+        yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.downloadTo(tempFileNameHack, path); }));
+        const fileAsString = fs_1.default.readFileSync(tempFileNameHack, { encoding: "utf-8" });
+        const fileAsObject = JSON.parse(fileAsString);
+        fs_1.default.unlinkSync(tempFileNameHack);
+        return fileAsObject;
+    });
+}
+function createLocalState(localFiles, logger, args) {
+    logger.verbose(`Creating local state at ${args["local-dir"]}${args["state-name"]}`);
+    fs_1.default.writeFileSync(`${args["local-dir"]}${args["state-name"]}`, JSON.stringify(localFiles, undefined, 4), { encoding: "utf8" });
+    logger.verbose("Local state created");
+}
+function connect(client, args, logger) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let secure = false;
+        if (args.protocol === "ftps") {
+            secure = true;
+        }
+        else if (args.protocol === "ftps-legacy") {
+            secure = "implicit";
+        }
+        client.ftp.verbose = args["log-level"] === "verbose";
+        const rejectUnauthorized = args.security === "strict";
+        try {
+            yield client.access({
+                host: args.server,
+                user: args.username,
+                password: args.password,
+                port: args.port,
+                secure: secure,
+                secureOptions: {
+                    rejectUnauthorized: rejectUnauthorized
+                }
+            });
+        }
+        catch (error) {
+            logger.all("Failed to connect, are you sure your server works via FTP or FTPS? Users sometimes get this error when the server only supports SFTP.");
+            throw error;
+        }
+        if (args["log-level"] === "verbose") {
+            client.trackProgress(info => {
+                logger.verbose(`${info.type} progress for "${info.name}". Progress: ${info.bytes} bytes of ${info.bytesOverall} bytes`);
+            });
+        }
+    });
+}
+function getServerFiles(client, logger, timings, args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield syncProvider_1.ensureDir(client, logger, timings, args["server-dir"]);
+            if (args["dangerous-clean-slate"]) {
+                logger.all(`----------------------------------------------------------------`);
+                logger.all("🗑️ Removing all files on the server because 'dangerous-clean-slate' was set, this will make the deployment very slow...");
+                yield client.clearWorkingDir();
+                logger.all("Clear complete");
+                throw new Error("nope");
+            }
+            const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
+            logger.all(`----------------------------------------------------------------`);
+            logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" })}`);
+            // apply exclude options to server
+            if (args.exclude.length > 0) {
+                const filteredData = serverFiles.data.filter((item) => utilities_1.applyExcludeFilter({ path: item.name, isDirectory: () => item.type === "folder" }, args.exclude));
+                serverFiles.data = filteredData;
+            }
+            return serverFiles;
+        }
+        catch (error) {
+            logger.all(`----------------------------------------------------------------`);
+            logger.all(`No file exists on the server "${args["server-dir"] + args["state-name"]}" - this must be your first publish! 🎉`);
+            logger.all(`The first publish will take a while... but once the initial sync is done only differences are published!`);
+            logger.all(`If you get this message and its NOT your first publish, something is wrong.`);
+            // set the server state to nothing, because we don't know what the server state is
+            return {
+                description: types_1.syncFileDescription,
+                version: types_1.currentSyncFileVersion,
+                generatedTime: new Date().getTime(),
+                data: [],
+            };
+        }
+    });
+}
+function deploy(args, logger, timings) {
+    return __awaiter(this, void 0, void 0, function* () {
+        timings.start("total");
+        // header
+        logger.all(`----------------------------------------------------------------`);
+        logger.all(`🚀 Thanks for using ftp-deploy. Let's deploy some stuff (with posix file mode support)!   `);
+        logger.all(`----------------------------------------------------------------`);
+        logger.all(`If you found this project helpful, please support it`);
+        logger.all(`by giving it a ⭐ on Github --> https://github.com/SamKirkland/FTP-Deploy-Action`);
+        logger.all(`or add a badge 🏷️ to your projects readme --> https://github.com/SamKirkland/FTP-Deploy-Action#badge`);
+        logger.verbose(`Using the following excludes filters: ${JSON.stringify(args.exclude)}`);
+        timings.start("hash");
+        const localFiles = yield localFiles_1.getLocalFiles(args);
+        timings.stop("hash");
+        createLocalState(localFiles, logger, args);
+        const client = new ftp.Client();
+        global.reconnect = function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                timings.start("connecting");
+                yield connect(client, args, logger);
+                timings.stop("connecting");
+            });
+        };
+        let totalBytesUploaded = 0;
+        try {
+            yield global.reconnect();
+            const serverFiles = yield getServerFiles(client, logger, timings, args);
+            timings.start("logging");
+            const diffTool = new HashDiff_1.HashDiff();
+            logger.standard(`----------------------------------------------------------------`);
+            logger.standard(`Local Files:\t${utilities_1.formatNumber(localFiles.data.length)}`);
+            logger.standard(`Server Files:\t${utilities_1.formatNumber(serverFiles.data.length)}`);
+            logger.standard(`----------------------------------------------------------------`);
+            logger.standard(`Calculating differences between client & server`);
+            logger.standard(`----------------------------------------------------------------`);
+            const diffs = diffTool.getDiffs(localFiles, serverFiles);
+            diffs.upload.filter((itemUpload) => itemUpload.type === "folder").map((itemUpload) => {
+                logger.standard(`📁 Create: ${itemUpload.name}`);
+            });
+            diffs.upload.filter((itemUpload) => itemUpload.type === "file").map((itemUpload) => {
+                logger.standard(`📄 Upload: ${itemUpload.name}`);
+            });
+            diffs.replace.map((itemReplace) => {
+                logger.standard(`🔁 File replace: ${itemReplace.name}`);
+            });
+            diffs.delete.filter((itemUpload) => itemUpload.type === "file").map((itemDelete) => {
+                logger.standard(`📄 Delete: ${itemDelete.name}    `);
+            });
+            diffs.delete.filter((itemUpload) => itemUpload.type === "folder").map((itemDelete) => {
+                logger.standard(`📁 Delete: ${itemDelete.name}    `);
+            });
+            diffs.same.map((itemSame) => {
+                if (itemSame.type === "file") {
+                    logger.standard(`⚖️  File content is the same, doing nothing: ${itemSame.name}`);
+                }
+            });
+            timings.stop("logging");
+            totalBytesUploaded = diffs.sizeUpload + diffs.sizeReplace;
+            timings.start("upload");
+            try {
+                const syncProvider = new syncProvider_1.FTPSyncProvider(client, logger, timings, args["local-dir"], args["server-dir"], args["state-name"], args["dry-run"], args["sync-posix-modes"]);
+                yield syncProvider.syncLocalToServer(diffs);
+            }
+            finally {
+                timings.stop("upload");
+            }
+        }
+        catch (error) {
+            errorHandling_1.prettyError(logger, args, error);
+            throw error;
+        }
+        finally {
+            client.close();
+            timings.stop("total");
+        }
+        const uploadSpeed = pretty_bytes_1.default(totalBytesUploaded / (timings.getTime("upload") / 1000));
+        // footer
+        logger.all(`----------------------------------------------------------------`);
+        logger.all(`Time spent hashing: ${timings.getTimeFormatted("hash")}`);
+        logger.all(`Time spent connecting to server: ${timings.getTimeFormatted("connecting")}`);
+        logger.all(`Time spent deploying: ${timings.getTimeFormatted("upload")} (${uploadSpeed}/second)`);
+        logger.all(`  - changing dirs: ${timings.getTimeFormatted("changingDir")}`);
+        logger.all(`  - logging: ${timings.getTimeFormatted("logging")}`);
+        logger.all(`----------------------------------------------------------------`);
+        logger.all(`Total time: ${timings.getTimeFormatted("total")}`);
+        logger.all(`----------------------------------------------------------------`);
+    });
+}
+exports.deploy = deploy;
+
+
+/***/ }),
+
+/***/ 9352:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.prettyError = void 0;
+const types_1 = __nccwpck_require__(1479);
+function logOriginalError(logger, error) {
+    logger.all();
+    logger.all(`----------------------------------------------------------------`);
+    logger.all(`----------------------  full error below  ----------------------`);
+    logger.all(`----------------------------------------------------------------`);
+    logger.all();
+    logger.all(error);
+}
+/**
+ * Converts a exception to helpful debug info
+ * @param error exception
+ */
+function prettyError(logger, args, error) {
+    logger.all();
+    logger.all(`----------------------------------------------------------------`);
+    logger.all(`--------------  🔥🔥🔥 an error occurred  🔥🔥🔥  --------------`);
+    logger.all(`----------------------------------------------------------------`);
+    const ftpError = error;
+    if (typeof error.code === "string") {
+        const errorCode = error.code;
+        if (errorCode === "ENOTFOUND") {
+            logger.all(`The server "${args.server}" doesn't seem to exist. Do you have a typo?`);
+        }
+    }
+    else if (typeof error.name === "string") {
+        const errorName = error.name;
+        if (errorName.includes("ERR_TLS_CERT_ALTNAME_INVALID")) {
+            logger.all(`The certificate for "${args.server}" is likely shared. The host did not place your server on the list of valid domains for this cert.`);
+            logger.all(`This is a common issue with shared hosts. You have a few options:`);
+            logger.all(` - Ignore this error by setting security back to loose`);
+            logger.all(` - Contact your hosting provider and ask them for your servers hostname`);
+        }
+    }
+    else if (typeof ftpError.code === "number") {
+        if (ftpError.code === types_1.ErrorCode.NotLoggedIn) {
+            const serverRequiresFTPS = ftpError.message.toLowerCase().includes("must use encryption");
+            if (serverRequiresFTPS) {
+                logger.all(`The server you are connecting to requires encryption (ftps)`);
+                logger.all(`Enable FTPS by using the protocol option.`);
+            }
+            else {
+                logger.all(`Could not login with the username "${args.username}" and password "${args.password}".`);
+                logger.all(`Make sure you can login with those credentials. If you have a space or a quote in your username or password be sure to escape them!`);
+            }
+        }
+    }
+    logOriginalError(logger, error);
+}
+exports.prettyError = prettyError;
+
+
+/***/ }),
+
+/***/ 4835:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getLocalFiles = void 0;
+const readdir_enhanced_1 = __importDefault(__nccwpck_require__(8811));
+const types_1 = __nccwpck_require__(1479);
+const HashDiff_1 = __nccwpck_require__(9526);
+const utilities_1 = __nccwpck_require__(6665);
+function getLocalFiles(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const files = yield readdir_enhanced_1.default.async(args["local-dir"], { deep: true, stats: true, sep: "/", filter: (stat) => utilities_1.applyExcludeFilter(stat, args.exclude) });
+        const records = [];
+        for (let stat of files) {
+            if (stat.isDirectory()) {
+                records.push({
+                    type: "folder",
+                    name: stat.path,
+                    size: undefined
+                });
+                continue;
+            }
+            if (stat.isFile()) {
+                records.push({
+                    type: "file",
+                    name: stat.path,
+                    size: stat.size,
+                    hash: yield HashDiff_1.fileHash(args["local-dir"] + stat.path, "sha256")
+                });
+                continue;
+            }
+            if (stat.isSymbolicLink()) {
+                console.warn("This script is currently unable to handle symbolic links - please add a feature request if you need this");
+            }
+        }
+        return {
+            description: types_1.syncFileDescription,
+            version: types_1.currentSyncFileVersion,
+            generatedTime: new Date().getTime(),
+            data: records
+        };
+    });
+}
+exports.getLocalFiles = getLocalFiles;
+
+
+/***/ }),
+
+/***/ 8855:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.deploy = exports.excludeDefaults = void 0;
+const deploy_1 = __nccwpck_require__(9952);
+const utilities_1 = __nccwpck_require__(6665);
+/**
+ * Default excludes, ignores all git files and the node_modules folder
+ * **\/.git* ignores all FILES that start with .git(in any folder or sub-folder)
+ * **\/.git*\/** ignores all FOLDERS that start with .git (in any folder or sub-folder)
+ * **\/node_modules\/** ignores all FOLDERS named node_modules (in any folder or sub-folder)
+ */
+exports.excludeDefaults = ["**/.git*", "**/.git*/**", "**/node_modules/**"];
+/**
+ * Syncs a local folder with a remote folder over FTP.
+ * After the initial sync only differences are synced, making deployments super fast!
+ */
+function deploy(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const argsWithDefaults = utilities_1.getDefaultSettings(args);
+        const logger = new utilities_1.Logger(argsWithDefaults["log-level"]);
+        const timings = new utilities_1.Timings();
+        yield deploy_1.deploy(argsWithDefaults, logger, timings);
+    });
+}
+exports.deploy = deploy;
+
+
+/***/ }),
+
+/***/ 2363:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.FTPSyncProvider = exports.ensureDir = void 0;
+const fs_1 = __importDefault(__nccwpck_require__(5747));
+const util_1 = __importDefault(__nccwpck_require__(1669));
+const pretty_bytes_1 = __importDefault(__nccwpck_require__(5168));
+const types_1 = __nccwpck_require__(1479);
+const utilities_1 = __nccwpck_require__(6665);
+const stat = util_1.default.promisify(fs_1.default.stat);
+function ensureDir(client, logger, timings, folder) {
+    return __awaiter(this, void 0, void 0, function* () {
+        timings.start("changingDir");
+        logger.verbose(`  changing dir to ${folder}`);
+        yield utilities_1.retryRequest(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.ensureDir(folder); }));
+        logger.verbose(`  dir changed`);
+        timings.stop("changingDir");
+    });
+}
+exports.ensureDir = ensureDir;
+class FTPSyncProvider {
+    constructor(client, logger, timings, localPath, serverPath, stateName, dryRun, syncPosixModes) {
+        this.client = client;
+        this.logger = logger;
+        this.timings = timings;
+        this.localPath = localPath;
+        this.serverPath = serverPath;
+        this.stateName = stateName;
+        this.dryRun = dryRun;
+        this.syncPosixModes = syncPosixModes;
+    }
+    /**
+     * Converts a file path (ex: "folder/otherfolder/file.txt") to an array of folder and a file path
+     * @param fullPath
+     */
+    getFileBreadcrumbs(fullPath) {
+        var _a;
+        // todo see if this regex will work for nonstandard folder names
+        // todo what happens if the path is relative to the root dir? (starts with /)
+        const pathSplit = fullPath.split("/");
+        const file = (_a = pathSplit === null || pathSplit === void 0 ? void 0 : pathSplit.pop()) !== null && _a !== void 0 ? _a : ""; // get last item
+        const folders = pathSplit.filter(folderName => folderName != "");
+        return {
+            folders: folders.length === 0 ? null : folders,
+            file: file === "" ? null : file
+        };
+    }
+    /**
+     * Navigates up {dirCount} number of directories from the current working dir
+     */
+    upDir(dirCount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof dirCount !== "number") {
+                return;
+            }
+            // navigate back to the starting folder
+            for (let i = 0; i < dirCount; i++) {
+                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.cdup(); }));
+            }
+        });
+    }
+    createFolder(folderPath) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            this.logger.all(`creating folder "${folderPath + "/"}"`);
+            if (this.dryRun === true) {
+                return;
+            }
+            const path = this.getFileBreadcrumbs(folderPath + "/");
+            if (path.folders === null) {
+                this.logger.verbose(`  no need to change dir`);
+            }
+            else {
+                yield ensureDir(this.client, this.logger, this.timings, path.folders.join("/"));
+            }
+            // navigate back to the root folder
+            yield this.upDir((_a = path.folders) === null || _a === void 0 ? void 0 : _a.length);
+            this.logger.verbose(`  completed`);
+        });
+    }
+    removeFile(filePath) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.logger.all(`removing "${filePath}"`);
+            if (this.dryRun === false) {
+                try {
+                    yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.remove(filePath); }));
+                }
+                catch (e) {
+                    // this error is common when a file was deleted on the server directly
+                    if (e.code === types_1.ErrorCode.FileNotFoundOrNoAccess) {
+                        this.logger.standard("File not found or you don't have access to the file - skipping...");
+                    }
+                    else {
+                        throw e;
+                    }
+                }
+            }
+            this.logger.verbose(`  file removed`);
+            this.logger.verbose(`  completed`);
+        });
+    }
+    removeFolder(folderPath) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
+            this.logger.all(`removing folder "${absoluteFolderPath}"`);
+            if (this.dryRun === false) {
+                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(absoluteFolderPath); }));
+            }
+            this.logger.verbose(`  completed`);
+        });
+    }
+    uploadFile(filePath, type = "upload") {
+        return __awaiter(this, void 0, void 0, function* () {
+            const typePresent = type === "upload" ? "uploading" : "replacing";
+            const typePast = type === "upload" ? "uploaded" : "replaced";
+            this.logger.all(`${typePresent} "${filePath}"`);
+            if (this.dryRun === false) {
+                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.uploadFrom(this.localPath + filePath, filePath); }));
+            }
+            this.logger.verbose(`  file ${typePast}`);
+        });
+    }
+    syncMode(file) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.syncPosixModes) {
+                return;
+            }
+            this.logger.verbose("Syncing posix mode for file " + file.name);
+            // https://www.martin-brennan.com/nodejs-file-permissions-fstat/
+            let stats = yield stat(this.localPath + file.name);
+            let mode = "0" + (stats.mode & parseInt('777', 8)).toString(8);
+            // https://github.com/patrickjuchli/basic-ftp/issues/9
+            let command = "SITE CHMOD " + mode + " " + file.name;
+            if (this.dryRun === false) {
+                yield this.client.ftp.request(command);
+            }
+            this.logger.verbose("Setting file mode with command " + command);
+        });
+    }
+    syncLocalToServer(diffs) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const totalCount = diffs.delete.length + diffs.upload.length + diffs.replace.length;
+            this.logger.all(`----------------------------------------------------------------`);
+            this.logger.all(`Making changes to ${totalCount} ${utilities_1.pluralize(totalCount, "file/folder", "files/folders")} to sync server state`);
+            this.logger.all(`Uploading: ${pretty_bytes_1.default(diffs.sizeUpload)} -- Deleting: ${pretty_bytes_1.default(diffs.sizeDelete)} -- Replacing: ${pretty_bytes_1.default(diffs.sizeReplace)}`);
+            this.logger.all(`----------------------------------------------------------------`);
+            // create new folders
+            for (const file of diffs.upload.filter(item => item.type === "folder")) {
+                yield this.createFolder(file.name);
+                yield this.syncMode(file);
+            }
+            // upload new files
+            for (const file of diffs.upload.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
+                yield this.uploadFile(file.name, "upload");
+                yield this.syncMode(file);
+            }
+            // replace new files
+            for (const file of diffs.replace.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
+                // note: FTP will replace old files with new files. We run replacements after uploads to limit downtime
+                yield this.uploadFile(file.name, "replace");
+                yield this.syncMode(file);
+            }
+            // delete old files
+            for (const file of diffs.delete.filter(item => item.type === "file")) {
+                yield this.removeFile(file.name);
+            }
+            // delete old folders
+            for (const file of diffs.delete.filter(item => item.type === "folder")) {
+                yield this.removeFolder(file.name);
+            }
+            this.logger.all(`----------------------------------------------------------------`);
+            this.logger.all(`🎉 Sync complete. Saving current server state to "${this.serverPath + this.stateName}"`);
+            if (this.dryRun === false) {
+                yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.uploadFrom(this.localPath + this.stateName, this.stateName); }));
+            }
+        });
+    }
+}
+exports.FTPSyncProvider = FTPSyncProvider;
+
+
+/***/ }),
+
+/***/ 1479:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ErrorCode = exports.syncFileDescription = exports.currentSyncFileVersion = void 0;
+exports.currentSyncFileVersion = "1.0.0";
+exports.syncFileDescription = "DO NOT DELETE THIS FILE. This file is used to keep track of which files have been synced in the most recent deployment. If you delete this file a resync will need to be done (which can take a while) - read more: https://github.com/SamKirkland/FTP-Deploy-Action";
+var ErrorCode;
+(function (ErrorCode) {
+    // The requested action is being initiated, expect another reply before proceeding with a new command.
+    ErrorCode[ErrorCode["RestartMarkerReplay"] = 110] = "RestartMarkerReplay";
+    ErrorCode[ErrorCode["ServiceReadyInNNNMinutes"] = 120] = "ServiceReadyInNNNMinutes";
+    ErrorCode[ErrorCode["DataConnectionAlreadyOpenStartingTransfer"] = 125] = "DataConnectionAlreadyOpenStartingTransfer";
+    ErrorCode[ErrorCode["FileStatusOkayOpeningDataConnection"] = 150] = "FileStatusOkayOpeningDataConnection";
+    // The requested action has been successfully completed.
+    ErrorCode[ErrorCode["CommandNotImplemented"] = 202] = "CommandNotImplemented";
+    ErrorCode[ErrorCode["SystemStatus"] = 211] = "SystemStatus";
+    ErrorCode[ErrorCode["DirectoryStatus"] = 212] = "DirectoryStatus";
+    ErrorCode[ErrorCode["FileStatus"] = 213] = "FileStatus";
+    ErrorCode[ErrorCode["HelpMessage"] = 214] = "HelpMessage";
+    ErrorCode[ErrorCode["IANAOfficialName"] = 215] = "IANAOfficialName";
+    ErrorCode[ErrorCode["ReadyForNewUser"] = 220] = "ReadyForNewUser";
+    ErrorCode[ErrorCode["ClosingControlConnection"] = 221] = "ClosingControlConnection";
+    ErrorCode[ErrorCode["DataConnectionOpen"] = 225] = "DataConnectionOpen";
+    ErrorCode[ErrorCode["SuccessNowClosingDataConnection"] = 226] = "SuccessNowClosingDataConnection";
+    ErrorCode[ErrorCode["EnteringPassiveMode"] = 227] = "EnteringPassiveMode";
+    ErrorCode[ErrorCode["EnteringLongPassiveMode"] = 228] = "EnteringLongPassiveMode";
+    ErrorCode[ErrorCode["EnteringExtendedPassiveMode"] = 229] = "EnteringExtendedPassiveMode";
+    ErrorCode[ErrorCode["UserLoggedIn"] = 230] = "UserLoggedIn";
+    ErrorCode[ErrorCode["UserLoggedOut"] = 231] = "UserLoggedOut";
+    ErrorCode[ErrorCode["LogoutWillCompleteWhenTransferDone"] = 232] = "LogoutWillCompleteWhenTransferDone";
+    ErrorCode[ErrorCode["ServerAcceptsAuthenticationMethod"] = 234] = "ServerAcceptsAuthenticationMethod";
+    ErrorCode[ErrorCode["ActionComplete"] = 250] = "ActionComplete";
+    ErrorCode[ErrorCode["PathNameCreated"] = 257] = "PathNameCreated";
+    // The command has been accepted, but the requested action is on hold, pending receipt of further information.
+    ErrorCode[ErrorCode["UsernameOkayPasswordNeeded"] = 331] = "UsernameOkayPasswordNeeded";
+    ErrorCode[ErrorCode["NeedAccountForLogin"] = 332] = "NeedAccountForLogin";
+    ErrorCode[ErrorCode["RequestedFileActionPendingFurtherInformation"] = 350] = "RequestedFileActionPendingFurtherInformation";
+    // The command was not accepted and the requested action did not take place, but the error condition is temporary and the action may be requested again.
+    ErrorCode[ErrorCode["ServiceNotAvailable"] = 421] = "ServiceNotAvailable";
+    ErrorCode[ErrorCode["CantOpenDataConnection"] = 425] = "CantOpenDataConnection";
+    ErrorCode[ErrorCode["ConnectionClosed"] = 426] = "ConnectionClosed";
+    ErrorCode[ErrorCode["InvalidUsernameOrPassword"] = 430] = "InvalidUsernameOrPassword";
+    ErrorCode[ErrorCode["HostUnavailable"] = 434] = "HostUnavailable";
+    ErrorCode[ErrorCode["FileActionNotTaken"] = 450] = "FileActionNotTaken";
+    ErrorCode[ErrorCode["LocalErrorProcessing"] = 451] = "LocalErrorProcessing";
+    ErrorCode[ErrorCode["InsufficientStorageSpaceOrFileInUse"] = 452] = "InsufficientStorageSpaceOrFileInUse";
+    // Syntax error, command unrecognized and the requested action did not take place. This may include errors such as command line too long.
+    ErrorCode[ErrorCode["SyntaxErrorInParameters"] = 501] = "SyntaxErrorInParameters";
+    ErrorCode[ErrorCode["CommandNotImpemented"] = 502] = "CommandNotImpemented";
+    ErrorCode[ErrorCode["BadSequenceOfCommands"] = 503] = "BadSequenceOfCommands";
+    ErrorCode[ErrorCode["CommandNotImplementedForThatParameter"] = 504] = "CommandNotImplementedForThatParameter";
+    ErrorCode[ErrorCode["NotLoggedIn"] = 530] = "NotLoggedIn";
+    ErrorCode[ErrorCode["NeedAccountForStoringFiles"] = 532] = "NeedAccountForStoringFiles";
+    ErrorCode[ErrorCode["CouldNotConnectToServerRequiresSSL"] = 534] = "CouldNotConnectToServerRequiresSSL";
+    ErrorCode[ErrorCode["FileNotFoundOrNoAccess"] = 550] = "FileNotFoundOrNoAccess";
+    ErrorCode[ErrorCode["UnknownPageType"] = 551] = "UnknownPageType";
+    ErrorCode[ErrorCode["ExceededStorageAllocation"] = 552] = "ExceededStorageAllocation";
+    ErrorCode[ErrorCode["FileNameNotAllowed"] = 553] = "FileNameNotAllowed";
+    // Replies regarding confidentiality and integrity
+    ErrorCode[ErrorCode["IntegrityProtectedReply"] = 631] = "IntegrityProtectedReply";
+    ErrorCode[ErrorCode["ConfidentialityAndIntegrityProtectedReply"] = 632] = "ConfidentialityAndIntegrityProtectedReply";
+    ErrorCode[ErrorCode["ConfidentialityProtectedReply"] = 633] = "ConfidentialityProtectedReply";
+    // Common Winsock Error Codes[2] (These are not FTP return codes)
+    ErrorCode[ErrorCode["ConnectionClosedByServer"] = 10054] = "ConnectionClosedByServer";
+    ErrorCode[ErrorCode["CannotConnect"] = 10060] = "CannotConnect";
+    ErrorCode[ErrorCode["CannotConnectRefusedByServer"] = 10061] = "CannotConnectRefusedByServer";
+    ErrorCode[ErrorCode["DirectoryNotEmpty"] = 10066] = "DirectoryNotEmpty";
+    ErrorCode[ErrorCode["TooManyUsers"] = 10068] = "TooManyUsers";
+})(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {}));
+;
+
+
+/***/ }),
+
+/***/ 6665:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.applyExcludeFilter = exports.getDefaultSettings = exports.Timer = exports.Timings = exports.retryRequest = exports.formatNumber = exports.pluralize = exports.Logger = void 0;
+const pretty_ms_1 = __importDefault(__nccwpck_require__(1127));
+const module_1 = __nccwpck_require__(8855);
+const types_1 = __nccwpck_require__(1479);
+const multimatch_1 = __importDefault(__nccwpck_require__(8222));
+class Logger {
+    constructor(level) {
+        this.level = level;
+    }
+    all(...data) {
+        console.log(...data);
+    }
+    standard(...data) {
+        if (this.level === "minimal") {
+            return;
+        }
+        console.log(...data);
+    }
+    verbose(...data) {
+        if (this.level !== "verbose") {
+            return;
+        }
+        console.log(...data);
+    }
+}
+exports.Logger = Logger;
+function pluralize(count, singular, plural) {
+    if (count === 1) {
+        return singular;
+    }
+    return plural;
+}
+exports.pluralize = pluralize;
+function formatNumber(number) {
+    return number.toLocaleString();
+}
+exports.formatNumber = formatNumber;
+/**
+ * retry a request
+ *
+ * @example retryRequest(logger, async () => await item());
+ */
+function retryRequest(logger, callback) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            return yield callback();
+        }
+        catch (e) {
+            if (e.code >= 400 && e.code <= 499) {
+                logger.standard("400 level error from server when performing action - retrying...");
+                logger.standard(e);
+                if (e.code === types_1.ErrorCode.ConnectionClosed) {
+                    logger.all("Connection closed. This library does not currently handle reconnects");
+                    // await global.reconnect();
+                    // todo reset current working dir
+                    throw e;
+                }
+                return yield callback();
+            }
+            else {
+                throw e;
+            }
+        }
+    });
+}
+exports.retryRequest = retryRequest;
+class Timings {
+    constructor() {
+        this.timers = {};
+    }
+    start(type) {
+        if (this.timers[type] === undefined) {
+            this.timers[type] = new Timer();
+        }
+        this.timers[type].start();
+    }
+    stop(type) {
+        this.timers[type].stop();
+    }
+    getTime(type) {
+        const timer = this.timers[type];
+        if (timer === undefined || timer.time === null) {
+            return 0;
+        }
+        return timer.time;
+    }
+    getTimeFormatted(type) {
+        const timer = this.timers[type];
+        if (timer === undefined || timer.time === null) {
+            return "💣 Failed";
+        }
+        return pretty_ms_1.default(timer.time, { verbose: true });
+    }
+}
+exports.Timings = Timings;
+class Timer {
+    constructor() {
+        this.totalTime = null;
+        this.startTime = null;
+        this.endTime = null;
+    }
+    start() {
+        this.startTime = process.hrtime();
+    }
+    stop() {
+        if (this.startTime === null) {
+            throw new Error("Called .stop() before calling .start()");
+        }
+        this.endTime = process.hrtime(this.startTime);
+        const currentSeconds = this.totalTime === null ? 0 : this.totalTime[0];
+        const currentNS = this.totalTime === null ? 0 : this.totalTime[1];
+        this.totalTime = [
+            currentSeconds + this.endTime[0],
+            currentNS + this.endTime[1]
+        ];
+    }
+    get time() {
+        if (this.totalTime === null) {
+            return null;
+        }
+        return (this.totalTime[0] * 1000) + (this.totalTime[1] / 1000000);
+    }
+}
+exports.Timer = Timer;
+function getDefaultSettings(withoutDefaults) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    if (withoutDefaults["local-dir"] !== undefined) {
+        if (!withoutDefaults["local-dir"].endsWith("/")) {
+            throw new Error("local-dir should be a folder (must end with /)");
+        }
+    }
+    if (withoutDefaults["server-dir"] !== undefined) {
+        if (!withoutDefaults["server-dir"].endsWith("/")) {
+            throw new Error("server-dir should be a folder (must end with /)");
+        }
+    }
+    return {
+        "server": withoutDefaults.server,
+        "username": withoutDefaults.username,
+        "password": withoutDefaults.password,
+        "port": (_a = withoutDefaults.port) !== null && _a !== void 0 ? _a : 21,
+        "protocol": (_b = withoutDefaults.protocol) !== null && _b !== void 0 ? _b : "ftp",
+        "local-dir": (_c = withoutDefaults["local-dir"]) !== null && _c !== void 0 ? _c : "./",
+        "server-dir": (_d = withoutDefaults["server-dir"]) !== null && _d !== void 0 ? _d : "./",
+        "state-name": (_e = withoutDefaults["state-name"]) !== null && _e !== void 0 ? _e : ".ftp-deploy-sync-state.json",
+        "dry-run": (_f = withoutDefaults["dry-run"]) !== null && _f !== void 0 ? _f : false,
+        "dangerous-clean-slate": (_g = withoutDefaults["dangerous-clean-slate"]) !== null && _g !== void 0 ? _g : false,
+        "exclude": (_h = withoutDefaults.exclude) !== null && _h !== void 0 ? _h : module_1.excludeDefaults,
+        "log-level": (_j = withoutDefaults["log-level"]) !== null && _j !== void 0 ? _j : "standard",
+        "security": (_k = withoutDefaults.security) !== null && _k !== void 0 ? _k : "loose",
+        "sync-posix-modes": (_l = withoutDefaults["sync-posix-modes"]) !== null && _l !== void 0 ? _l : false,
+    };
+}
+exports.getDefaultSettings = getDefaultSettings;
+function applyExcludeFilter(stat, excludeFilters) {
+    // match exclude, return immediatley
+    if (excludeFilters.length > 0) {
+        // todo this could be a performance problem...
+        const pathWithFolderSlash = stat.path + (stat.isDirectory() ? "/" : "");
+        const excludeMatch = multimatch_1.default(pathWithFolderSlash, excludeFilters, { matchBase: true, dot: true });
+        if (excludeMatch.length > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+exports.applyExcludeFilter = applyExcludeFilter;
+
+
+/***/ }),
+
 /***/ 7117:
 /***/ ((module) => {
 
@@ -7836,7 +7891,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
-const ftp_deploy_1 = __nccwpck_require__(8347);
+const ftp_deploy_1 = __nccwpck_require__(8855);
 const parse_1 = __nccwpck_require__(6089);
 async function runDeployment() {
     try {
@@ -7850,6 +7905,7 @@ async function runDeployment() {
             "server-dir": (0, parse_1.optionalString)(core.getInput("server-dir")),
             "state-name": (0, parse_1.optionalString)(core.getInput("state-name")),
             "dry-run": (0, parse_1.optionalBoolean)("dry-run", core.getInput("dry-run")),
+            "sync-posix-modes": (0, parse_1.optionalBoolean)("sync-posix-modes", core.getInput("sync-posix-modes")),
             "dangerous-clean-slate": (0, parse_1.optionalBoolean)("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
             "exclude": (0, parse_1.optionalStringArray)("exclude", core.getMultilineInput("exclude")),
             "log-level": (0, parse_1.optionalLogLevel)("log-level", core.getInput("log-level")),
@@ -7956,9 +8012,6 @@ exports.optionalInt = optionalInt;
 function optionalStringArray(argumentName, rawValue) {
     if (typeof rawValue === "string") {
         throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". This option expects an list in the EXACT format described in the readme`);
-    }
-    if (rawValue.length === 0) {
-        return undefined;
     }
     return rawValue;
 }

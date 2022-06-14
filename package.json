@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.6.0",
-    "@samkirkland/ftp-deploy": "git+https://github.com/timthelion/ftp-deploy.git#5a415704876687e7ddefd0266f880eb44f38ecae",
+    "ftp-deploy": "git+https://github.com/timthelion/ftp-deploy.git#19dbafd9cda8dc78139f83ce0270f01156cccfcc",
     "@types/jest": "^27.0.2",
     "jest": "^27.2.5",
     "ts-jest": "^27.0.5",
