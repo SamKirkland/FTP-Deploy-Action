@@ -3161,16 +3161,8 @@ class FTPSyncProvider {
     }
     removeFolder(folderPath) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.client.cd("/");
-            const root = yield this.client.pwd();
-            this.logger.all(`move / "${root}"`);
-            yield this.client.cd("/home");
-            const home = yield this.client.pwd();
-            this.logger.all(`move /home "${home}"`);
-            yield this.client.cd("/home/adw21/www/tools/xxx/aaa/bbbb/ccc")
-            const curr = yield this.client.pwd();
-            this.logger.all(`move /curr "${curr}"`);
-            const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
+            const pwd = yield this.client.pwd();
+            const absoluteFolderPath = "/" + pwd + folderPath;
             this.logger.all(`removing folder "${absoluteFolderPath}"`);
             if (this.dryRun === false) {
                 yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(absoluteFolderPath); }));
