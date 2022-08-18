@@ -3161,7 +3161,8 @@ class FTPSyncProvider {
     }
     removeFolder(folderPath) {
         return __awaiter(this, void 0, void 0, function* () {
-            const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
+            // const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
+            const absoluteFolderPath = "/" + folderPath;
             const current = yield this.client.pwd();
             this.logger.all(`removing folder "${absoluteFolderPath} ${current}"`);
             if (this.dryRun === false) {
