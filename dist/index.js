@@ -3162,7 +3162,8 @@ class FTPSyncProvider {
     removeFolder(folderPath) {
         return __awaiter(this, void 0, void 0, function* () {
             const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
-            this.logger.all(`removing folder "${absoluteFolderPath}"`);
+            const current = await this.client.pwd();
+            this.logger.all(`removing folder "${absoluteFolderPath} ${current}"`);
             if (this.dryRun === false) {
                 yield utilities_1.retryRequest(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(absoluteFolderPath); }));
             }
@@ -4148,12 +4149,12 @@ class Client {
      */
     async removeDir(remoteDirPath) {
         return this._exitAtCurrentDirectory(async () => {
-            // await this.cd(remoteDirPath);
-            // await this.clearWorkingDir();
-            // if (remoteDirPath !== "/") {
-            //     await this.cdup();
-            //     await this.removeEmptyDir(remoteDirPath);
-            // }
+            await this.cd(remoteDirPath);
+            await this.clearWorkingDir();
+            if (remoteDirPath !== "/") {
+                await this.cdup();
+                await this.removeEmptyDir(remoteDirPath);
+            }
         });
     }
     /**
