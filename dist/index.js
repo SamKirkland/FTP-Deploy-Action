@@ -3167,6 +3167,9 @@ class FTPSyncProvider {
             yield this.client.cd("/home");
             const home = yield this.client.pwd();
             this.logger.all(`move /home "${home}"`);
+            yield this.client.cd("/home/adw21/www/tools/xxx/aaa/bbbb/ccc")
+            const curr = yield this.client.pwd();
+            this.logger.all(`move /curr "${curr}"`);
             const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
             this.logger.all(`removing folder "${absoluteFolderPath}"`);
             if (this.dryRun === false) {
