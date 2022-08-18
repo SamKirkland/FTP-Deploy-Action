@@ -4148,7 +4148,7 @@ class Client {
      */
     async removeDir(remoteDirPath) {
         return this._exitAtCurrentDirectory(async () => {
-            await this.cd(remoteDirPath);
+            // await this.cd(remoteDirPath);
             // await this.clearWorkingDir();
             // if (remoteDirPath !== "/") {
             //     await this.cdup();
