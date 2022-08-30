@@ -41,6 +41,9 @@ inputs:
   security:
     required: false
     description: "strict or loose"
+  timeout:
+    required: false
+    description: "Timeout in milliseconds for FTP operations"
 runs:
   using: "node12"
   main: "dist/index.js"
