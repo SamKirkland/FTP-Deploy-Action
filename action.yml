@@ -49,4 +49,4 @@ runs:
   main: "dist/index.js"
 branding:
   icon: "upload-cloud"
-  color: "orange"
+  color: "blue"
