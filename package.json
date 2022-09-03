@@ -1,6 +1,6 @@
 {
   "name": "ftp-deploy-action",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "private": true,
   "description": "Automate deploying websites and more with this GitHub action",
   "main": "dist/index.js",
@@ -37,5 +37,8 @@
     "eslint": "^8.22.0",
     "eslint-plugin-jest": "^26.8.7",
     "typescript": "^4.7.4"
+  },
+  "jest": {
+    "preset": "ts-jest"
   }
 }
