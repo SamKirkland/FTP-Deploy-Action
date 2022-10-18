@@ -5,7 +5,7 @@
   "description": "TypeScript template action",
   "main": "dist/main.js",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "build": "ncc build src/main.ts -o dist --watch",
