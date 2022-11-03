@@ -3242,15 +3242,16 @@ function getServerFiles(client, logger, timings, args) {
                 logger.all("Clear complete");
                 throw new Error("dangerous-clean-slate was run");
             }
-            const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
-            logger.all(`----------------------------------------------------------------`);
-            logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" })}`);
-            // apply exclude options to server
-            if (args.exclude.length > 0) {
-                const filteredData = serverFiles.data.filter((item) => (0, utilities_1.applyExcludeFilter)({ path: item.name, isDirectory: () => item.type === "folder" }, args.exclude));
-                serverFiles.data = filteredData;
-            }
-            return serverFiles;
+//             const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
+//             logger.all(`----------------------------------------------------------------`);
+//             logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" })}`);
+//             // apply exclude options to server
+//             if (args.exclude.length > 0) {
+//                 const filteredData = serverFiles.data.filter((item) => (0, utilities_1.applyExcludeFilter)({ path: item.name, isDirectory: () => item.type === "folder" }, args.exclude));
+//                 serverFiles.data = filteredData;
+//             }
+//             return serverFiles;
+	       throw new Error("upload all files");
         }
         catch (error) {
             logger.all(`----------------------------------------------------------------`);
