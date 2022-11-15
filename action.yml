@@ -12,7 +12,7 @@ inputs:
     required: true
     description: "ftp password"
   port:
-    required: false
+    required: true
     description: "Server port to connect to (read your web hosts docs)"
   protocol:
     required: false
