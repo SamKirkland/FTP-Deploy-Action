@@ -23,7 +23,7 @@ jobs:
       with:
         fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      uses: SamKirkland/FTP-Deploy-Action@3.1.2
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFtpUserName
@@ -55,14 +55,14 @@ Keys can be added directly to your .yml config file or referenced from your proj
 To add a `secret` go to the `Settings` tab in your project then select `Secrets`.
 I recommend you store your `ftp-password` as a secret.
 
-| Key Name       | Required? | Example                                       | Default | Description                                              |
-|----------------|-----------|-----------------------------------------------|---------|----------------------------------------------------------|
-| `ftp-server`   | Yes       | ftp://ftp.samkirkland.com/destinationPath/    |         | Deployment destination server & path. Formatted as `protocol://domain.com:port/destinationPath/` protocol can be `ftp`, `ftps`, or `sftp`. Port is optional, when not specified it will default to 21 when using ftp, 22 when using sftp, and 990 when using ftps         |
-| `ftp-username` | Yes       | username@samkirkland.com                      |         | FTP account username                                     |
-| `ftp-password` | Yes       | CrazyUniquePassword&%123                      |         | FTP account password                                     |
-| `local-dir`    | No        | deploy/                                       | ./      | Which local folder to deploy, path should be relative to the root and should include trailing slash. `./` is the root of the project  |
-| `git-ftp-args` | No        | See `git-ftp-args` section below              |         | Custom git-ftp arguments, this field is passed through directly into the git-ftp script |
-| `known-hosts`  | No        | hostname ssh-rsa AAAAB3NzaC1y ...             |         | The desired contents of your .ssh/known_hosts file. See [known hosts setup](#known-hosts-setup) |
+| Key Name       | Required? | Example                                    | Default | Description                                                                                                                                                                                                                                                       |
+|----------------|-----------|--------------------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ftp-server`   | Yes       | ftp://ftp.samkirkland.com/destinationPath/ |         | Deployment destination server & path. Formatted as `protocol://domain.com:port/destinationPath/` protocol can be `ftp`, `ftps`, or `sftp`. Port is optional, when not specified it will default to 21 when using ftp, 22 when using sftp, and 990 when using ftps |
+| `ftp-username` | Yes       | username@samkirkland.com                   |         | FTP account username                                                                                                                                                                                                                                              |
+| `ftp-password` | Yes       | CrazyUniquePassword&%123                   |         | FTP account password                                                                                                                                                                                                                                              |
+| `local-dir`    | No        | deploy/                                    | ./      | Which local folder to deploy, path should be relative to the root and should include trailing slash. `./` is the root of the project                                                                                                                              |
+| `git-ftp-args` | No        | See `git-ftp-args` section below           |         | Custom git-ftp arguments, this field is passed through directly into the git-ftp script                                                                                                                                                                           |
+| `known-hosts`  | No        | hostname ssh-rsa AAAAB3NzaC1y ...          |         | The desired contents of your .ssh/known_hosts file. See [known hosts setup](#known-hosts-setup)                                                                                                                                                                   |
 
 #### Advanced options using `git-ftp-args`
 Custom arguments, this field is passed through directly into the git-ftp script. See [git-ftp's manual](https://github.com/git-ftp/git-ftp/blob/master/man/git-ftp.1.md) for all options.
@@ -70,18 +70,18 @@ You can use as many arguments as you want, seperate them with a space
 
 Below is an incomplete list of commonly used args:
 
-| Argument               | Description                                                                                          |
-|------------------------|------------------------------------------------------------------------------------------------------|
-| `--dry-run`            | Does not upload or delete anything, but tries to get the .git-ftp.log file from remote host          |
-| `--silent`             | Be silent                                                                                            |
-| `--all`                | Transfer all files, even seemingly the same as the target site (default is differences only). Note: Only files committed to github are uploaded, if you'd like to upload files generated during the action run see `.git-ftp-include` |
-| `--lock`               | Locks remote files from being modified while a deployment is running                                 |
-| `--remote-root`        | Specifies the remote root directory to deploy to. The remote path in the URL is ignored              |
-| `--key`                | SSH private key file name for SFTP                                                                   |
-| `--branch`             | Push a specific branch. I recommend [creating a yaml action for each branch instead](https://github.com/SamKirkland/FTP-Deploy-Action/issues/37#issuecomment-579819486) |
-| `--pubkey`             | SSH public key file name. Used with `--key` option                                                   |
-| `--insecure`           | Don't verify server's certificate                                                                    |
-| `--cacert <file>`      | Use as CA certificate store. Useful when a server has a self-signed certificate                      |
+| Argument          | Description                                                                                                                                                                                                                           |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `--dry-run`       | Does not upload or delete anything, but tries to get the .git-ftp.log file from remote host                                                                                                                                           |
+| `--silent`        | Be silent                                                                                                                                                                                                                             |
+| `--all`           | Transfer all files, even seemingly the same as the target site (default is differences only). Note: Only files committed to github are uploaded, if you'd like to upload files generated during the action run see `.git-ftp-include` |
+| `--lock`          | Locks remote files from being modified while a deployment is running                                                                                                                                                                  |
+| `--remote-root`   | Specifies the remote root directory to deploy to. The remote path in the URL is ignored                                                                                                                                               |
+| `--key`           | SSH private key file name for SFTP                                                                                                                                                                                                    |
+| `--branch`        | Push a specific branch. I recommend [creating a yaml action for each branch instead](https://github.com/SamKirkland/FTP-Deploy-Action/issues/37#issuecomment-579819486)                                                               |
+| `--pubkey`        | SSH public key file name. Used with `--key` option                                                                                                                                                                                    |
+| `--insecure`      | Don't verify server's certificate                                                                                                                                                                                                     |
+| `--cacert <file>` | Use as CA certificate store. Useful when a server has a self-signed certificate                                                                                                                                                       |
 
 ### Ignore specific files when deploying
 Add patterns to `.git-ftp-ignore` and all matching file names will be ignored. The patterns are interpreted as shell glob patterns.
@@ -183,7 +183,7 @@ jobs:
       with:
         fetch-depth: 2
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      uses: SamKirkland/FTP-Deploy-Action@3.1.2
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFtpUserName
@@ -212,7 +212,7 @@ jobs:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      uses: SamKirkland/FTP-Deploy-Action@3.1.2
       with:
         ftp-server: ftps://ftp.samkirkland.com:21/
         ftp-username: myFTPSUsername
@@ -259,7 +259,7 @@ jobs:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      uses: SamKirkland/FTP-Deploy-Action@3.1.2
       with:
         ftp-server: sftp://ftp.samkirkland.com:7280/
         ftp-username: mySFTPUsername
@@ -284,10 +284,10 @@ jobs:
       with:
         fetch-depth: 2
 
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
+    - name: Use Node.js 16
+      uses: actions/setup-node@v2
       with:
-        node-version: '12.x'
+        node-version: '16'
         
     - name: Build Project
       run: |
@@ -298,7 +298,7 @@ jobs:
       run: ls
       
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      uses: SamKirkland/FTP-Deploy-Action@3.1.2
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFTPUsername
@@ -321,7 +321,7 @@ jobs:
         fetch-depth: 2
 
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      uses: SamKirkland/FTP-Deploy-Action@3.1.2
       with:
         ftp-server: ftp://ftp.samkirkland.com/
         ftp-username: myFTPUsername
