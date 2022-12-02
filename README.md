@@ -23,7 +23,7 @@ jobs:
       uses: actions/checkout@v2
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -88,10 +88,10 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
 
-    - name: Use Node.js 14
+    - name: Use Node.js 16
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '16'
       
     - name: 🔨 Build Project
       run: |
@@ -99,7 +99,7 @@ jobs:
         npm run build
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -119,7 +119,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -142,7 +142,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -164,7 +164,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.2
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
