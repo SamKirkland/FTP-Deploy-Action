@@ -3191,9 +3191,13 @@ function downloadFileList(client, logger, path) {
     });
 }
 function createLocalState(localFiles, logger, args) {
-    logger.verbose(`Creating local state at ${args["local-dir"]}${args["state-name"]}`);
-    fs_1.default.writeFileSync(`${args["local-dir"]}${args["state-name"]}`, JSON.stringify(localFiles, undefined, 4), { encoding: "utf8" });
-    logger.verbose("Local state created");
+    if (args["track-state"]) {
+        logger.verbose(`Creating local state at ${args["local-dir"]}${args["state-name"]}`);
+        fs_1.default.writeFileSync(`${args["local-dir"]}${args["state-name"]}`, JSON.stringify(localFiles, undefined, 4), { encoding: "utf8" });
+        logger.verbose("Local state created");
+    } else {
+        logger.verbose(`Not creating a local state because tracking is disabled`);
+    }
 }
 function connect(client, args, logger) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -3242,15 +3246,17 @@ function getServerFiles(client, logger, timings, args) {
                 logger.all("Clear complete");
                 throw new Error("dangerous-clean-slate was run");
             }
-            const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
-            logger.all(`----------------------------------------------------------------`);
-            logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" })}`);
-            // apply exclude options to server
-            if (args.exclude.length > 0) {
-                const filteredData = serverFiles.data.filter((item) => (0, utilities_1.applyExcludeFilter)({ path: item.name, isDirectory: () => item.type === "folder" }, args.exclude));
-                serverFiles.data = filteredData;
+            if (args['track-state']) {
+                const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
+                logger.all(`----------------------------------------------------------------`);
+                logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" })}`);
+                // apply exclude options to server
+                if (args.exclude.length > 0) {
+                    const filteredData = serverFiles.data.filter((item) => (0, utilities_1.applyExcludeFilter)({ path: item.name, isDirectory: () => item.type === "folder" }, args.exclude));
+                    serverFiles.data = filteredData;
+                }
+                return serverFiles;
             }
-            return serverFiles;
         }
         catch (error) {
             logger.all(`----------------------------------------------------------------`);
@@ -3946,6 +3952,7 @@ function getDefaultSettings(withoutDefaults) {
         "log-level": (_j = withoutDefaults["log-level"]) !== null && _j !== void 0 ? _j : "standard",
         "security": (_k = withoutDefaults.security) !== null && _k !== void 0 ? _k : "loose",
         "timeout": (_l = withoutDefaults.timeout) !== null && _l !== void 0 ? _l : 30000,
+        "track-state": (_m = withoutDefaults["track-state"]) !== null && _m !== void 0 ? _m : true,
     };
 }
 exports.getDefaultSettings = getDefaultSettings;
@@ -9037,7 +9044,8 @@ async function runDeployment() {
             "dangerous-clean-slate": (0, parse_1.optionalBoolean)("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
             "exclude": (0, parse_1.optionalStringArray)("exclude", core.getMultilineInput("exclude")),
             "log-level": (0, parse_1.optionalLogLevel)("log-level", core.getInput("log-level")),
-            "security": (0, parse_1.optionalSecurity)("security", core.getInput("security"))
+            "security": (0, parse_1.optionalSecurity)("security", core.getInput("security")),
+            "track-state": (0, parse_1.optionalString)(core.getInput("track-state")),
         };
         await (0, ftp_deploy_1.deploy)(args);
     }
