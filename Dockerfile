@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:stable-20220125-slim
 
 LABEL repository="https://github.com/SamKirkland/FTP-Deploy-Action"
 LABEL maintainer="Sam Kirkland <FTP-Deploy-Action@samkirkland.com>"
