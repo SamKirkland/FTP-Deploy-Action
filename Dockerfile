@@ -1,4 +1,5 @@
-FROM alpine:3.10
+FROM debian:11-slim
+
 
 LABEL repository="https://github.com/SamKirkland/FTP-Deploy-Action"
 LABEL maintainer="Sam Kirkland <FTP-Deploy-Action@samkirkland.com>"
