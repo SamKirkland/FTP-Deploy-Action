@@ -4116,12 +4116,12 @@ const netUtils_1 = __nccwpck_require__(6288);
 const transfer_1 = __nccwpck_require__(5803);
 const parseControlResponse_1 = __nccwpck_require__(9948);
 // Use promisify to keep the library compatible with Node 8.
-const fsReadDir = util_1.promisify(fs_1.readdir);
-const fsMkDir = util_1.promisify(fs_1.mkdir);
-const fsStat = util_1.promisify(fs_1.stat);
-const fsOpen = util_1.promisify(fs_1.open);
-const fsClose = util_1.promisify(fs_1.close);
-const fsUnlink = util_1.promisify(fs_1.unlink);
+const fsReadDir = (0, util_1.promisify)(fs_1.readdir);
+const fsMkDir = (0, util_1.promisify)(fs_1.mkdir);
+const fsStat = (0, util_1.promisify)(fs_1.stat);
+const fsOpen = (0, util_1.promisify)(fs_1.open);
+const fsClose = (0, util_1.promisify)(fs_1.close);
+const fsUnlink = (0, util_1.promisify)(fs_1.unlink);
 const LIST_COMMANDS_DEFAULT = ["LIST -a", "LIST"];
 const LIST_COMMANDS_MLSD = ["MLSD", "LIST -a", "LIST"];
 /**
@@ -4174,7 +4174,7 @@ class Client {
             host,
             port,
             family: this.ftp.ipFamily
-        }, () => this.ftp.log(`Connected to ${netUtils_1.describeAddress(this.ftp.socket)} (${netUtils_1.describeTLS(this.ftp.socket)})`));
+        }, () => this.ftp.log(`Connected to ${(0, netUtils_1.describeAddress)(this.ftp.socket)} (${(0, netUtils_1.describeTLS)(this.ftp.socket)})`));
         return this._handleConnectResponse();
     }
     /**
@@ -4183,7 +4183,7 @@ class Client {
      */
     connectImplicitTLS(host = "localhost", port = 21, tlsOptions = {}) {
         this.ftp.reset();
-        this.ftp.socket = tls_1.connect(port, host, tlsOptions, () => this.ftp.log(`Connected to ${netUtils_1.describeAddress(this.ftp.socket)} (${netUtils_1.describeTLS(this.ftp.socket)})`));
+        this.ftp.socket = (0, tls_1.connect)(port, host, tlsOptions, () => this.ftp.log(`Connected to ${(0, netUtils_1.describeAddress)(this.ftp.socket)} (${(0, netUtils_1.describeTLS)(this.ftp.socket)})`));
         this.ftp.tlsOptions = tlsOptions;
         return this._handleConnectResponse();
     }
@@ -4196,14 +4196,13 @@ class Client {
                 // The connection has been destroyed by the FTPContext at this point.
                 task.reject(res);
             }
-            else if (parseControlResponse_1.positiveCompletion(res.code)) {
+            else if ((0, parseControlResponse_1.positiveCompletion)(res.code)) {
                 task.resolve(res);
             }
             // Reject all other codes, including 120 "Service ready in nnn minutes".
             else {
                 // Don't stay connected but don't replace the socket yet by using reset()
                 // so the user can inspect properties of this instance.
-                this.ftp.socket.destroy();
                 task.reject(new FtpContext_1.FTPError(res));
             }
         });
@@ -4244,9 +4243,9 @@ class Client {
      */
     async useTLS(options = {}, command = "AUTH TLS") {
         const ret = await this.send(command);
-        this.ftp.socket = await netUtils_1.upgradeSocket(this.ftp.socket, options);
+        this.ftp.socket = await (0, netUtils_1.upgradeSocket)(this.ftp.socket, options);
         this.ftp.tlsOptions = options; // Keep the TLS options for later data connections that should use the same options.
-        this.ftp.log(`Control socket is using: ${netUtils_1.describeTLS(this.ftp.socket)}`);
+        this.ftp.log(`Control socket is using: ${(0, netUtils_1.describeTLS)(this.ftp.socket)}`);
         return ret;
     }
     /**
@@ -4256,12 +4255,12 @@ class Client {
      * @param password  Password to use for login. Optional, default is "guest".
      */
     login(user = "anonymous", password = "guest") {
-        this.ftp.log(`Login security: ${netUtils_1.describeTLS(this.ftp.socket)}`);
+        this.ftp.log(`Login security: ${(0, netUtils_1.describeTLS)(this.ftp.socket)}`);
         return this.ftp.handle("USER " + user, (res, task) => {
             if (res instanceof Error) {
                 task.reject(res);
             }
-            else if (parseControlResponse_1.positiveCompletion(res.code)) { // User logged in proceed OR Command superfluous
+            else if ((0, parseControlResponse_1.positiveCompletion)(res.code)) { // User logged in proceed OR Command superfluous
                 task.resolve(res);
             }
             else if (res.code === 331) { // User name okay, need password
@@ -4351,7 +4350,7 @@ class Client {
         const res = await this.sendIgnoringError("FEAT");
         const features = new Map();
         // Not supporting any special features will be reported with a single line.
-        if (res.code < 400 && parseControlResponse_1.isMultiline(res.message)) {
+        if (res.code < 400 && (0, parseControlResponse_1.isMultiline)(res.message)) {
             // The first and last line wrap the multiline response, ignore them.
             res.message.split("\n").slice(1, -1).forEach(line => {
                 // A typical lines looks like: " REST STREAM" or " MDTM".
@@ -4383,7 +4382,7 @@ class Client {
         const validPath = await this.protectWhitespace(path);
         const res = await this.send(`MDTM ${validPath}`);
         const date = res.message.slice(4);
-        return parseListMLSD_1.parseMLSxDate(date);
+        return (0, parseListMLSD_1.parseMLSxDate)(date);
     }
     /**
      * Get the size of a file.
@@ -4467,7 +4466,7 @@ class Client {
      */
     async _uploadLocalFile(localPath, remotePath, command, options) {
         const fd = await fsOpen(localPath, "r");
-        const source = fs_1.createReadStream("", {
+        const source = (0, fs_1.createReadStream)("", {
             fd,
             start: options.localStart,
             end: options.localEndInclusive,
@@ -4491,7 +4490,7 @@ class Client {
             await this.prepareTransfer(this.ftp);
             // Keep the keyword `await` or the `finally` clause below runs too early
             // and removes the event listener for the source stream too early.
-            return await transfer_1.uploadFrom(source, {
+            return await (0, transfer_1.uploadFrom)(source, {
                 ftp: this.ftp,
                 tracker: this._progressTracker,
                 command,
@@ -4529,7 +4528,7 @@ class Client {
         const appendingToLocalFile = startAt > 0;
         const fileSystemFlags = appendingToLocalFile ? "r+" : "w";
         const fd = await fsOpen(localPath, fileSystemFlags);
-        const destination = fs_1.createWriteStream("", {
+        const destination = (0, fs_1.createWriteStream)("", {
             fd,
             start: startAt,
             autoClose: false
@@ -4561,7 +4560,7 @@ class Client {
             await this.prepareTransfer(this.ftp);
             // Keep the keyword `await` or the `finally` clause below runs too early
             // and removes the event listener for the source stream too early.
-            return await transfer_1.downloadTo(destination, {
+            return await (0, transfer_1.downloadTo)(destination, {
                 ftp: this.ftp,
                 tracker: this._progressTracker,
                 command: startAt > 0 ? `REST ${startAt}` : `RETR ${validPath}`,
@@ -4606,7 +4605,7 @@ class Client {
      */
     async _requestListWithCommand(command) {
         const buffer = new StringWriter_1.StringWriter();
-        await transfer_1.downloadTo(buffer, {
+        await (0, transfer_1.downloadTo)(buffer, {
             ftp: this.ftp,
             tracker: this._progressTracker,
             command,
@@ -4679,7 +4678,7 @@ class Client {
     async _uploadToWorkingDir(localDirPath) {
         const files = await fsReadDir(localDirPath);
         for (const file of files) {
-            const fullPath = path_1.join(localDirPath, file);
+            const fullPath = (0, path_1.join)(localDirPath, file);
             const stats = await fsStat(fullPath);
             if (stats.isFile()) {
                 await this.uploadFrom(fullPath, file);
@@ -4711,7 +4710,7 @@ class Client {
     async _downloadFromWorkingDir(localDirPath) {
         await ensureLocalDirectory(localDirPath);
         for (const file of await this.list()) {
-            const localPath = path_1.join(localDirPath, file.name);
+            const localPath = (0, path_1.join)(localDirPath, file.name);
             if (file.isDirectory) {
                 await this.cd(file.name);
                 await this._downloadFromWorkingDir(localPath);
@@ -4781,26 +4780,26 @@ class Client {
      * Try all available transfer strategies and pick the first one that works. Update `client` to
      * use the working strategy for all successive transfer requests.
      *
-     * @param transferModes
      * @returns a function that will try the provided strategies.
      */
-    _enterFirstCompatibleMode(transferModes) {
+    _enterFirstCompatibleMode(strategies) {
         return async (ftp) => {
-            ftp.log("Trying to find optimal transfer mode...");
-            for (const transferMode of transferModes) {
+            ftp.log("Trying to find optimal transfer strategy...");
+            let lastError = undefined;
+            for (const strategy of strategies) {
                 try {
-                    const res = await transferMode(ftp);
-                    ftp.log("Optimal transfer mode found.");
-                    this.prepareTransfer = transferMode; // eslint-disable-line require-atomic-updates
+                    const res = await strategy(ftp);
+                    ftp.log("Optimal transfer strategy found.");
+                    this.prepareTransfer = strategy; // eslint-disable-line require-atomic-updates
                     return res;
                 }
                 catch (err) {
                     // Try the next candidate no matter the exact error. It's possible that a server
                     // answered incorrectly to a strategy, for example a PASV answer to an EPSV.
-                    ftp.log(`Transfer mode failed: "${err.message}", will try next.`);
+                    lastError = err;
                 }
             }
-            throw new Error("None of the available transfer modes work.");
+            throw new Error(`None of the available transfer strategies work. Last error response was '${lastError}'.`);
         };
     }
     /**
@@ -5038,7 +5037,8 @@ class FTPContext {
             return;
         }
         this._closingError = err;
-        // Before giving the user's task a chance to react, make sure we won't be bothered with any inputs.
+        this.send("QUIT"); // Don't wait for an answer
+        // Close the sockets but don't fully reset this context to preserve `this._closingError`.
         this._closeSocket(this._socket);
         this._closeSocket(this._dataSocket);
         // Give the user's task a chance to react, maybe cleanup resources.
@@ -5071,16 +5071,17 @@ class FTPContext {
     set socket(socket) {
         // No data socket should be open in any case where the control socket is set or upgraded.
         this.dataSocket = undefined;
+        // This being a reset, reset any other state apart from the socket.
         this.tlsOptions = {};
-        // This being a soft reset, remove any remaining partial response.
         this._partialResponse = "";
         if (this._socket) {
-            // Only close the current connection if the new is not an upgrade.
-            const isUpgrade = socket.localPort === this._socket.localPort;
-            if (!isUpgrade) {
-                this._socket.destroy();
+            const newSocketUpgradesExisting = socket.localPort === this._socket.localPort;
+            if (newSocketUpgradesExisting) {
+                this._removeSocketListeners(this.socket);
             }
-            this._removeSocketListeners(this._socket);
+            else {
+                this._closeSocket(this.socket);
+            }
         }
         if (socket) {
             // Setting a completely new control socket is in essence something like a reset. That's
@@ -5168,7 +5169,6 @@ class FTPContext {
      */
     handle(command, responseHandler) {
         if (this._task) {
-            // The user or client instance called `handle()` while a task is still running.
             const err = new Error("User launched a task while another one is still running. Forgot to use 'await' or '.then()'?");
             err.stack += `\nRunning task launched at: ${this._task.stack}`;
             this.closeWithError(err);
@@ -5176,27 +5176,25 @@ class FTPContext {
             // because the context closed already. That way, users will receive an exception where
             // they called this method by mistake.
         }
-        return new Promise((resolvePromise, rejectPromise) => {
-            const stack = new Error().stack || "Unknown call stack";
-            const resolver = {
-                resolve: (arg) => {
-                    this._stopTrackingTask();
-                    resolvePromise(arg);
-                },
-                reject: err => {
-                    this._stopTrackingTask();
-                    rejectPromise(err);
-                }
-            };
+        return new Promise((resolveTask, rejectTask) => {
             this._task = {
-                stack,
-                resolver,
-                responseHandler
+                stack: new Error().stack || "Unknown call stack",
+                responseHandler,
+                resolver: {
+                    resolve: arg => {
+                        this._stopTrackingTask();
+                        resolveTask(arg);
+                    },
+                    reject: err => {
+                        this._stopTrackingTask();
+                        rejectTask(err);
+                    }
+                }
             };
             if (this._closingError) {
                 // This client has been closed. Provide an error that describes this one as being caused
                 // by `_closingError`, include stack traces for both.
-                const err = new Error("Client is closed"); // Type 'Error' is not correctly defined, doesn't have 'code'.
+                const err = new Error(`Client is closed because ${this._closingError.message}`); // Type 'Error' is not correctly defined, doesn't have 'code'.
                 err.stack += `\nClosing reason: ${this._closingError.stack}`;
                 err.code = this._closingError.code !== undefined ? this._closingError.code : "0";
                 this._passToHandler(err);
@@ -5244,7 +5242,7 @@ class FTPContext {
         this.log(`< ${chunk}`);
         // This chunk might complete an earlier partial response.
         const completeResponse = this._partialResponse + chunk;
-        const parsed = parseControlResponse_1.parseControlResponse(completeResponse);
+        const parsed = (0, parseControlResponse_1.parseControlResponse)(completeResponse);
         // Remember any incomplete remainder.
         this._partialResponse = parsed.rest;
         // Each response group is passed along individually.
@@ -5285,7 +5283,10 @@ class FTPContext {
                 this.closeWithError(new Error(`Socket closed due to transmission error (${identifier})`));
             }
         });
-        socket.once("timeout", () => this.closeWithError(new Error(`Timeout (${identifier})`)));
+        socket.once("timeout", () => {
+            socket.destroy();
+            this.closeWithError(new Error(`Timeout (${identifier})`));
+        });
     }
     /**
      * Close a socket.
@@ -5293,8 +5294,11 @@ class FTPContext {
      */
     _closeSocket(socket) {
         if (socket) {
-            socket.destroy();
             this._removeSocketListeners(socket);
+            socket.on("error", () => { });
+            socket.on("timeout", () => socket.destroy());
+            socket.setTimeout(this.timeout);
+            socket.end();
         }
     }
     /**
@@ -5453,7 +5457,11 @@ exports.StringWriter = StringWriter;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -5515,7 +5523,7 @@ function upgradeSocket(socket, options) {
         const tlsOptions = Object.assign({}, options, {
             socket
         });
-        const tlsSocket = tls_1.connect(tlsOptions, () => {
+        const tlsSocket = (0, tls_1.connect)(tlsOptions, () => {
             const expectCertificate = tlsOptions.rejectUnauthorized !== false;
             if (expectCertificate && !tlsSocket.authorized) {
                 reject(tlsSocket.authorizationError);
@@ -5545,7 +5553,8 @@ function ipIsPrivateV4Address(ip = "") {
     const octets = ip.split(".").map(o => parseInt(o, 10));
     return octets[0] === 10 // 10.0.0.0 - 10.255.255.255
         || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) // 172.16.0.0 - 172.31.255.255
-        || (octets[0] === 192 && octets[1] === 168); // 192.168.0.0 - 192.168.255.255
+        || (octets[0] === 192 && octets[1] === 168) // 192.168.0.0 - 192.168.255.255
+        || ip === "127.0.0.1";
 }
 exports.ipIsPrivateV4Address = ipIsPrivateV4Address;
 
@@ -5634,7 +5643,11 @@ function isNotBlank(str) {
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -5668,8 +5681,11 @@ const availableParsers = [
 function firstCompatibleParser(line, parsers) {
     return parsers.find(parser => parser.testLine(line) === true);
 }
-function stringIsNotBlank(str) {
+function isNotBlank(str) {
     return str.trim() !== "";
+}
+function isNotMeta(str) {
+    return !str.startsWith("total");
 }
 const REGEX_NEWLINE = /\r?\n/;
 /**
@@ -5678,7 +5694,8 @@ const REGEX_NEWLINE = /\r?\n/;
 function parseList(rawList) {
     const lines = rawList
         .split(REGEX_NEWLINE)
-        .filter(stringIsNotBlank);
+        .filter(isNotBlank)
+        .filter(isNotMeta);
     if (lines.length === 0) {
         return [];
     }
@@ -5797,7 +5814,7 @@ const factHandlersByName = {
         if (value.startsWith("OS.unix=slink")) {
             info.type = FileInfo_1.FileType.SymbolicLink;
             info.link = value.substr(value.indexOf(":") + 1);
-            return 1 /* Continue */;
+            return 1 /* FactHandlerResult.Continue */;
         }
         switch (value) {
             case "file":
@@ -5813,11 +5830,11 @@ const factHandlersByName = {
                 break;
             case "cdir": // Current directory being listed
             case "pdir": // Parent directory
-                return 2 /* IgnoreFile */; // Don't include these entries in the listing
+                return 2 /* FactHandlerResult.IgnoreFile */; // Don't include these entries in the listing
             default:
                 info.type = FileInfo_1.FileType.Unknown;
         }
-        return 1 /* Continue */;
+        return 1 /* FactHandlerResult.Continue */;
     },
     "unix.mode": (value, info) => {
         const digits = value.substr(-3);
@@ -5898,7 +5915,7 @@ function parseLine(line) {
             continue;
         }
         const result = factHandler(factValue, info);
-        if (result === 2 /* IgnoreFile */) {
+        if (result === 2 /* FactHandlerResult.IgnoreFile */) {
             return undefined;
         }
     }
@@ -5996,7 +6013,7 @@ const JA_YEAR = "\u5e74";
  *    {@code @}   file has extended attributes
  */
 const RE_LINE = new RegExp("([bcdelfmpSs-])" // file type
-    + "(((r|-)(w|-)([xsStTL-]))((r|-)(w|-)([xsStTL-]))((r|-)(w|-)([xsStTL-])))\\+?" // permissions
+    + "(((r|-)(w|-)([xsStTL-]))((r|-)(w|-)([xsStTL-]))((r|-)(w|-)([xsStTL-]?)))\\+?" // permissions
     + "\\s*" // separator TODO why allow it to be omitted??
     + "(\\d+)" // link count
     + "\\s+" // separator
@@ -6126,6 +6143,7 @@ function parseMode(r, w, x) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.downloadTo = exports.uploadFrom = exports.connectForPassiveTransfer = exports.parsePasvResponse = exports.enterPassiveModeIPv4 = exports.parseEpsvResponse = exports.enterPassiveModeIPv6 = void 0;
 const netUtils_1 = __nccwpck_require__(6288);
+const stream_1 = __nccwpck_require__(2781);
 const tls_1 = __nccwpck_require__(4404);
 const parseControlResponse_1 = __nccwpck_require__(9948);
 /**
@@ -6176,7 +6194,7 @@ async function enterPassiveModeIPv4(ftp) {
     // We can't always perform this replacement because it's possible (although unlikely) that the FTP server
     // indeed uses a different host for data connections.
     const controlHost = ftp.socket.remoteAddress;
-    if (netUtils_1.ipIsPrivateV4Address(target.host) && controlHost && !netUtils_1.ipIsPrivateV4Address(controlHost)) {
+    if ((0, netUtils_1.ipIsPrivateV4Address)(target.host) && controlHost && !(0, netUtils_1.ipIsPrivateV4Address)(controlHost)) {
         target.host = controlHost;
     }
     await connectForPassiveTransfer(target.host, target.port, ftp);
@@ -6200,15 +6218,21 @@ function parsePasvResponse(message) {
 exports.parsePasvResponse = parsePasvResponse;
 function connectForPassiveTransfer(host, port, ftp) {
     return new Promise((resolve, reject) => {
+        let socket = ftp._newSocket();
         const handleConnErr = function (err) {
             err.message = "Can't open data connection in passive mode: " + err.message;
             reject(err);
         };
-        let socket = ftp._newSocket();
+        const handleTimeout = function () {
+            socket.destroy();
+            reject(new Error(`Timeout when trying to open data connection to ${host}:${port}`));
+        };
+        socket.setTimeout(ftp.timeout);
         socket.on("error", handleConnErr);
+        socket.on("timeout", handleTimeout);
         socket.connect({ port, host, family: ftp.ipFamily }, () => {
             if (ftp.socket instanceof tls_1.TLSSocket) {
-                socket = tls_1.connect(Object.assign({}, ftp.tlsOptions, {
+                socket = (0, tls_1.connect)(Object.assign({}, ftp.tlsOptions, {
                     socket,
                     // Reuse the TLS session negotiated earlier when the control connection
                     // was upgraded. Servers expect this because it provides additional
@@ -6227,6 +6251,7 @@ function connectForPassiveTransfer(host, port, ftp) {
             }
             // Let the FTPContext listen to errors from now on, remove local handler.
             socket.removeListener("error", handleConnErr);
+            socket.removeListener("timeout", handleTimeout);
             ftp.dataSocket = socket;
             resolve();
         });
@@ -6336,18 +6361,22 @@ function uploadFrom(source, config) {
             // 'secureConnect'. If this hasn't happened yet, getCipher() returns undefined.
             const canUpload = "getCipher" in dataSocket ? dataSocket.getCipher() !== undefined : true;
             onConditionOrEvent(canUpload, dataSocket, "secureConnect", () => {
-                config.ftp.log(`Uploading to ${netUtils_1.describeAddress(dataSocket)} (${netUtils_1.describeTLS(dataSocket)})`);
+                config.ftp.log(`Uploading to ${(0, netUtils_1.describeAddress)(dataSocket)} (${(0, netUtils_1.describeTLS)(dataSocket)})`);
                 resolver.onDataStart(config.remotePath, config.type);
-                source.pipe(dataSocket).once("finish", () => {
-                    dataSocket.destroy(); // Explicitly close/destroy the socket to signal the end.
-                    resolver.onDataDone(task);
+                (0, stream_1.pipeline)(source, dataSocket, err => {
+                    if (err) {
+                        resolver.onError(task, err);
+                    }
+                    else {
+                        resolver.onDataDone(task);
+                    }
                 });
             });
         }
-        else if (parseControlResponse_1.positiveCompletion(res.code)) { // Transfer complete
+        else if ((0, parseControlResponse_1.positiveCompletion)(res.code)) { // Transfer complete
             resolver.onControlDone(task, res);
         }
-        else if (parseControlResponse_1.positiveIntermediate(res.code)) {
+        else if ((0, parseControlResponse_1.positiveIntermediate)(res.code)) {
             resolver.onUnexpectedRequest(res);
         }
         // Ignore all other positive preliminary response codes (< 200)
@@ -6358,9 +6387,6 @@ function downloadTo(destination, config) {
     if (!config.ftp.dataSocket) {
         throw new Error("Download will be initiated but no data connection is available.");
     }
-    // It's possible that data transmission begins before the control socket
-    // receives the announcement. Start listening for data immediately.
-    config.ftp.dataSocket.pipe(destination);
     const resolver = new TransferResolver(config.ftp, config.tracker);
     return config.ftp.handle(config.command, (res, task) => {
         if (res instanceof Error) {
@@ -6372,17 +6398,24 @@ function downloadTo(destination, config) {
                 resolver.onError(task, new Error("Download should begin but no data connection is available."));
                 return;
             }
-            config.ftp.log(`Downloading from ${netUtils_1.describeAddress(dataSocket)} (${netUtils_1.describeTLS(dataSocket)})`);
+            config.ftp.log(`Downloading from ${(0, netUtils_1.describeAddress)(dataSocket)} (${(0, netUtils_1.describeTLS)(dataSocket)})`);
             resolver.onDataStart(config.remotePath, config.type);
-            onConditionOrEvent(isWritableFinished(destination), destination, "finish", () => resolver.onDataDone(task));
+            (0, stream_1.pipeline)(dataSocket, destination, err => {
+                if (err) {
+                    resolver.onError(task, err);
+                }
+                else {
+                    resolver.onDataDone(task);
+                }
+            });
         }
         else if (res.code === 350) { // Restarting at startAt.
             config.ftp.send("RETR " + config.remotePath);
         }
-        else if (parseControlResponse_1.positiveCompletion(res.code)) { // Transfer complete
+        else if ((0, parseControlResponse_1.positiveCompletion)(res.code)) { // Transfer complete
             resolver.onControlDone(task, res);
         }
-        else if (parseControlResponse_1.positiveIntermediate(res.code)) {
+        else if ((0, parseControlResponse_1.positiveIntermediate)(res.code)) {
             resolver.onUnexpectedRequest(res);
         }
         // Ignore all other positive preliminary response codes (< 200)
@@ -6405,18 +6438,6 @@ function onConditionOrEvent(condition, emitter, eventName, action) {
     else {
         emitter.once(eventName, () => action());
     }
-}
-/**
- * Detect whether a writable stream is finished, supporting Node 8.
- * From https://github.com/nodejs/node/blob/3e2a3007107b7a100794f4e4adbde19263fc7464/lib/internal/streams/end-of-stream.js#L28-L33
- */
-function isWritableFinished(stream) {
-    if (stream.writableFinished)
-        return true;
-    const wState = stream._writableState;
-    if (!wState || wState.errored)
-        return false;
-    return wState.finished || (wState.ended && wState.length === 0);
 }
 
 
@@ -9037,7 +9058,8 @@ async function runDeployment() {
             "dangerous-clean-slate": (0, parse_1.optionalBoolean)("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
             "exclude": (0, parse_1.optionalStringArray)("exclude", core.getMultilineInput("exclude")),
             "log-level": (0, parse_1.optionalLogLevel)("log-level", core.getInput("log-level")),
-            "security": (0, parse_1.optionalSecurity)("security", core.getInput("security"))
+            "security": (0, parse_1.optionalSecurity)("security", core.getInput("security")),
+            "timeout": (0, parse_1.optionalInt)("timeout", core.getInput("timeout"))
         };
         await (0, ftp_deploy_1.deploy)(args);
     }
