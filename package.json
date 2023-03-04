@@ -29,6 +29,9 @@
     "ts-jest": "^28.0.8",
     "ts-node-dev": "^2.0.0"
   },
+  "overrides": {
+    "basic-ftp": "^5.0.0"
+  },
   "devDependencies": {
     "@types/node": "^14.0.27",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
