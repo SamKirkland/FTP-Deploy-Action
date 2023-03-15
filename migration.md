@@ -27,7 +27,7 @@ Most features have been carried forward and improved upon. However, some feature
 ### How to upgrade
 
 1) Remove `with: fetch-depth: 2`. It is no longer needed and removing it will _slightly_ speed up deployments.
-2) Change the version to `4.X.X`, for example `SamKirkland/FTP-Deploy-Action@4.3.1` (please check readme for latest version)
+2) Change the version to `4.X.X`, for example `SamKirkland/FTP-Deploy-Action@v4.3.4` (please check readme for latest version)
 3) If you have a `.git-ftp-include` file you should delete it. Version 4 tracks files differently and no longer needs this config file.
 4) If you have a `.git-ftp-ignore` file, you should transfer the options to the new `exclude` argument. _Note: Version 4 excludes any `.git*` and `node_modules/` files/folders by default_
 5) Update your arguments to reflect the following changes
