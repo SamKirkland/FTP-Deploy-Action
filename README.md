@@ -130,7 +130,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # - name: Copy .env
     #   run: php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -155,7 +155,7 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: '/public_html/example/'
+        server-dir: '/public_html/example.com/'
 ```
 
 #### FTPS
