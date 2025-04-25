@@ -4632,17 +4632,26 @@ class Client {
      * @example client.removeDir("/") // Remove everything.
      */
     async removeDir(remoteDirPath) {
-        return this._exitAtCurrentDirectory(async () => {
-            await this.cd(remoteDirPath);
-            // Get the absolute path of the target because remoteDirPath might be a relative path, even `../` is possible.
-            const absoluteDirPath = await this.pwd();
-            await this.clearWorkingDir();
-            const dirIsRoot = absoluteDirPath === "/";
-            if (!dirIsRoot) {
-                await this.cdup();
-                await this.removeEmptyDir(absoluteDirPath);
+        try {
+            return await this._exitAtCurrentDirectory(async () => {
+                await this.cd(remoteDirPath);
+                // Get the absolute path of the target because remoteDirPath might be a relative path, even `../` is possible.
+                const absoluteDirPath = await this.pwd();
+                await this.clearWorkingDir();
+                const dirIsRoot = absoluteDirPath === "/";
+                if (!dirIsRoot) {
+                    await this.cdup();
+                    await this.removeEmptyDir(absoluteDirPath);
+                }
+            });
+        } catch (err) {
+            // Safely ignore if the folder doesn't exist
+            if (err.code === 550 || err.message.includes("No such file or directory") || err.message.includes("File not found")) {
+                console.warn(`Warning: Folder "${remoteDirPath}" not found, skipping deletion.`);
+                return;
             }
-        });
+            throw err;
+        }
     }
     /**
      * Remove all files and directories in the working directory without removing
