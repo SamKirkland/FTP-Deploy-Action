@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.9.1",
-    "@samkirkland/ftp-deploy": "^1.2.4",
+    "@samkirkland/ftp-deploy": "^1.2.5",
     "@types/jest": "^29.4.1",
     "jest": "^29.5.0",
     "ts-jest": "^29.0.5",
