@@ -3626,7 +3626,7 @@ class FTPSyncProvider {
                 }
                 catch (e) {
                     // this error is common when a file was deleted on the server directly
-                    if (e.code === types_1.ErrorCode.FileNotFoundOrNoAccess) {
+                    if ((e === null || e === void 0 ? void 0 : e.code) === types_1.ErrorCode.FileNotFoundOrNoAccess) {
                         this.logger.standard("File not found or you don't have access to the file - skipping...");
                     }
                     else {
@@ -3643,7 +3643,17 @@ class FTPSyncProvider {
             const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
             this.logger.all(`removing folder "${absoluteFolderPath}"`);
             if (this.dryRun === false) {
-                yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(absoluteFolderPath); }));
+                try {
+                    yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeDir(absoluteFolderPath); }));
+                }
+                catch (e) {
+                    if ((e === null || e === void 0 ? void 0 : e.code) === types_1.ErrorCode.FileNotFoundOrNoAccess) {
+                        this.logger.standard("Directory not found or you don't have access to the file - skipping...");
+                    }
+                    else {
+                        throw e;
+                    }
+                }
             }
             this.logger.verbose(`  completed`);
         });
