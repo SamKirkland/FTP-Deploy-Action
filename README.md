@@ -106,6 +106,58 @@ jobs:
         password: ${{ secrets.password }}
 ```
 
+## Laravel
+#### Build and Publish Laravel Website
+```yml
+# This is a basic workflow to help you get started with Actions
+
+name: 🚀 Deploye
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [closed]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  web-deploy:
+    name: 🎉 Deploying
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    # - name: Copy .env
+    #   run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+    # - name: Generate key
+    #   run: php artisan key:generate
+
+    - name: Install Dependencies
+      run: composer update --ignore-platform-reqs
+
+    - name: Directory Permissions
+      run: chmod -R 775 storage
+
+    - name: Clear Caches
+      run: php artisan optimize:clear
+
+    - name: Storage link
+      run: php artisan storage:link --force
+
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: '/public_html/example.com/'
+```
+
 #### FTPS
 ```yml
 on: push
