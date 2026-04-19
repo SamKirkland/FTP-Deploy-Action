@@ -7,7 +7,7 @@
   "scripts": {
     "build": "ncc build src/main.ts --no-cache",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
@@ -22,21 +22,21 @@
   "author": "Sam Kirkland",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.9.1",
-    "@samkirkland/ftp-deploy": "^1.2.5",
-    "@types/jest": "^29.4.1",
-    "jest": "^29.5.0",
-    "ts-jest": "^29.0.5",
-    "ts-node-dev": "^2.0.0"
+    "@actions/core": "^2.0.2",
+    "@samkirkland/ftp-deploy": "^1.2.5"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
-    "@typescript-eslint/eslint-plugin": "^5.33.1",
-    "@typescript-eslint/parser": "^5.33.1",
-    "@vercel/ncc": "^0.34.0",
-    "eslint": "^8.22.0",
-    "eslint-plugin-jest": "^26.8.7",
-    "typescript": "^4.7.4"
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.1.0",
+    "@vercel/ncc": "^0.38.4",
+    "eslint": "^10.2.1",
+    "@eslint/js": "^10.0.1",
+    "eslint-plugin-jest": "^29.15.2",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.58.2"
   },
   "jest": {
     "preset": "ts-jest"
