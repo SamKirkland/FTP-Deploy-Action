@@ -1,6 +1,6 @@
 {
   "name": "ftp-deploy-action",
-  "version": "4.3.6",
+  "version": "4.4.0",
   "private": true,
   "description": "Automate deploying websites and more with this GitHub action",
   "main": "dist/index.js",
@@ -30,7 +30,7 @@
     "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
+    "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
     "@vercel/ncc": "^0.34.0",
