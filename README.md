@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      uses: SamKirkland/FTP-Deploy-Action@v4.0.1
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Use Node.js 16
       uses: actions/setup-node@v2
@@ -99,7 +99,7 @@ jobs:
         npm run build
     
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      uses: SamKirkland/FTP-Deploy-Action@v4.0.1
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -116,10 +116,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      uses: SamKirkland/FTP-Deploy-Action@v4.0.1
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -139,10 +139,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      uses: SamKirkland/FTP-Deploy-Action@v4.0.1
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
@@ -161,10 +161,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      uses: SamKirkland/FTP-Deploy-Action@v4.0.1
       with:
         server: ftp.samkirkland.com
         username: myFtpUserName
